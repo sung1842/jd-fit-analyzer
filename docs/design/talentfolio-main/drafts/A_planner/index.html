@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Talentfolio 시안 A</title>
+<style>
+:root{--accent-ink:#B85A40;--bg:#F6F7F9;--ink:#14161A;--ink2:#5B6170;--line:#E3E6EB;--accent:#E07A5F;--accentw:#F6D9CF;--inv:#14161A}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;line-height:1.65;overflow-x:hidden}
+a{color:inherit}.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+.skip{position:absolute;left:-999px}.skip:focus{left:16px;top:16px;background:#fff;padding:8px;z-index:9}
+.cta{display:inline-block;padding:13px 22px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+.cta.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2)}
+.ex{font-size:11px;color:var(--ink2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin-left:6px}
+/* hero */
+.hero{position:relative;min-height:92vh;overflow:hidden}
+#peeps{position:absolute;inset:0;width:100%;height:100%;opacity:.22;pointer-events:none}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(246,247,249,.92),rgba(246,247,249,.46) 44%,rgba(246,247,249,.9));pointer-events:none}
+.hero .wrap{position:relative;z-index:2;display:grid;grid-template-columns:7fr 5fr;gap:40px;padding-top:96px;padding-bottom:72px;align-items:center}
+.tabs{display:inline-flex;position:relative;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:28px}
+.tabs button{position:relative;z-index:1;border:0;background:none;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer;color:var(--ink2)}
+.tabs button[aria-selected=true]{color:#fff}
+.ind{position:absolute;top:4px;bottom:4px;left:4px;border-radius:999px;background:var(--ink);transition:transform .35s,width .35s}
+h1{font-size:clamp(30px,3.6vw,46px);line-height:1.08;letter-spacing:-.04em;margin:0 0 20px;font-weight:700;word-break:keep-all}
+h2,h3,p{word-break:keep-all}
+.line{display:block;overflow:hidden}.line>span{display:inline-block}
+.slot{display:inline-block;min-width:4.6em;white-space:nowrap;color:var(--accent-ink,#B85A40)}
+.lead{color:var(--ink2);max-width:30em}
+.demo{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 20px 40px -24px rgba(20,22,26,.25)}
+.jd{font-family:ui-monospace,monospace;font-size:13px;background:var(--bg);border-radius:8px;padding:10px 12px;min-height:40px}
+.cand{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:10px}
+.thumb{width:48px;height:48px;border-radius:8px;flex:none;background:linear-gradient(135deg,#d9dde4,#eef0f3)}
+.thumb.b{background:repeating-linear-gradient(45deg,#e4e7ec 0 6px,#f1f3f6 6px 12px)}
+.thumb.c{background:radial-gradient(circle at 30% 30%,var(--accentw),#eceef2 60%)}
+.cand b{font-size:14px}.cand small{display:block;color:var(--ink2);font-size:12px}
+.score{margin-left:auto;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.cand.top{border-color:var(--accent)}
+.callout{font-size:12px;color:var(--ink2);margin-top:12px;border-left:2px solid var(--accent);padding-left:10px}
+.panel[hidden]{display:none}
+/* prologue */
+section.blk{padding:112px 0}
+.big{font-size:clamp(72px,16vw,200px);font-weight:700;letter-spacing:-.06em;line-height:.9}
+h2{font-size:clamp(28px,4.4vw,52px);letter-spacing:-.04em;line-height:1.1;margin:12px 0 18px}
+/* walkthrough */
+.walk{display:grid;grid-template-columns:5fr 7fr;gap:48px}
+.walk .side{position:sticky;top:80px;align-self:start}
+.steps{list-style:none;margin:24px 0 0;padding:0}
+.steps li{display:flex;gap:10px;align-items:center;color:var(--ink2);padding:6px 0}
+.steps li i{width:10px;height:10px;border-radius:50%;border:2px solid var(--line)}
+.steps li.on{color:var(--ink);font-weight:600}.steps li.on i{background:var(--ink);border-color:var(--ink)}
+.steps li.human.on i{background:var(--accent);border-color:var(--accent)}
+.ch{min-height:70vh;display:flex;flex-direction:column;justify-content:center;border-top:1px solid var(--line);padding:48px 0}
+.no{font-size:clamp(56px,10vw,140px);font-weight:700;color:var(--line);line-height:1;letter-spacing:-.05em}
+.ch h3{font-size:clamp(22px,3vw,34px);letter-spacing:-.03em;margin:8px 0}
+.ch p{color:var(--ink2);max-width:34em}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:18px;max-width:520px}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:6px 0 12px}.bar>span{display:block;height:100%;width:0;background:var(--ink)}
+.approve{display:flex;gap:8px;margin-top:12px}
+.approve button{font:inherit;border-radius:999px;padding:8px 16px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.approve .yes{background:var(--accent);border-color:var(--accent);color:#fff}
+/* invert */
+.inv{background:var(--inv);color:#F6F7F9}.inv .eyebrow{color:#9097a3}
+.inv h2{font-size:clamp(36px,7vw,96px)}.inv em{font-style:normal;color:var(--accent)}
+/* marquee */
+.mq{overflow:hidden;margin-top:40px;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.track{display:flex;gap:16px;width:max-content;animation:mq 40s linear infinite}
+.mq:hover .track{animation-play-state:paused}
+.tile{width:220px;height:150px;border-radius:12px;border:1px solid var(--line);background:#fff;padding:12px;font-size:12px;color:var(--ink2);display:flex;flex-direction:column;justify-content:flex-end}
+.tile:nth-child(3n+1){background:linear-gradient(160deg,#fff 40%,#eef0f3)}
+.tile:nth-child(3n+2){background:repeating-linear-gradient(0deg,#fff 0 14px,#f2f3f6 14px 15px)}
+.tile:nth-child(3n){background:radial-gradient(circle at 70% 30%,var(--accentw),#fff 55%)}
+@keyframes mq{to{transform:translateX(-50%)}}
+.end{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+.end div{border:1px solid var(--line);border-radius:16px;padding:28px;background:#fff}
+footer{padding:40px 0;color:var(--ink2);font-size:13px}
+@media (max-width:767px){
+ .hero .wrap,.walk,.end{grid-template-columns:1fr}.walk .side{position:static}
+ section.blk{padding:72px 0}.hero .wrap{padding-top:72px}.ch{min-height:auto}
+}
+@media (prefers-reduced-motion:reduce){.track{animation:none}html{scroll-behavior:auto}.ind{transition:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#walk">워크스루 건너뛰기</a>
+
+<!-- 0. HERO -->
+<header class="hero">
+  <!-- Skiper39 간이 재현: all-peeps.png (15x7) 스프라이트를 canvas로 걷게 함. 로드 실패 시 빈 레이어 -->
+  <canvas id="peeps" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div>
+      <div class="tabs" role="tablist" aria-label="역할 선택">
+        <span class="ind" aria-hidden="true"></span>
+        <button role="tab" aria-selected="true" aria-controls="p-hh" id="t-hh">인재를 찾고 있어요</button>
+        <button role="tab" aria-selected="false" aria-controls="p-ap" id="t-ap" tabindex="-1">작업물을 올려요</button>
+      </div>
+      <div id="p-hh" class="panel" role="tabpanel" aria-labelledby="t-hh">
+        <h1 aria-label="좋은 개발자는 이미 여기 있습니다. AI가 찾고, 사람이 고릅니다.">
+          <span class="line"><span>좋은 <span class="slot" id="rot" aria-hidden="true">프론트엔드</span> 개발자는</span></span>
+          <span class="line"><span>이미 여기 있습니다.</span></span>
+          <span class="line"><span>AI가 찾고, 사람이 고릅니다.</span></span>
+        </h1>
+        <p class="lead">공고 한 줄이면 됩니다. AI 에이전트가 쌓인 작업물에서 후보를 찾고 핏을 분석합니다. 누구에게 연락할지는 헤드헌터가 정합니다.</p>
+        <p style="margin-top:28px"><a class="cta" href="#walk">스카우트 건 넣어보기</a> <a class="cta ghost" href="#walk">어떻게 돌아가나요</a></p>
+        <p><a href="#apply" style="font-size:13px;color:var(--ink2)">데모 건너뛰고 시작하기</a></p>
+      </div>
+      <div id="p-ap" class="panel" role="tabpanel" aria-labelledby="t-ap" hidden>
+        <h1><span class="line"><span>이력서보다 작업물이</span></span><span class="line"><span>먼저 말하게 하세요.</span></span></h1>
+        <p class="lead">프로젝트와 트러블슈팅 기록을 쌓아두면, 그걸 필요로 하는 의뢰가 왔을 때 헤드헌터가 먼저 연락합니다.</p>
+        <p style="margin-top:28px"><a class="cta" href="#apply">포트폴리오 시작하기</a></p>
+      </div>
+    </div>
+    <div class="demo" aria-label="제품 미니 데모 (예시)">
+      <div class="eyebrow">스카우트 건 #0142 <span class="ex">예시</span></div>
+      <div class="jd" id="jd"></div>
+      <div class="cand top"><span class="thumb"></span><div><b>후보 A</b><small>React · 결제 페이지 성능 개선 기록</small></div><span class="score" data-v="92">0</span></div>
+      <div class="cand"><span class="thumb b"></span><div><b>후보 B</b><small>Next.js · 디자인 시스템 구축</small></div><span class="score" data-v="81">0</span></div>
+      <div class="cand"><span class="thumb c"></span><div><b>후보 C</b><small>Vue → React 마이그레이션</small></div><span class="score" data-v="67">0</span></div>
+      <p class="callout">왜 92점? 기술 스택 일치 + 비슷한 트래픽 장애를 직접 해결한 기록.</p>
+      <div class="approve"><button class="yes" type="button" id="demoOk">승인하고 제안</button><button type="button">보류</button></div>
+      <p id="live" aria-live="polite" style="font-size:12px;color:var(--ink2);margin:8px 0 0">헤드헌터 승인 대기 중</p>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- 1. PROLOGUE -->
+<section class="blk"><div class="wrap">
+  <p class="eyebrow">Prologue <span class="ex">예시 시나리오</span></p>
+  <div class="big rv">하루 30건</div>
+  <h2 class="rv">헤드헌터가 꼼꼼히 볼 수 있는 포트폴리오는<br>이 정도입니다.</h2>
+  <p class="rv" style="color:var(--ink2);max-width:34em">좋은 후보는 늘 있었습니다. 다 읽어볼 시간이 없었을 뿐이죠. Talentfolio는 읽는 일을 에이전트에게, 고르는 일을 사람에게 맡깁니다.</p>
+</div></section>
+
+<!-- 2. WALKTHROUGH -->
+<section class="blk" id="walk" style="padding-top:0"><div class="wrap walk">
+  <div class="side">
+    <p class="eyebrow">스카우트 건 하나의 하루</p>
+    <h2>의뢰부터 제안까지,<br>네 걸음.</h2>
+    <ol class="steps">
+      <li data-s="1"><i></i>의뢰 접수</li>
+      <li data-s="2"><i></i>후보 탐색 · 핏 분석</li>
+      <li data-s="3" class="human"><i></i>헤드헌터 승인</li>
+      <li data-s="4"><i></i>제안 발송</li>
+    </ol>
+  </div>
+  <div>
+    <article class="ch" data-s="1"><div class="no">01</div><h3>기업이 의뢰를 넣습니다</h3>
+      <p>"결제 트래픽을 견딜 시니어 프론트엔드." 채용공고 한 줄이면 됩니다. 필요한 기술과 경험을 에이전트가 정리합니다.</p>
+      <div class="card"><small class="eyebrow">추출된 조건</small><p style="margin:6px 0 0">React · TypeScript · 대규모 트래픽 · 5년 이상</p></div></article>
+    <article class="ch" data-s="2"><div class="no">02</div><h3>에이전트가 작업물을 읽습니다</h3>
+      <p>플랫폼에 쌓인 포트폴리오를 먼저 코드로 걸러내고, 남은 후보만 깊게 분석합니다. 기술 적합도와 경험 적합도를 따로 매깁니다.</p>
+      <div class="card"><small>기술 스택 적합도</small><div class="bar"><span data-w="88"></span></div><small>경험·트러블슈팅 적합도</small><div class="bar"><span data-w="94"></span></div><small class="ex">예시</small></div></article>
+    <article class="ch" data-s="3"><div class="no" style="color:var(--accentw)">03</div><h3>연락할지는 사람이 정합니다</h3>
+      <p>AI는 추천 이유를 보여줄 뿐, 후보에게 먼저 연락하지 않습니다. 헤드헌터가 리포트를 읽고 승인해야 다음 단계로 갑니다.</p>
+      <div class="card"><b>후보 A · 92점</b> <span class="ex">예시</span><p style="margin:6px 0 0;color:var(--ink2);font-size:14px">근거: 결제 페이지 LCP 4.1s → 1.6s 개선 기록</p>
+        <div class="approve"><button class="yes" type="button">승인하고 제안</button><button type="button">보류</button></div></div></article>
+    <article class="ch" data-s="4"><div class="no">04</div><h3>제안이 후보에게 닿습니다</h3>
+      <p>승인된 건만 알림이 나갑니다. 후보는 자기 작업물 중 어떤 부분이 눈에 띄었는지 함께 받습니다.</p>
+      <div class="card">"결제 성능 개선 기록을 보고 연락드립니다." <span class="ex">예시</span></div></article>
+  </div>
+</div></section>
+
+<!-- 3. HIL (유일한 반전 섹션) -->
+<section class="blk inv"><div class="wrap">
+  <p class="eyebrow">Talentfolio가 지키는 한 가지</p>
+  <h2 class="rv">AI가 제안하고,<br><em>사람이 승인합니다.</em></h2>
+  <p class="rv" style="max-width:34em;color:#b6bcc6">에이전트는 처리량을 늘리고, 판단과 접촉은 헤드헌터의 몫으로 남깁니다. 대체가 아니라 확장입니다.</p>
+</div></section>
+
+<!-- 4. APPLICANT -->
+<section class="blk" id="apply"><div class="wrap">
+  <p class="eyebrow">작업물을 올리는 사람에게</p>
+  <h2>지원하지 않아도,<br>쌓아둔 것이 일을 합니다.</h2>
+  <p style="color:var(--ink2);max-width:34em">프로젝트, 해결한 문제, 남긴 기록. 의뢰가 들어올 때마다 에이전트가 다시 읽습니다.</p>
+  <div class="mq" aria-label="포트폴리오 예시 목록"><div class="track" id="track">
+    <div class="tile">결제 성능 개선 · React</div><div class="tile">디자인 시스템 v2 · Figma</div><div class="tile">실시간 알림 서버 · Node</div>
+    <div class="tile">온보딩 리서치 · UX</div><div class="tile">모바일 커머스 리뉴얼</div><div class="tile">데이터 대시보드 · D3</div>
+  </div></div>
+</div></section>
+
+<!-- 5. END -->
+<section class="blk" style="padding-top:0"><div class="wrap">
+  <h2>어느 쪽에서 시작할까요?</h2>
+  <div class="end">
+    <div><p class="eyebrow">헤드헌터 · 기업</p><h3>스카우트 건을 넣어보세요</h3><a class="cta" href="#">의뢰 시작하기</a></div>
+    <div><p class="eyebrow">지원자</p><h3>첫 작업물을 올려보세요</h3><a class="cta" href="#">포트폴리오 만들기</a></div>
+  </div>
+</div></section>
+</main>
+<footer><div class="wrap">Talentfolio · 화면의 모든 수치는 예시입니다.</div></footer>
+
+<script type="module">
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// marquee 트랙 복제
+const tr=document.getElementById('track'); tr.innerHTML+=tr.innerHTML;
+tr.querySelectorAll('.tile').forEach((t,i)=>{ if(i>=6) t.setAttribute('aria-hidden','true'); });
+
+// 역할 토글 (키보드: 좌우 화살표)
+const tabs=[...document.querySelectorAll('[role=tab]')], ind=document.querySelector('.ind');
+function place(b){ind.style.width=b.offsetWidth+'px';ind.style.transform=`translateX(${b.offsetLeft-4}px)`;}
+let A=null;
+function select(b){tabs.forEach(t=>{const on=t===b;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=!on;});
+  place(b); const p=document.getElementById(b.getAttribute('aria-controls'));
+  if(A&&!reduce) A.animate(p,{clipPath:['inset(0 100% 0 0)','inset(0 0% 0 0)'],duration:480,ease:'out(3)'});}
+tabs.forEach((b,i)=>{b.onclick=()=>select(b);b.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=tabs[(i+1)%2];n.focus();select(n);}}});
+requestAnimationFrame(()=>place(tabs[0]));addEventListener('resize',()=>place(tabs.find(t=>t.getAttribute('aria-selected')==='true')));
+
+// 스크롤 단계 표시 (IntersectionObserver, 하이재킹 없음)
+const lis=document.querySelectorAll('.steps li');
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const s=e.target.dataset.s;lis.forEach(l=>l.classList.toggle('on',l.dataset.s<=s));
+  e.target.querySelectorAll('.bar>span').forEach(b=>b.style.width=b.dataset.w+'%');}}),{rootMargin:'-45% 0px -45% 0px'});
+document.querySelectorAll('.ch').forEach(c=>io.observe(c));
+
+document.getElementById('demoOk').onclick=e=>{e.target.disabled=true;e.target.textContent='승인됨';document.getElementById('live').textContent='제안 대기열에 추가됨 (예시)';};
+const jdText='결제 트래픽을 견딜 시니어 프론트엔드 (React, 5년+)';
+const scores=[...document.querySelectorAll('.score')];
+function finalState(){document.getElementById('jd').textContent=jdText;scores.forEach(s=>s.textContent=s.dataset.v);document.querySelectorAll('.bar>span').forEach(b=>b.style.width=b.dataset.w+'%');}
+
+try{
+  if(reduce) throw 0;
+  A = await import('https://cdn.jsdelivr.net/npm/animejs@4.0.2/+esm');
+  const {animate,createTimeline,stagger,onScroll}=A;
+  // 헤드라인 진입
+  animate('#p-hh .line>span',{y:['105%','0%'],opacity:[0,1],delay:stagger(90),duration:800,ease:'out(3)'});
+  // 직무명 회전 (고정폭 슬롯)
+  const words=['프론트엔드','백엔드','iOS','데이터'],rot=document.getElementById('rot');let k=0;
+  setInterval(()=>{animate(rot,{y:[0,-14],opacity:[1,0],duration:260,ease:'inOut(3)',onComplete:()=>{k=(k+1)%words.length;rot.textContent=words[k];animate(rot,{y:[14,0],opacity:[0,1],duration:320,ease:'out(3)'});}});},2400);
+  // 미니 데모 타임라인
+  const jd=document.getElementById('jd'),o={n:0};
+  const tl=createTimeline({delay:600});
+  tl.add(o,{n:jdText.length,duration:1400,ease:'linear',onUpdate:()=>jd.textContent=jdText.slice(0,Math.round(o.n))})
+    .add('.cand',{x:[24,0],opacity:[0,1],delay:stagger(120),duration:500,ease:'out(3)'})
+    .add('.callout',{opacity:[0,1],duration:400});
+  scores.forEach((s,i)=>{const v={x:0};tl.add(v,{x:+s.dataset.v,duration:900,ease:'out(3)',onUpdate:()=>s.textContent=Math.round(v.x)},2000+i*120);});
+  // 섹션별로 다른 진입 (fade-up 일괄 금지)
+  document.querySelectorAll('.rv').forEach((el,i)=>animate(el,{x:[i%2?40:-40,0],opacity:[0,1],duration:700,ease:'out(3)',autoplay:onScroll({target:el,enter:'bottom top'})}));
+  document.querySelectorAll('.ch').forEach(ch=>animate(ch.querySelector('.card'),{scale:[.96,1],opacity:[0,1],duration:600,autoplay:onScroll({target:ch,enter:'bottom top'})}));
+  animate('.ch .approve .yes',{scale:[1,1.06,1],duration:600,autoplay:onScroll({target:'.ch .approve',enter:'bottom top'})});
+}catch(e){ finalState(); }
+
+// Skiper39 간이 재현
+(function peeps(){
+  const c=document.getElementById('peeps'),x=c.getContext('2d'),img=new Image();
+  img.src='http://localhost:3000/images/peeps/all-peeps.png';
+  img.onload=()=>{const W=img.width/15,H=img.height/7;let ps=[];
+    function size(){c.width=c.offsetWidth;c.height=c.offsetHeight;const n=Math.max(6,Math.round(c.width/110));
+      ps=Array.from({length:n},()=>({i:Math.floor(Math.random()*105),x:Math.random()*c.width,s:(.3+Math.random()*.4)*(Math.random()<.5?-1:1),h:c.height*(.45+Math.random()*.15)}));}
+    size();addEventListener('resize',size);
+    function draw(){x.clearRect(0,0,c.width,c.height);ps.sort((a,b)=>a.h-b.h).forEach(p=>{const h=p.h,w=h*W/H;
+      x.save();x.translate(p.x,c.height-h);if(p.s<0){x.scale(-1,1);x.translate(-w,0);}
+      x.drawImage(img,(p.i%15)*W,Math.floor(p.i/15)*H,W,H,0,Math.sin(p.x/9)*3,w,h);x.restore();
+      if(!reduce){p.x+=p.s;if(p.x>c.width+w)p.x=-w;if(p.x<-w)p.x=c.width+w;}});
+      if(!reduce)requestAnimationFrame(draw);}
+    draw();};
+})();
+</script>
+</body>
+</html>

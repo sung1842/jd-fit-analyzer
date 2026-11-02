@@ -1,0 +1,72 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>헤더 시안 H1</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&display=swap">
+<style>
+:root{--cobalt:#1F4FD6;--cerulean:#4AA3F2;--ink:#0B1C45;--ink-2:#44527A;--mist:#DCEBFF;--sun:#FFE7A3;--line:#D3E3F7;--ease:cubic-bezier(.22,.8,.24,1)}
+*{box-sizing:border-box;margin:0}html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;color:var(--ink);background:#fff}
+body.menu-open{overflow:hidden}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius:999px}
+.logo{font-family:Lora,serif;font-style:italic;font-weight:500;font-size:24px;letter-spacing:-.03em;position:relative;display:inline-block;width:max-content;line-height:1}
+.logo b{font-weight:700;background:linear-gradient(100deg,var(--cobalt),var(--cerulean));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
+.logo svg{position:absolute;right:-2px;bottom:-7px;width:58%;height:9px;overflow:visible}
+.links a{font-size:15px;font-weight:500;color:var(--ink)}
+.links a[aria-current]{color:var(--cobalt);font-weight:600}
+.hero{min-height:100vh;display:grid;place-items:center;text-align:center;padding:120px 16px;background:linear-gradient(180deg,#BFDDFF 0%,#DCEBFF 55%,#F4F9FF 100%)}
+.hero h1{font-family:'Wanted Sans Variable',sans-serif;font-weight:800;font-size:clamp(38px,8vw,88px);letter-spacing:-.04em}
+.hero p{margin-top:14px;color:var(--ink-2)}
+section.dummy{padding:120px 16px;max-width:1100px;margin:auto}
+section.dummy h2,.final h2{font-family:'Wanted Sans Variable',sans-serif;font-size:32px;margin-bottom:24px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{height:220px;border-radius:20px;background:linear-gradient(135deg,var(--cobalt),var(--cerulean));color:#fff;padding:20px;font-weight:600}
+.final{min-height:100vh;background:var(--cobalt);color:#fff;display:grid;place-items:center;text-align:center;padding:120px 16px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.nav{position:fixed;z-index:50;top:16px;left:50%;transform:translateX(-50%);transform-origin:50% 0;width:min(1080px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 8px 8px 24px;border-radius:999px;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.7);backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3);box-shadow:0 1px 0 rgba(255,255,255,.7) inset;transition:transform .45s var(--ease),background .4s,box-shadow .4s}
+.nav.shrunk{transform:translateX(-50%) translateY(-6px) scale(.97);background:rgba(255,255,255,.85);box-shadow:0 10px 30px -14px rgba(11,28,69,.28),0 1px 0 #fff inset}
+.links{display:flex;list-style:none;padding:0;gap:4px}
+.links a{display:block;padding:9px 14px;border-radius:999px;transition:color .25s,background .25s}
+.links a:hover{background:rgba(220,235,255,.8)}
+.links a[aria-current]{background:rgba(220,235,255,.7)}
+.cta{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:14px;padding:11px 18px;border-radius:999px;background:var(--cobalt);color:#fff;transition:transform .25s var(--ease),box-shadow .25s,background .3s,color .3s}
+.cta:hover{transform:translateY(-1px);box-shadow:0 8px 18px -8px rgba(31,79,214,.6)}
+.cta i{font-style:normal;transition:transform .25s var(--ease)}.cta:hover i{transform:translateX(3px)}
+.nav.on-dark .cta.desk{background:#fff;color:var(--cobalt)}
+.burger{display:none;width:44px;height:44px;border:0;border-radius:999px;background:rgba(255,255,255,.7);cursor:pointer;position:relative;z-index:2}
+.burger span{position:absolute;left:14px;right:14px;height:1.5px;background:var(--ink);transition:transform .35s var(--ease)}
+.burger span:first-child{top:18px}.burger span:last-child{top:25px}
+.burger[aria-expanded=true] span:first-child{transform:translateY(3.5px) rotate(45deg)}.burger[aria-expanded=true] span:last-child{transform:translateY(-3.5px) rotate(-45deg)}
+.mmenu{position:fixed;z-index:40;inset:0;background:rgba(244,249,255,.97);backdrop-filter:blur(18px);padding:110px 24px 32px;display:flex;flex-direction:column;justify-content:space-between;overscroll-behavior:contain;overflow:auto}
+.mmenu[hidden]{display:none}
+.mmenu ul{list-style:none;padding:0}.mmenu li a{display:block;font-family:"Wanted Sans Variable",sans-serif;font-weight:700;font-size:30px;padding:12px 0;border-bottom:1px solid var(--line)}
+.mmenu .cta{justify-content:center;text-align:center;padding:16px;border-radius:999px;background:var(--cobalt);color:#fff;font-weight:600;border:0}
+@media (max-width:860px){.links,.links-wrap{display:none!important}.burger{display:block}.nav .cta.desk{display:none}}
+@media (max-width:860px){.nav{padding:6px 6px 6px 18px}}
+</style></head><body>
+<nav class="nav" aria-label="주요 메뉴"><a class="logo" href="#top" aria-label="talentfolio 홈">talent<b>folio</b><svg viewBox="0 0 60 9" aria-hidden="true"><path d="M2 6 C20 1 40 1 58 5" stroke="#4AA3F2" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a><ul class="links"><li><a href="#roles">역할</a></li><li><a href="#demo">작동 방식</a></li><li><a href="#works">작업물</a></li><li><a href="/desk">기업</a></li></ul><a class="cta desk" href="/start">시작하기 <i>→</i></a><button class="burger" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mmenu"><span></span><span></span></button></nav>
+<div id="mmenu" class="mmenu" hidden><ul><li><a href="#roles">역할</a></li><li><a href="#demo">작동 방식</a></li><li><a href="#works">작업물</a></li><li><a href="/desk">기업</a></li></ul><a class="cta" href="/start">시작하기 →</a></div>
+<main id="top"><section class="hero"><div><h1>오늘 아침, 모두의 출발</h1><p>스크롤해서 헤더 상태 변화를 확인하세요.</p></div></section>
+<section class="dummy" id="roles"><h2>역할</h2><div class="cards"><div class="card">카드 A</div><div class="card">카드 B</div><div class="card">카드 C</div></div></section>
+<section class="dummy" id="demo"><h2>작동 방식</h2><div class="cards"><div class="card">단계 1</div><div class="card">단계 2</div><div class="card">단계 3</div></div></section>
+<section class="dummy" id="works"><h2>작업물</h2><div class="cards"><div class="card">작업 1</div><div class="card">작업 2</div></div></section>
+<section class="final" id="cta"><div><h2>지금 시작해 보세요</h2><p>코발트 배경 위 헤더 상태 확인용 섹션</p></div></section></main>
+<script>
+const nav=document.querySelector(".nav"),b=document.querySelector(".burger"),m=document.getElementById("mmenu"),main=document.querySelector("main");
+function setMenu(o){b.setAttribute("aria-expanded",o);b.setAttribute("aria-label",o?"메뉴 닫기":"메뉴 열기");m.hidden=!o;document.body.classList.toggle("menu-open",o);main.inert=o;if(o)m.querySelector("a").focus();}
+b.onclick=()=>setMenu(b.getAttribute("aria-expanded")!=="true");
+m.addEventListener("click",e=>{if(e.target.closest("a"))setMenu(false)});
+addEventListener("keydown",e=>{if(m.hidden)return;
+  if(e.key==="Escape"){setMenu(false);b.focus();return}
+  if(e.key==="Tab"){const f=[b,...m.querySelectorAll("a")],i=f.indexOf(document.activeElement);
+    if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}}});
+const navLinks=[...nav.querySelectorAll(".links a[href^='#']")];
+function setActive(id){navLinks.forEach(a=>{if(a.hash==="#"+id)a.setAttribute("aria-current","location");else a.removeAttribute("aria-current")});if(window.onActive)onActive(navLinks.find(a=>a.hash==="#"+id));}
+const mq=matchMedia("(max-width:860px)").matches;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)setActive(e.target.id||"")}),{rootMargin:mq?"-40% 0px -55% 0px":"-45% 0px -50% 0px"});
+document.querySelectorAll("main > section").forEach(s=>io.observe(s));
+const cta=document.getElementById("cta");
+new IntersectionObserver(([e])=>nav.classList.toggle("on-dark",e.isIntersecting),{rootMargin:"0px 0px -92% 0px"}).observe(cta);
+const onS=()=>nav.classList.toggle("shrunk",scrollY>40);addEventListener("scroll",onS,{passive:true});onS();
+</script></body></html>

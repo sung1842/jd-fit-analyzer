@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Talentfolio 시안 B</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{--paper:#F6F4F0;--paper-2:#EDEAE4;--ink:#17140F;--ink-2:#4A453D;--mute:#8C857A;--line:rgba(23,20,15,.12);
+--accent:#E07A5F;--accent-ink:#B85A40;--accent-soft:#F2B8A6;
+--sh-1:0 1px 0 var(--line),0 2px 6px rgba(23,20,15,.06);--sh-2:0 18px 40px -16px rgba(23,20,15,.28);
+--mono:ui-monospace,"JetBrains Mono",Consolas,monospace}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Pretendard Variable",Pretendard,system-ui,sans-serif;background:var(--paper);color:var(--ink);font-size:17px;line-height:1.65;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.05;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.skip{position:absolute;left:-999px}.skip:focus{left:16px;top:16px;z-index:99;background:var(--ink);color:#fff;padding:8px 12px}
+/* Skiper39 간이 재현 */
+#peeps{position:fixed;inset:0;width:100%;height:100%;opacity:.22;z-index:-2}
+.bgfade{position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(246,244,240,.4),#F6F4F0 85%)}
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+.logo{font-weight:800;letter-spacing:-.03em;font-size:20px}.logo i{color:var(--accent);font-style:normal}
+nav ul{display:flex;gap:28px;list-style:none;padding:0;font-size:15px;color:var(--ink-2)}
+.cta{display:inline-flex;align-items:center;gap:10px;position:relative;overflow:hidden;border:0;cursor:pointer;
+background:var(--ink);color:#fff;font-weight:600;font-size:15px;font-family:inherit;padding:12px 20px;border-radius:999px;text-decoration:none}
+.cta::before{content:"";position:absolute;inset:0;background:var(--accent);transform:translateY(101%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.cta:hover::before,.cta:focus-visible::before{transform:none}.cta>*{position:relative}
+.cta .ar{transition:transform .35s}.cta:hover .ar{transform:translateX(4px)}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;padding:56px 0 96px;align-items:center}
+.seg{display:inline-flex;background:var(--paper-2);border-radius:999px;padding:4px;position:relative;margin-bottom:28px}
+.seg button{all:unset;cursor:pointer;padding:8px 18px;font-size:14px;font-weight:600;border-radius:999px;position:relative;z-index:1;color:var(--ink-2)}
+.seg button[aria-pressed=true]{color:#fff}.seg button:focus-visible{outline:2px solid var(--accent)}
+.seg .pill{position:absolute;top:4px;bottom:4px;left:4px;border-radius:999px;background:var(--ink);transition:all .4s cubic-bezier(.2,.8,.2,1)}
+h1{font-size:clamp(40px,6.6vw,92px);word-break:keep-all;line-height:.98;font-weight:800;letter-spacing:-.045em;outline-offset:6px}
+h1 .ln{display:block;overflow:hidden;padding-bottom:.06em;white-space:nowrap}h1 .ch{display:inline-block}
+.slot{display:inline-block;color:var(--accent);position:relative;overflow:hidden;vertical-align:bottom;text-align:left}
+.slot span{display:inline-block;white-space:nowrap}
+.lead{margin-top:28px;max-width:30em;color:var(--ink-2);font-size:19px}
+.hero-ctas{display:flex;gap:16px;align-items:center;margin-top:36px;flex-wrap:wrap}
+.ghost{font-weight:600;text-decoration:underline;text-underline-offset:5px;text-decoration-color:var(--accent)}
+.role-layer[hidden]{display:none}
+.demo{background:#fff;border-radius:10px;box-shadow:var(--sh-2);padding:20px;position:relative}
+.jd{font-family:var(--mono);font-size:13px;background:var(--paper);border:1px dashed var(--line);border-radius:6px;padding:12px 14px;min-height:48px}
+.jd b{color:var(--accent-ink)}.caret{display:inline-block;width:7px;height:15px;background:var(--ink);vertical-align:-2px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+.fan{position:relative;height:230px;margin-top:22px}
+.pc{position:absolute;left:50%;top:10px;width:32%;margin-left:-16%;background:var(--paper);border-radius:6px;box-shadow:var(--sh-1),var(--sh-2);padding:10px;transform-origin:50% 120%}
+.pc .th{height:96px;border-radius:4px;margin-bottom:10px}
+.pc .nm{font-weight:700;font-size:14px}.pc .rl{font-size:12px;color:var(--mute)}
+.pc .sc{position:absolute;right:8px;top:8px;background:rgba(255,255,255,.9);padding:0 6px;border-radius:3px;font:700 18px var(--mono);letter-spacing:-.04em}
+.pc.top .sc{color:var(--accent)}
+.tape{position:absolute;top:-8px;left:50%;width:54px;height:16px;margin-left:-27px;background:rgba(242,184,166,.7);transform:rotate(-3deg)}
+.callout{position:relative;margin:14px auto 0;background:var(--ink);color:#fff;font-size:12px;padding:10px 12px;border-radius:6px;max-width:260px;opacity:0;text-align:center}
+.callout::before{content:"";position:absolute;left:50%;top:-6px;margin-left:-6px;border:6px solid transparent;border-bottom-color:var(--ink);border-top:0}
+.callout em{color:var(--accent-soft);font-style:normal;font-family:var(--mono)}
+.tag{position:absolute;left:16px;top:-12px;background:var(--accent);color:#fff;font:600 11px var(--mono);padding:3px 8px;border-radius:3px}
+.mq{overflow:hidden;border-block:1px solid var(--line);padding:28px 0;background:rgba(237,234,228,.6)}
+.mq-track{display:flex;gap:20px;width:max-content;animation:mq 40s linear infinite}
+.mq:hover .mq-track,.mq:focus-within .mq-track{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+.mc{width:220px;background:#fff;border-radius:6px;padding:10px;box-shadow:var(--sh-1);transform:rotate(var(--r));position:relative}
+.mc .th{height:120px;border-radius:4px}.mc p{font-size:13px;margin-top:8px;font-weight:600}.mc small{color:var(--mute);font-size:12px}
+.duo1{background:linear-gradient(135deg,#17140F 0 40%,transparent 40%),repeating-linear-gradient(90deg,#E07A5F 0 6px,#F2B8A6 6px 12px)}
+.duo2{background:radial-gradient(circle at 70% 35%,#E07A5F 0 22%,transparent 23%),linear-gradient(#EDEAE4,#F2B8A6)}
+.duo3{background:linear-gradient(90deg,#17140F 0 30%,#F6F4F0 30% 34%,#E07A5F 34% 60%,#EDEAE4 60%)}
+.duo4{background:repeating-linear-gradient(0deg,#17140F 0 2px,#F6F4F0 2px 14px),#F6F4F0}
+.duo5{background:conic-gradient(from 40deg at 30% 60%,#E07A5F,#F2B8A6,#17140F,#E07A5F)}
+section{padding:clamp(96px,14vw,170px) 0}
+.eyebrow{font:600 13px var(--mono);color:var(--accent-ink);letter-spacing:.06em}
+h2{font-size:clamp(30px,4.4vw,56px);line-height:1.08;letter-spacing:-.035em;font-weight:800;margin-top:12px;max-width:14em}
+.walk{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;margin-top:64px}
+.walk-num{position:sticky;top:100px;align-self:start;font:800 clamp(120px,18vw,240px)/0.85 var(--mono);letter-spacing:-.08em}
+.walk-num span{display:inline-block}
+.walk-num small{display:block;font-weight:600;font-size:14px;line-height:1.5;font-family:"Pretendard Variable",system-ui;letter-spacing:0;color:var(--mute);margin-top:16px}
+.step{min-height:70vh;display:flex;align-items:center}
+.step-card{background:#fff;border-radius:10px;padding:28px;box-shadow:var(--sh-1);width:100%;border-left:3px solid var(--line);transition:border-color .4s,box-shadow .4s}
+.step.on .step-card{border-left-color:var(--accent);box-shadow:var(--sh-2)}
+.step-card h3{font-size:24px;letter-spacing:-.02em}.step-card p{color:var(--ink-2);margin-top:8px}
+.vis{margin-top:20px;background:var(--paper);border-radius:6px;padding:16px;font-size:14px}
+.scan{height:8px;background:var(--paper-2);border-radius:4px;margin:8px 0;position:relative;overflow:hidden}
+.scan i{position:absolute;inset:0;width:0;background:var(--ink)}
+.stamp{display:inline-block;border:3px solid var(--accent);color:var(--accent);font-weight:800;padding:6px 14px;transform:rotate(-8deg);letter-spacing:.1em;opacity:0}
+.bar{display:grid;grid-template-columns:72px 1fr 44px;gap:10px;align-items:center;margin:8px 0;font-size:13px}
+.bar span:nth-child(2){height:10px;background:var(--paper-2);border-radius:5px;overflow:hidden}
+.bar b{display:block;height:100%;width:0;background:var(--accent);border-radius:5px}
+.bar em{font:700 13px var(--mono);font-style:normal;text-align:right}
+.band{background:var(--ink);color:var(--paper)}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+.num{border-top:1px solid rgba(246,244,240,.2);padding-top:20px}
+.num strong{display:block;font:800 clamp(56px,9vw,120px)/1 var(--mono);letter-spacing:-.06em}
+.num strong i{color:var(--accent);font-style:normal}
+.num p{color:#BDB6AA;font-size:15px}
+.ex{font:600 11px var(--mono);color:var(--accent-soft);border:1px solid;padding:1px 6px;border-radius:3px;margin-left:10px;vertical-align:middle;letter-spacing:0}
+.hil{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.appr{background:#fff;border-radius:10px;box-shadow:var(--sh-2);padding:24px;position:relative}
+.appr .row{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0;font-size:15px}
+.btns{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn2{all:unset;cursor:pointer;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;border:1px solid var(--line);transition:transform .15s}
+.btn2:active{transform:scale(.96)}.btn2:focus-visible{outline:2px solid var(--accent)}
+.btn2.ok{background:var(--accent);color:#fff;border-color:var(--accent)}
+.result{margin-top:14px;font-size:14px;color:var(--accent-ink);min-height:1.5em}
+.final{border-top:1px solid var(--line)}
+footer{padding:40px 0;color:var(--mute);font-size:13px;border-top:1px solid var(--line)}
+@media (max-width:860px){
+ .hero,.walk,.hil{grid-template-columns:1fr}.walk-num{position:static;font-size:96px}
+ nav ul{display:none}.nums{grid-template-columns:1fr}.step{min-height:auto;padding:24px 0}
+ .mq-track{animation-duration:66s}.wrap{padding:0 16px}.hero{padding-top:24px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#walk">워크스루 건너뛰기</a>
+<!-- Skiper39 간이 재현: all-peeps.png (15x7 스프라이트)를 걸어가게. 로드 실패(talentfolio 서버 미기동) 시 빈 캔버스 = 플레이스홀더 레이어 -->
+<canvas id="peeps" aria-hidden="true"></canvas><div class="bgfade"></div>
+
+<div class="wrap">
+<nav><span class="logo">talent<i>●</i>folio</span>
+ <ul><li><a href="#walk">작동 방식</a></li><li><a href="#hil">승인 흐름</a></li><li><a href="#">요금</a></li></ul>
+ <a class="cta" href="#"><span>무료로 시작</span><span class="ar">→</span></a></nav>
+
+<header class="hero">
+ <div>
+  <div class="seg" role="group" aria-label="사용자 유형"><span class="pill"></span>
+   <button aria-pressed="true" data-role="hh">헤드헌터·기업</button><button aria-pressed="false" data-role="ap">지원자</button></div>
+  <div class="role-layer" data-layer="hh">
+   <h1 aria-label="디자이너의 포트폴리오를, 공고 한 줄로.">
+    <span class="ln" aria-hidden="true"><span class="slot" data-words="디자이너,개발자,마케터,PM"><span>디자이너</span></span><span class="split">의</span></span>
+    <span class="ln split" aria-hidden="true">포트폴리오를,</span>
+    <span class="ln split" aria-hidden="true">공고 한 줄로.</span></h1>
+   <p class="lead">JD를 붙여 넣으면 AI가 후보 포트폴리오를 읽고 핏을 점수로 보여줍니다. 연락은 <b>헤드헌터가 승인한 뒤에만</b> 나갑니다.</p>
+   <div class="hero-ctas"><a class="cta" href="#"><span>스카우트 건 등록하기</span><span class="ar">→</span></a><a class="ghost" href="#walk">4단계로 보기</a></div>
+  </div>
+  <div class="role-layer" data-layer="ap" hidden>
+   <h1 aria-label="내 작업이 먼저 말하게.">
+    <span class="ln split" aria-hidden="true">내 작업이</span><span class="ln split" aria-hidden="true">먼저 말하게.</span></h1>
+   <p class="lead">이력서 한 장 대신 실제 작업물로. 공고와 맞는 지점을 Talentfolio가 짚어 기업에 보여줍니다.</p>
+   <div class="hero-ctas"><a class="cta" href="#"><span>포트폴리오 올리기</span><span class="ar">→</span></a><a class="ghost" href="#">예시 포트폴리오</a></div>
+  </div>
+ </div>
+ <div class="demo" aria-label="제품 미니 데모 (예시 데이터)">
+  <span class="tag">LIVE 데모 · 예시</span>
+  <div class="jd" id="jd"></div>
+  <div class="fan">
+   <div class="pc"><div class="th duo2"></div><div class="nm">이서윤</div><div class="rl">프론트엔드 · 4년</div><div class="sc" data-v="71">0</div></div>
+   <div class="pc"><div class="th duo4"></div><div class="nm">박도현</div><div class="rl">풀스택 · 6년</div><div class="sc" data-v="78">0</div></div>
+   <div class="pc top"><span class="tape"></span><div class="th duo1"></div><div class="nm">김하린</div><div class="rl">프론트엔드 · 5년</div><div class="sc" data-v="92">0</div></div>
+  </div>
+  <div class="callout" id="callout">김하린 92점 근거: Next.js 실서비스 3건 · 성능 개선 트러블슈팅 <em>+18</em></div>
+ </div>
+</header>
+</div>
+
+<div class="mq" aria-label="포트폴리오 예시 띠"><div class="mq-track" id="mq"></div></div>
+
+<section id="walk"><div class="wrap">
+ <p class="eyebrow">HOW IT WORKS</p><h2>의뢰가 들어와서 제안이 나가기까지, 네 단계.</h2>
+ <div class="walk">
+  <div class="walk-num" aria-hidden="true"><span id="wn">01</span><small id="wl">의뢰 입력</small></div>
+  <div>
+   <div class="step" data-n="01" data-l="의뢰 입력"><div class="step-card"><h3>스카우트 건을 한 줄로</h3><p>JD 원문이나 요약을 넣으면 요구 스택·연차·도메인을 구조화합니다.</p>
+    <div class="vis" style="font-family:var(--mono)">React · TypeScript · 5년+ · 커머스<span class="caret"></span></div></div></div>
+   <div class="step" data-n="02" data-l="탐색·분석"><div class="step-card"><h3>후보를 먼저 거르고, 깊게 읽습니다</h3><p>코드로 1차 필터 후 소수만 AI가 기술·경험·컬처 핏을 정밀 분석합니다.</p>
+    <div class="vis"><div class="scan"><i></i></div><div class="scan"><i></i></div><div class="scan"><i></i></div><small style="color:var(--mute)">1,240명 → 32명 → 정밀 분석 8명 (예시)</small></div></div></div>
+   <div class="step" data-n="03" data-l="헤드헌터 승인"><div class="step-card"><h3>사람이 승인해야 다음으로</h3><p>쇼트리스트는 헤드헌터 검토함으로 갑니다. 승인 전엔 아무에게도 연락하지 않습니다.</p>
+    <div class="vis"><span class="stamp">승인</span></div></div></div>
+   <div class="step" data-n="04" data-l="제안·리포트"><div class="step-card"><h3>근거가 붙은 Fit Report와 함께 제안</h3><p>점수마다 어떤 작업물이 근거인지 함께 보여줍니다.</p>
+    <div class="vis"><div class="bar"><span>기술 스택</span><span><b data-w="94"></b></span><em>94</em></div><div class="bar"><span>경험</span><span><b data-w="88"></b></span><em>88</em></div><div class="bar"><span>컬처</span><span><b data-w="81"></b></span><em>81</em></div></div></div></div>
+  </div>
+ </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+ <p class="eyebrow" style="color:var(--accent-soft)">BY THE NUMBERS</p><h2>숫자로 보면 이렇습니다.<span class="ex">예시 수치</span></h2>
+ <div class="nums">
+  <div class="num"><strong><span class="cnt" data-v="8">0</span><i>분</i></strong><p>스카우트 건 1개당 쇼트리스트까지</p></div>
+  <div class="num"><strong><span class="cnt" data-v="5">0</span><i>회</i></strong><p>후보 1명당 AI 호출 상한</p></div>
+  <div class="num"><strong><span class="cnt" data-v="100">0</span><i>%</i></strong><p>사람 승인을 거친 제안 비율</p></div>
+ </div>
+</div></section>
+
+<section id="hil"><div class="wrap hil">
+ <div><p class="eyebrow">OUR DIFFERENCE</p><h2>AI가 제안하고, 사람이 승인합니다.</h2>
+  <p class="lead">반복 탐색은 에이전트가, 판단과 접촉은 헤드헌터가. 처리량은 늘리고 책임은 사람에게 남깁니다.</p></div>
+ <div class="appr" id="appr"><p class="eyebrow">승인 대기 · 예시</p>
+  <div class="row"><span>후보</span><b>김하린</b></div><div class="row"><span>의뢰</span><b>커머스 FE 리드</b></div><div class="row"><span>핏 점수</span><b style="color:var(--accent-ink)">92 · strong fit</b></div>
+  <div class="btns"><button class="btn2 ok" data-r="제안 메시지 초안이 준비됐습니다.">승인하고 제안</button><button class="btn2" data-r="보류함으로 이동했습니다.">보류</button></div>
+  <p class="result" aria-live="polite"></p></div>
+</div></section>
+
+<section class="final"><div class="wrap"><h2>다음 스카우트 건, 오늘 등록하세요.</h2>
+ <div class="hero-ctas"><a class="cta" href="#"><span>무료로 시작</span><span class="ar">→</span></a><a class="ghost" href="#">도입 문의</a></div></div></section>
+<footer><div class="wrap">© 2026 Talentfolio · 시안 B (비주얼 임팩트) 정적 목업 — 모든 수치·인물은 예시</div></footer>
+
+<script type="module">
+import { animate, stagger, utils } from 'https://cdn.jsdelivr.net/npm/animejs@4.0.2/+esm';
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+/* Skiper39 간이 재현: 스프라이트 15x7 */
+(() => {
+  const c = $('#peeps'), x = c.getContext('2d'), img = new Image();
+  img.src = 'http://localhost:3000/images/peeps/all-peeps.png';
+  let W, H; const peeps = [];
+  const fit = () => { W = c.width = innerWidth; H = c.height = innerHeight; };
+  fit(); addEventListener('resize', fit);
+  img.onload = () => {
+    const sw = img.width / 15, sh = img.height / 7;
+    for (let i = 0; i < 18; i++) peeps.push({ k: (i * 7) % 105, x: Math.random() * W, s: (0.4 + Math.random() * 0.6) * (Math.random() < 0.5 ? -1 : 1), h: H * (0.3 + Math.random() * 0.15) });
+    const loop = (t) => {
+      x.clearRect(0, 0, W, H);
+      peeps.forEach((p) => {
+        if (!RM) p.x += p.s;
+        if (p.x > W + 200) p.x = -200; if (p.x < -200) p.x = W + 200;
+        const w = (p.h * sw) / sh, y = H - p.h + Math.sin(t / 120 + p.k) * (RM ? 0 : 3);
+        x.save(); x.translate(p.x, y); if (p.s < 0) x.scale(-1, 1);
+        x.drawImage(img, (p.k % 15) * sw, Math.floor(p.k / 15) * sh, sw, sh, p.s < 0 ? -w : 0, 0, w, p.h);
+        x.restore();
+      });
+      if (!RM) requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  };
+})();
+
+/* 글자 분할 (완성형 단위) */
+$$('.split').forEach((el) => {
+  el.innerHTML = [...el.textContent].map((ch) => `<span class="ch">${ch === ' ' ? '&nbsp;' : ch}</span>`).join('');
+});
+const intro = (layer) => {
+  const ch = $$('.ch,.slot', layer);
+  if (RM) return utils.set(ch, { opacity: 1 });
+  animate(ch, { y: ['105%', '0%'], opacity: [0, 1], delay: stagger(26), duration: 900, ease: 'outExpo' });
+};
+intro($('[data-layer=hh]'));
+
+/* 회전 직무명: 고정폭 슬롯 */
+const slot = $('.slot'); const words = slot.dataset.words.split(','); let wi = 0;
+const inner = slot.firstElementChild;
+slot.style.width = Math.max(...words.map((w) => { inner.textContent = w; return inner.offsetWidth; })) + 'px';
+inner.textContent = words[0];
+if (!RM) setInterval(() => {
+  animate(inner, { y: ['0%', '-100%'], opacity: [1, 0], duration: 380, ease: 'inQuad', onComplete: () => {
+    wi = (wi + 1) % words.length; inner.textContent = words[wi];
+    animate(inner, { y: ['100%', '0%'], opacity: [0, 1], duration: 520, ease: 'outExpo' });
+  } });
+}, 3000);
+
+/* 한글 자모 스크램블 (hover/focus) */
+const J = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㅏㅓㅗㅜ';
+$$('h1').forEach((h) => {
+  h.tabIndex = 0; let busy = false;
+  const go = () => {
+    if (RM || busy) return; busy = true;
+    const chs = $$('.ch', h), orig = chs.map((c) => c.textContent), o = { p: 0 };
+    animate(o, { p: 1, duration: 600, ease: 'linear',
+      onUpdate: () => chs.forEach((c, i) => { c.textContent = (i / chs.length < o.p || orig[i] === ' ') ? orig[i] : J[(Math.random() * J.length) | 0]; }),
+      onComplete: () => { chs.forEach((c, i) => (c.textContent = orig[i])); busy = false; } });
+  };
+  h.addEventListener('mouseenter', go); h.addEventListener('focus', go);
+});
+
+/* 역할 토글 clip-path wipe */
+const pill = $('.seg .pill');
+const place = (b) => { pill.style.left = b.offsetLeft + 'px'; pill.style.width = b.offsetWidth + 'px'; };
+place($('.seg button'));
+$$('.seg button').forEach((b) => b.addEventListener('click', () => {
+  if (b.getAttribute('aria-pressed') === 'true') return;
+  $$('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  place(b);
+  $$('.role-layer').forEach((l) => (l.hidden = l.dataset.layer !== b.dataset.role));
+  const l = $(`[data-layer=${b.dataset.role}]`);
+  if (!RM) animate(l, { clipPath: ['inset(0 100% 0 0)', 'inset(0 0% 0 0)'], duration: 560, ease: 'inOutQuad' });
+  intro(l);
+}));
+
+/* 미니 데모: 타이핑 → 카드 팬 → 카운트업 → 인스펙터 콜아웃 */
+const jdText = 'JD: 커머스 프론트엔드 리드, <b>React·Next.js</b> 5년+';
+(() => {
+  const jd = $('#jd'), cards = $$('.pc'), plain = jdText.replace(/<[^>]+>/g, '');
+  const rot = [-5, 5, 0], tx = [-100, 100, 0];
+  const finish = () => {
+    jd.innerHTML = jdText;
+    if (RM) {
+      cards.forEach((c, i) => (c.style.transform = `translateX(${tx[i]}%) rotate(${rot[i]}deg)`));
+      $$('.sc').forEach((s) => (s.textContent = s.dataset.v)); $('#callout').style.opacity = 1; return;
+    }
+    animate(cards, { opacity: [0, 1], y: [40, 0], rotate: (el, i) => [0, rot[i]], translateX: (el, i) => ['0%', tx[i] + '%'], delay: stagger(90), duration: 900, ease: 'outExpo' });
+    $$('.sc').forEach((s, i) => { const o = { v: 0 };
+      animate(o, { v: +s.dataset.v, duration: 1200, delay: 500 + i * 90, ease: 'outExpo', modifier: utils.round(0), onUpdate: () => (s.textContent = o.v) }); });
+    animate('#callout', { opacity: [0, 1], y: [-8, 0], delay: 1500, duration: 600, ease: 'outExpo' });
+  };
+  if (RM) return finish();
+  let i = 0;
+  const t = setInterval(() => {
+    jd.innerHTML = plain.slice(0, ++i) + '<span class="caret"></span>';
+    if (i >= plain.length) { clearInterval(t); setTimeout(finish, 250); }
+  }, 38);
+})();
+
+/* 데모 카드 틸트 (마우스 기기만, 최대 6deg) */
+if (!RM && matchMedia('(hover:hover)').matches) {
+  const d = $('.demo');
+  d.addEventListener('mousemove', (e) => { const r = d.getBoundingClientRect();
+    d.style.transform = `perspective(900px) rotateY(${((e.clientX - r.left) / r.width - 0.5) * 6}deg) rotateX(${-((e.clientY - r.top) / r.height - 0.5) * 6}deg)`; });
+  d.addEventListener('mouseleave', () => { d.style.transition = 'transform .5s'; d.style.transform = 'none'; setTimeout(() => (d.style.transition = ''), 500); });
+}
+
+/* 포트폴리오 마퀴 (CSS keyframe, 복제 트랙은 aria-hidden) */
+const items = [['duo1','커머스 리뉴얼 케이스','UI 디자이너'],['duo2','결제 전환율 개선','프론트엔드'],['duo3','브랜드 아이덴티티','그래픽'],['duo4','로그 파이프라인','백엔드'],['duo5','온보딩 리서치','UX 리서처'],['duo2','추천 모델 A/B','데이터']];
+$('#mq').innerHTML = [...items, ...items].map(([c, t, r], i) =>
+  `<div class="mc" style="--r:${[-2, 1.5, -1, 2, 0, -1.5][i % 6]}deg"${i >= items.length ? ' aria-hidden="true"' : ''}><div class="th ${c}"></div><p>${t}</p><small>${r} · 예시</small></div>`).join('');
+
+/* 워크스루: 네이티브 스크롤, 단계별로 다른 모션 */
+const wn = $('#wn'), wl = $('#wl'); const done = new Set();
+const fx = {
+  '02': (s) => animate($$('.scan i', s), { width: ['0%', '100%'], delay: stagger(180), duration: 900, ease: 'inOutQuad' }),
+  '03': (s) => animate($('.stamp', s), { scale: [1.6, 1], opacity: [0, 1], rotate: [-20, -8], duration: 500, ease: 'outBack' }),
+  '04': (s) => $$('.bar b', s).forEach((b, i) => animate(b, { width: ['0%', b.dataset.w + '%'], delay: i * 120, duration: 1000, ease: 'outExpo' })),
+};
+const settle = (s) => { $$('.scan i', s).forEach((i) => (i.style.width = '100%')); $$('.bar b', s).forEach((b) => (b.style.width = b.dataset.w + '%')); const st = $('.stamp', s); if (st) st.style.opacity = 1; };
+const io = new IntersectionObserver((es) => es.forEach((e) => {
+  if (!e.isIntersecting) return; const s = e.target;
+  $$('.step').forEach((x) => x.classList.toggle('on', x === s));
+  if (wn.textContent !== s.dataset.n) { wn.textContent = s.dataset.n; wl.textContent = s.dataset.l;
+    if (!RM) animate(wn, { y: [30, 0], opacity: [0, 1], duration: 500, ease: 'outExpo' }); }
+  if (!done.has(s.dataset.n)) { done.add(s.dataset.n); const f = fx[s.dataset.n]; if (f) RM ? settle(s) : f(s); }
+}), { threshold: 0.55 });
+$$('.step').forEach((s) => io.observe(s));
+
+/* 숫자 밴드 카운트업 */
+const io2 = new IntersectionObserver((es) => es.forEach((e) => {
+  if (!e.isIntersecting) return; io2.unobserve(e.target); const el = e.target, o = { v: 0 };
+  if (RM) { el.textContent = el.dataset.v; return; }
+  animate(o, { v: +el.dataset.v, duration: 1400, ease: 'outExpo', modifier: utils.round(0), onUpdate: () => (el.textContent = o.v) });
+}), { threshold: 0.6 });
+$$('.cnt').forEach((c) => io2.observe(c));
+
+/* HIL 승인/보류 마이크로인터랙션 */
+$$('.btn2').forEach((b) => b.addEventListener('click', () => {
+  $('.result').textContent = b.dataset.r;
+  if (!RM) animate('#appr', { scale: [0.98, 1], duration: 400, ease: 'outBack' });
+}));
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "_comment": "파이프라인 스모크 테스트 전용. 채용공고가 아니라 스크래핑 연습용 데모 사이트(books.toscrape.com)를 title/url 로 매핑해 '브라우저 설치 → 셀렉터 추출 → CSV' 가 동작하는지만 본다. 절대 --load 하지 말 것(fit.job_postings 오염).",
+  "enabled": true,
+  "legal_basis": "2026-10-24 직접 확인: https://books.toscrape.com/robots.txt 는 HTTP 404(규칙 없음). 첫 화면에 'This is a demo website for web scraping purposes' 경고문이 명시돼 있어 사이트 운영자가 스크래핑 연습용으로 제공. 채용 데이터 아님, 상업 목적 없음.",
+  "source": "crawl4ai:smoke-books-toscrape",
+  "base_url": "https://books.toscrape.com",
+  "allowed_hosts": [],
+  "delay": [3.0, 7.0],
+  "max_runtime_sec": 300,
+  "list": {
+    "url": "https://books.toscrape.com/catalogue/page-{page}.html",
+    "pages": 1,
+    "wait_for": "css:article.product_pod",
+    "js_code": null,
+    "schema": {
+      "name": "books",
+      "baseSelector": "article.product_pod",
+      "fields": [
+        { "name": "title", "selector": "h3 a", "type": "attribute", "attribute": "title" },
+        { "name": "url", "selector": "h3 a", "type": "attribute", "attribute": "href" },
+        { "name": "external_id", "selector": "h3 a", "type": "attribute", "attribute": "href" },
+        { "name": "salary", "selector": "p.price_color", "type": "text" }
+      ]
+    }
+  },
+  "defaults": { "company": "books.toscrape.com (smoke test)", "employment_type": null }
+}

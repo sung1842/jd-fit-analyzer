@@ -1,0 +1,69 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&display=swap">
+<link rel="stylesheet" href="_base.css">
+<title>talentfolio 로그인 · LG1 아침 창</title>
+<style>
+.split{display:grid;grid-template-columns:1.05fr 1fr;min-height:calc(100vh - 64px)}
+.sky{position:relative;overflow:hidden;background:linear-gradient(180deg,#CFE5FF 0%,var(--mist) 45%,var(--paper) 100%);padding:64px 56px;display:flex;flex-direction:column;justify-content:space-between;gap:40px}
+.sun{position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,var(--sun) 0 38%,rgba(255,231,163,.45) 39% 60%,transparent 61%);right:-40px;top:-30px;animation:rise 1.6s var(--ease) both}
+@keyframes rise{from{transform:translateY(60px);opacity:0}}
+.sky h1{position:relative;font-family:var(--f-disp);font-weight:700;font-size:clamp(34px,3.6vw,52px);line-height:1.18;letter-spacing:-.03em;max-width:13em}
+.sky p.lead{position:relative;margin-top:16px;color:var(--ink-2);font-size:17px;line-height:1.6;max-width:30em}
+.demo{position:relative;background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;max-width:420px;box-shadow:0 30px 60px -40px rgba(11,28,69,.45)}
+.demo .lab{font-size:12px;letter-spacing:.14em;color:var(--cobalt);font-weight:600}
+.demo ul{list-style:none;margin-top:12px;display:grid;gap:10px}
+.demo li{display:flex;align-items:center;gap:12px;font-size:14px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--mist);display:grid;place-items:center;font-weight:700;color:var(--cobalt);flex:none}
+.demo li b{margin-left:auto;font-family:var(--f-disp);font-size:18px;color:var(--cobalt)}
+.demo .note{margin-top:12px;font-size:12px;color:var(--ink-2)}
+.panel{display:flex;align-items:center;justify-content:center;padding:56px 24px}
+.card{width:100%;max-width:400px}
+.card h2{font-family:var(--f-disp);font-size:30px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.card .sub{color:var(--ink-2);margin-bottom:24px;font-size:15px;line-height:1.55}
+[data-swap]{transition:opacity .35s,transform .35s var(--ease)}
+.swapping [data-swap]{opacity:0;transform:translateY(6px)}
+@media (max-width:900px){.split{grid-template-columns:1fr}.sky{padding:36px 16px 28px;gap:20px}.sky h1{font-size:28px}.sky p.lead{font-size:15px}.demo{display:none}.sun{width:140px;height:140px;right:-30px;top:-30px}.panel{padding:28px 16px 48px;align-items:flex-start}}
+</style></head><body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="nav"><a class="logo" href="#" aria-label="talentfolio 홈"><span class="logo-type">talent<b>folio</b><svg class="logo-swash" viewBox="0 0 80 9" preserveAspectRatio="none" aria-hidden="true"><path d="M2 6 C 22 1, 48 1, 78 5" fill="none" stroke="#4AA3F2" stroke-width="2.2" stroke-linecap="round"/></svg></span></a><a class="nav-help" href="#">도움이 필요하신가요?</a></header>
+<main id="main" class="split">
+  <section class="sky" aria-labelledby="sky-h">
+    <span class="sun" aria-hidden="true"></span>
+    <div>
+      <h1 id="sky-h" data-swap><span data-seeker>포트폴리오가 먼저<br><span class="acc">말을 거는</span> 아침.</span><span data-company hidden>오늘 아침, 맞는 후보가<br><span class="acc">먼저 도착</span>해 있습니다.</span></h1>
+      <p class="lead" data-swap><span data-seeker>작업물 하나로 핏 점수를 받고, 기업의 제안은 내가 먼저 확인합니다.</span><span data-company hidden>JD 한 줄이면 후보 탐색과 핏 분석은 AI가, 접촉 승인은 헤드헌터가 합니다.</span></p>
+    </div>
+    <figure class="demo" aria-label="예시 화면" data-swap>
+      <p class="lab" data-seeker>내 포트폴리오 · 핏 리포트</p><p class="lab" data-company hidden>스카우트 건 · 프론트엔드 리드</p>
+      <ul data-seeker><li><span class="av">JD</span>디자인 시스템 리드 공고<b>92</b></li><li><span class="av">JD</span>React 성능 개선 포지션<b>84</b></li></ul>
+      <ul data-company hidden><li><span class="av">하</span>하*린 · 디자인 시스템 12건<b>92</b></li><li><span class="av">윤</span>윤*호 · 성능 개선 7건<b>84</b></li></ul>
+      <figcaption class="note"><span class="tag">예시</span> 수치는 시안용 예시입니다.</figcaption>
+    </figure>
+  </section>
+  <section class="panel">
+    <div class="card">
+      <h2>로그인</h2>
+      <p class="sub" data-swap><span data-seeker>다시 오셨네요. 이어서 포트폴리오를 다듬어 볼까요?</span><span data-company hidden>진행 중인 스카우트 건과 승인 대기 후보를 확인하세요.</span></p>
+      <form data-demo novalidate aria-labelledby="lg-h"><h3 id="lg-h" class="sr-only">이메일로 로그인</h3>
+        <div class="seg" role="radiogroup" aria-label="회원 유형" data-role="seeker"><span class="thumb" aria-hidden="true"></span><button type="button" role="radio" aria-checked="true" tabindex="0" data-role="seeker">구직자</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-role="company">기업 · 헤드헌터</button></div>
+        <div class="alert" role="alert" tabindex="-1"><span aria-hidden="true">!</span><span>시안 데모: 이메일 또는 비밀번호가 올바르지 않습니다.</span></div>
+  <div class="field"><label for="email">이메일</label><input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" data-v="email" aria-describedby="email-err" aria-invalid="false" placeholder="name@example.com"><p class="err" id="email-err" aria-live="polite"></p></div>
+  <div class="field"><label for="pw">비밀번호</label><div class="pw"><input class="input" id="pw" name="password" type="password" autocomplete="current-password" data-v="pw" aria-describedby="pw-err pw-hint" aria-invalid="false"><button type="button" aria-controls="pw" aria-pressed="false">보기</button></div><p class="err" id="pw-err" aria-live="polite"></p><span class="sr-only" id="pw-hint">6자 이상</span></div>
+  <div class="row"><label class="check"><input type="checkbox" name="remember"> 로그인 상태 유지</label><a href="#">비밀번호 찾기</a></div>
+        <button class="btn" type="submit"><span data-seeker>로그인</span><span data-company hidden>기업 계정으로 로그인</span> <i aria-hidden="true">→</i></button>
+      </form>
+      <div class="or">또는</div><div class="social"><button class="btn ghost" type="button">Google로 계속 <span class="tag">미연결</span></button><button class="btn ghost" type="button">카카오로 계속 <span class="tag">미연결</span></button></div>
+      <p class="foot">아직 계정이 없나요? <a href="#">회원가입</a><span data-company hidden> · <a href="#">기업 도입 문의</a></span></p>
+    </div>
+  </section>
+</main>
+<script src="_form.js"></script>
+<script>
+document.addEventListener('rolechange',e=>{const c=e.detail==='company';const root=document.getElementById('main');
+  const apply=()=>{document.querySelectorAll('[data-seeker]').forEach(n=>n.hidden=c);document.querySelectorAll('[data-company]').forEach(n=>n.hidden=!c);root.classList.remove('swapping')};
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return apply();root.classList.add('swapping');setTimeout(apply,300);});
+</script>
+</body></html>

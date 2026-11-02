@@ -1,0 +1,60 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&display=swap">
+<link rel="stylesheet" href="_base.css">
+<title>talentfolio 로그인 · LG2 한 줄씩</title>
+<style>
+body{background:linear-gradient(180deg,var(--white) 0%,var(--paper) 55%,var(--mist) 100%)}
+.stage{min-height:calc(100vh - 64px);display:grid;place-items:center;padding:48px 16px 72px;position:relative;overflow:hidden}
+.horizon{position:absolute;left:50%;bottom:-62vw;width:120vw;height:80vw;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(255,231,163,.75),rgba(255,231,163,0));pointer-events:none}
+.stage{grid-template-columns:minmax(0,1fr)}
+.box{position:relative;width:100%;max-width:440px;min-width:0;justify-self:center}
+.eyebrow{font-size:12px;letter-spacing:.18em;font-weight:600;color:var(--cobalt)}
+h1{font-family:var(--f-disp);font-size:clamp(30px,6vw,44px);font-weight:700;letter-spacing:-.03em;line-height:1.2;margin:10px 0 10px}
+.sub{color:var(--ink-2);font-size:15px;line-height:1.6;margin-bottom:28px}
+.steps{display:flex;gap:6px;margin-bottom:18px}.steps span{height:3px;flex:1;border-radius:3px;background:var(--line);transition:background .4s}.steps span.on{background:var(--cobalt)}
+.chip{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:16px;font-size:14px;min-width:0}
+.chip strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.chip button{border:0;background:none;color:var(--cobalt);font:inherit;font-weight:600;cursor:pointer;padding:4px;flex:none}
+.step{animation:in .5s var(--ease)}@keyframes in{from{opacity:0;transform:translateX(16px)}}
+.sso{font-size:13px;color:var(--ink-2);background:#fff;border:1px dashed var(--sky);border-radius:12px;padding:10px 12px;margin-bottom:14px}
+</style></head><body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="nav"><a class="logo" href="#" aria-label="talentfolio 홈"><span class="logo-type">talent<b>folio</b><svg class="logo-swash" viewBox="0 0 80 9" preserveAspectRatio="none" aria-hidden="true"><path d="M2 6 C 22 1, 48 1, 78 5" fill="none" stroke="#4AA3F2" stroke-width="2.2" stroke-linecap="round"/></svg></span></a><a class="nav-help" href="#">도움이 필요하신가요?</a></header>
+<main id="main" class="stage"><span class="horizon" aria-hidden="true"></span>
+<div class="box">
+  <p class="eyebrow">GOOD MORNING</p>
+  <h1>다시 만나서 <span class="acc">반가워요</span></h1>
+  <p class="sub" id="sub">이메일 한 줄이면 됩니다. 기업 메일이면 기업 화면으로 바로 안내해 드려요.</p>
+  <div class="steps" aria-hidden="true"><span class="on"></span><span id="s2"></span></div>
+  <form data-demo novalidate id="f" aria-label="로그인">
+    <div class="alert" role="alert" tabindex="-1"><span aria-hidden="true">!</span><span>시안 데모: 비밀번호가 올바르지 않습니다.</span></div>
+    <p class="sr-only" id="stepnote" aria-live="polite">1단계 중 1: 이메일</p>
+    <div id="step1" class="step">
+      <div class="seg" role="radiogroup" aria-label="회원 유형" data-role="seeker"><span class="thumb" aria-hidden="true"></span><button type="button" role="radio" aria-checked="true" tabindex="0" data-role="seeker">구직자</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-role="company">기업 · 헤드헌터</button></div>
+      <div class="field"><label for="email">이메일</label><input class="input" id="email" type="email" autocomplete="username" inputmode="email" data-v="email" aria-describedby="email-err" aria-invalid="false" placeholder="name@example.com"><p class="err" id="email-err" aria-live="polite"></p></div>
+      <button class="btn" type="button" id="next">계속 <i aria-hidden="true">→</i></button>
+    </div>
+    <div id="step2" class="step" hidden>
+      <div class="chip"><strong id="who"></strong><button type="button" id="back">변경</button></div>
+      <p class="sso" id="sso" hidden>회사 도메인이 확인되었습니다. 기업·헤드헌터 계정으로 로그인합니다. <span class="tag">예시</span></p>
+        <div class="field"><label for="pw">비밀번호</label><div class="pw"><input class="input" id="pw" name="password" type="password" autocomplete="current-password" data-v="pw" aria-describedby="pw-err pw-hint" aria-invalid="false"><button type="button" aria-controls="pw" aria-pressed="false">보기</button></div><p class="err" id="pw-err" aria-live="polite"></p><span class="sr-only" id="pw-hint">6자 이상</span></div>
+      <div class="row"><label class="check"><input type="checkbox"> 로그인 상태 유지</label><a href="#">비밀번호 찾기</a></div>
+      <button class="btn" type="submit">로그인 <i aria-hidden="true">→</i></button>
+    </div>
+  </form>
+  <div class="or">또는</div><div class="social"><button class="btn ghost" type="button">Google로 계속 <span class="tag">미연결</span></button><button class="btn ghost" type="button">카카오로 계속 <span class="tag">미연결</span></button></div>
+  <p class="foot">처음이신가요? <a href="#">회원가입</a></p>
+</div></main>
+<script src="_form.js"></script>
+<script>
+(function(){const s1=document.getElementById('step1'),s2=document.getElementById('step2'),em=document.getElementById('email'),pw=document.getElementById('pw'),note=document.getElementById('stepnote');
+const free=/@(gmail|naver|daum|hanmail|kakao|icloud|outlook|hotmail)\./i;
+function go(n){s1.hidden=n!==1;s2.hidden=n!==2;document.getElementById('s2').classList.toggle('on',n===2);note.textContent=n===1?'2단계 중 1: 이메일':'2단계 중 2: 비밀번호';(n===1?em:pw).focus()}
+document.getElementById('next').addEventListener('click',()=>{if(!tfValidate(s1))return;document.getElementById('who').textContent=em.value.trim();
+  const company=document.documentElement.dataset.role==='company'||!free.test(em.value);document.getElementById('sso').hidden=!company;go(2)});
+em.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('next').click()}});
+document.getElementById('back').addEventListener('click',()=>go(1));})();
+</script></body></html>

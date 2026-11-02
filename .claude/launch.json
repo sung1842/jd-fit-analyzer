@@ -1,0 +1,39 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "web",
+        "run",
+        "dev"
+      ],
+      "port": 3010
+    },
+    {
+      "name": "design-drafts",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8090",
+        "--directory",
+        "docs/design/talentfolio-main/drafts"
+      ],
+      "port": 8090
+    },
+    {
+      "name": "talentfolio",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "../test1-main/talentfolio",
+        "run",
+        "dev"
+      ],
+      "port": 3000
+    }
+  ]
+}

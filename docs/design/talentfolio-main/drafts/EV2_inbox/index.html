@@ -1,0 +1,358 @@
+<!doctype html>
+<!--
+이 시안의 정보구조 가설:
+1. 비공개 "내 기록함"(서랍)과 공개 "진열대"(기업이 보는 화면)를 물리적으로 나란히 두면, 무엇이 공개되는지 헷갈리지 않는다.
+2. 공개는 "진열대로 옮기기" 한 가지 동작 + 확인 시트로만 일어나므로, 기본값은 언제나 비공개다.
+3. 동의는 항상 보이는 "공개 설정" 바에, 추천 내역은 별도 탭에 두어 "내 카드가 어디서 인용됐는지"를 따로 추적한다.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Studio 기록함 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&display=swap">
+<style>
+:root{--ink:#0B1C45;--ink2:#44527A;--mute:#5F6B8A;--line:#E2E8F2;--line2:#EEF2F8;--paper:#F7F9FC;--white:#fff;--blue:#1F4FD6;--blue-s:#EAF0FD;--sky:#4AA3F2;--sun:#FFE7A3;--green:#1F7A50;--green-s:#E6F4EC;--red:#B42318;--red-s:#FDECEA}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden}
+body{font-family:"Pretendard Variable",Pretendard,system-ui,sans-serif;color:var(--ink);background:var(--paper);font-size:15px;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.logo{position:relative;font-family:Lora,serif;font-style:italic;font-weight:500;font-size:22px;letter-spacing:-.03em;line-height:1}
+.logo b{font-weight:700;background:linear-gradient(100deg,#1F4FD6,#4AA3F2);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
+.logo svg{position:absolute;right:-2px;bottom:-.27em;width:58%;height:.35em;overflow:visible}
+header{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--white);border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav[role=tablist]{display:flex;gap:4px;flex-wrap:wrap;min-width:0}
+.tab{min-height:44px;padding:0 14px;border:0;background:none;border-radius:8px;cursor:pointer;color:var(--ink2)}
+.tab[aria-selected=true]{background:var(--blue-s);color:var(--blue);font-weight:700}
+.consent{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 20px;background:var(--white);border-bottom:1px solid var(--line);font-size:14px}
+.consent strong{margin-right:4px}
+.sw{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:22px;background:var(--white);cursor:pointer}
+.sw .st{font-weight:700}
+.sw[aria-checked=true] .st{color:var(--green)}
+.sw[aria-checked=false] .st{color:var(--red)}
+main{padding:20px;max-width:1280px;margin:0 auto}
+.panes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.pane{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0}
+.pane h2{margin:0 0 4px;font-size:18px}
+.pane .sub{margin:0 0 14px;color:var(--mute);font-size:13px}
+.lock{display:inline-block;font-size:12px;padding:2px 8px;border-radius:10px;background:var(--line2);color:var(--ink2);font-weight:600}
+.lock.pub{background:var(--green-s);color:var(--green)}
+fieldset{border:1px solid var(--line);border-radius:10px;padding:12px;margin:0 0 14px}
+legend{font-weight:700;padding:0 4px}
+label{display:block;font-size:13px;color:var(--ink2);margin:6px 0 4px}
+textarea,input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #B9C3D8;border-radius:8px;background:var(--white)}
+textarea{min-height:90px;resize:vertical}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.btn{min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--line);background:var(--white);cursor:pointer;font-weight:600}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.dng{color:var(--red);border-color:#F1B8B2}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.job{margin-top:10px;font-size:13px;color:var(--ink2)}
+.bar{height:6px;background:var(--line2);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:var(--blue)}
+ul.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+ul.list li{border-bottom:1px solid var(--line)}
+.item{display:flex;gap:10px;width:100%;text-align:left;background:none;border:0;padding:12px 6px;cursor:pointer;min-height:44px;align-items:flex-start}
+.item:hover{background:var(--paper)}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;margin-top:7px;background:transparent;border:2px solid var(--line)}
+.unread .dot{background:var(--blue);border-color:var(--blue)}
+.unread .ttl{font-weight:700}
+.ttl{display:block;overflow-wrap:anywhere}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.chip{font-size:12px;padding:2px 8px;border-radius:10px;border:1px solid var(--line);color:var(--ink2);background:var(--white)}
+.chip.t1{border-style:dashed}
+.chip.t3{background:var(--green-s);color:var(--green);border-color:#BFE3CF}
+.chip.when{background:var(--sun);border-color:#F2D27A;color:#5A4300}
+.chip.ai{background:var(--blue-s);color:var(--blue);border-color:#C8D6F7}
+.pcard{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.pcard h3{margin:0 0 6px;font-size:16px}
+.pcard p{margin:4px 0;overflow-wrap:anywhere}
+.empty{color:var(--mute);font-size:14px;padding:20px;border:1px dashed var(--line);border-radius:12px;text-align:center}
+.profile{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.av{width:48px;height:48px;border-radius:50%;background:var(--blue-s);display:grid;place-items:center;font-weight:700;color:var(--blue);flex:none}
+.editor{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px}
+.cell{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px}
+.cell h4{margin:0 0 6px;font-size:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.cell textarea{min-height:64px}
+.cell.emptyc{background:var(--paper)}
+.qref{font-size:12px;color:var(--blue);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;min-height:24px}
+.quote{border-left:3px solid var(--line);padding:6px 10px;margin:0 0 10px;font-size:14px;color:var(--ink2);background:var(--paper);border-radius:0 8px 8px 0}
+.quote.hl{border-left-color:var(--blue);background:var(--blue-s)}
+ins{background:#FFF1C2;text-decoration:underline;text-decoration-style:dotted}
+del{color:var(--red);text-decoration:line-through}
+ins{color:var(--green)}
+.diff{font-size:13px;margin-top:6px;padding:8px;border-radius:8px;background:var(--paper)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--white);cursor:pointer}
+.seg button[aria-pressed=true]{border-color:var(--blue);color:var(--blue);font-weight:700}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+dialog{border:0;border-radius:14px;padding:0;max-width:min(520px,calc(100vw - 32px));width:100%}
+dialog::backdrop{background:rgba(11,28,69,.4)}
+.sheet{padding:20px}
+.sheet h2{margin:0 0 8px;font-size:18px}
+.sheet ul{padding-left:18px}
+.toast{position:fixed;left:16px;right:16px;bottom:16px;margin:0 auto;max-width:420px;background:var(--ink);color:#fff;padding:12px 16px;border-radius:10px;display:none}
+[hidden]{display:none!important}
+.mswitch{display:none}
+.chip.when{font-weight:700;font-size:13px}
+.whenrow{display:block;margin-bottom:4px}
+@media (max-width:860px){
+ .mswitch{display:flex;position:sticky;top:0;z-index:5;gap:4px;padding:6px;background:var(--white);border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
+ .mswitch button{flex:1;min-height:44px;border:0;border-radius:8px;background:none;cursor:pointer;color:var(--ink2);min-width:0}
+ .mswitch button[aria-pressed=true]{background:var(--ink);color:#fff;font-weight:700}
+ .panes.m-drawer #p-shelf,.panes.m-shelf #p-drawer{display:none}
+ .panes,.editor,.board{grid-template-columns:minmax(0,1fr)}
+ main{padding:16px}
+ header,.consent{padding-left:16px;padding-right:16px}
+ .row3{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">talent<b>folio</b><svg viewBox="0 0 80 9" preserveAspectRatio="none" aria-hidden="true"><path d="M2 6 C 22 1, 48 1, 78 5" fill="none" stroke="#4AA3F2" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+  <nav role="tablist" aria-label="스튜디오 메뉴">
+    <button class="tab" role="tab" aria-selected="true" aria-controls="v-home" id="t-home">기록함 · 진열대</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="v-match" id="t-match" tabindex="-1">추천 내역</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="v-me" id="t-me" tabindex="-1">프로필 · 자기소개서</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="v-jobs" id="t-jobs" tabindex="-1">공고</button>
+  </nav>
+</header>
+
+<section class="consent" aria-label="공개 설정">
+  <strong>공개 설정</strong>
+  <button class="sw" role="switch" aria-checked="true" data-c="self_ai">본인용 AI 정리 <span class="st">켜짐</span></button>
+  <button class="sw" role="switch" aria-checked="false" data-c="matching">기업 매칭 <span class="st">꺼짐</span></button>
+  <span style="color:var(--mute)">예시 데이터 · 언제든 철회할 수 있어요</span>
+</section>
+
+<div class="sr" aria-live="polite" id="live"></div>
+
+<main>
+<!-- 홈: 두 공간 -->
+<div id="v-home" role="tabpanel" aria-labelledby="t-home">
+ <div class="mswitch" role="group" aria-label="보기 전환">
+  <button type="button" aria-pressed="true" data-pane="drawer">내 기록함 🔒 <span class="sr">비공개</span></button>
+  <button type="button" aria-pressed="false" data-pane="shelf">공개 진열대 👁 <span class="sr">기업에 보임</span></button>
+ </div>
+ <div class="panes m-drawer" id="home-panes">
+  <section class="pane" id="p-drawer" aria-labelledby="h-drawer">
+    <h2 id="h-drawer">내 기록함 <span class="lock">🔒 비공개 · 나만 봄</span></h2>
+    <p class="sub">여기 있는 건 기업에 보이지 않아요.</p>
+    <form id="composer">
+      <fieldset>
+        <legend>빠른 기록</legend>
+        <label for="c-text">회고 붙여넣기</label>
+        <textarea id="c-text" required>결제 API 응답이 피크 때 2초 넘게 걸렸다. 쿼리 로그를 보니 N+1 이었고, 조인으로 바꾸고 캐시를 붙여 380ms까지 줄였다.</textarea>
+        <div class="row3">
+          <div><label for="c-kind">종류</label><select id="c-kind"><option>프로젝트</option><option>트러블슈팅</option><option>학습</option></select></div>
+          <div><label for="c-period">기간</label><input id="c-period" value="2025.03–2025.05"></div>
+          <div><label for="c-role">역할</label><input id="c-role" value="백엔드 담당"></div>
+        </div>
+        <div class="actions"><button class="btn pri" type="submit" id="c-go">정리 요청</button></div>
+        <div class="job" id="job" hidden><span id="job-t">대기 중</span><div class="bar" aria-hidden="true"><i id="job-b"></i></div></div>
+      </fieldset>
+    </form>
+    <h3 style="font-size:15px;margin:0 0 6px">받은 정리 <span id="unread-n" class="chip">안 읽음 1</span></h3>
+    <ul class="list" id="inbox"></ul>
+  </section>
+
+  <section class="pane" id="p-shelf" aria-labelledby="h-shelf">
+    <h2 id="h-shelf">공개 진열대 <span class="lock pub">👁 기업에 보임</span></h2>
+    <p class="sub">기업이 보는 화면 그대로예요. <span id="match-note"></span></p>
+    <div class="profile"><div class="av" aria-hidden="true">김</div><div><strong>김하린</strong> · 백엔드 4년차 (예시)<br><span style="color:var(--mute);font-size:13px">Java · Spring · MySQL</span></div></div>
+    <div id="shelf"></div>
+  </section>
+ </div>
+</div>
+
+<!-- 편집기 -->
+<div id="v-edit" hidden>
+  <div class="pane">
+    <div class="actions" style="margin:0 0 12px"><button class="btn" id="back">← 기록함으로</button></div>
+    <h2 id="e-title" tabindex="-1"></h2>
+    <div class="meta" id="e-meta"></div>
+    <div class="editor" style="margin-top:14px">
+      <section aria-labelledby="h-cells">
+        <h3 id="h-cells" style="font-size:15px">카드 6칸 <span style="font-weight:400;color:var(--mute);font-size:13px">직접 고쳐 쓰세요. AI는 맞춤법·문장 교정만 해요.</span></h3>
+        <div id="cells"></div>
+        <fieldset>
+          <legend>신뢰 등급</legend>
+          <div class="seg" id="trust"></div>
+          <label for="att">근거 첨부 (링크)</label>
+          <input id="att" placeholder="예: PR 링크, 대시보드 캡처">
+        </fieldset>
+        <div class="actions">
+          <button class="btn" id="fix">AI 교정</button>
+          <button class="btn" id="save">비공개로 저장</button>
+          <button class="btn pri" id="move">진열대로 옮기기</button>
+          <button class="btn dng" id="pull" hidden>진열대에서 내리기</button>
+        </div>
+      </section>
+      <aside aria-labelledby="h-src">
+        <h3 id="h-src" style="font-size:15px">원문 인용</h3>
+        <p class="sub">원문을 메시지 단위(m1, m2…)로 나눴어요. 초안 문장은 모두 이 중 하나를 인용해요. 인용이 없는 문장은 만들지 않아요.</p>
+        <div id="quotes"></div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- 추천 내역 -->
+<div id="v-match" role="tabpanel" aria-labelledby="t-match" hidden>
+  <div class="pane">
+    <h2>추천 내역</h2>
+    <p class="sub">진열대 카드가 어떤 공고에 왜 인용됐는지예요. 원치 않으면 제외하세요.</p>
+    <div id="matches"></div>
+  </div>
+</div>
+
+<!-- 프로필 -->
+<div id="v-me" role="tabpanel" aria-labelledby="t-me" hidden>
+  <div class="panes">
+    <section class="pane"><h2>프로필</h2>
+      <label for="p-n">이름</label><input id="p-n" value="김하린">
+      <label for="p-j">직무 · 연차</label><input id="p-j" value="백엔드 · 4년차">
+      <label for="p-s">기술</label><input id="p-s" value="Java, Spring, MySQL, Redis"></section>
+    <section class="pane"><h2>자기소개서</h2>
+      <label for="p-cv">본문 <span class="lock">🔒 비공개</span></label>
+      <textarea id="p-cv" style="min-height:180px">트래픽이 몰릴 때 병목을 끝까지 추적하는 개발자입니다. (예시)</textarea></section>
+  </div>
+</div>
+
+<!-- 공고 -->
+<div id="v-jobs" role="tabpanel" aria-labelledby="t-jobs" hidden>
+  <div class="board" id="board"></div>
+</div>
+</main>
+
+<dialog id="dlg" aria-labelledby="d-h"><div class="sheet">
+  <h2 id="d-h"></h2><div id="d-b"></div>
+  <div class="actions"><button class="btn" id="d-no">취소</button><button class="btn pri" id="d-ok">확인</button></div>
+</div></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="module">
+let anim=null;try{anim=(await import('https://cdn.jsdelivr.net/npm/animejs@4.0.2/+esm')).animate}catch(e){}
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fade=el=>{if(anim&&!RM)anim(el,{opacity:[0,1],translateY:[6,0],duration:200,ease:'outQuad'})};
+const $=s=>document.querySelector(s),live=m=>{$('#live').textContent=m};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CELLS=['① 내가 푼 문제','② 실패와 회복','③ 일하는 방식','④ 남들이 나를 찾는 이유','⑤ 증거','⑥ 다음'];
+const TRUST=['본인 주장','근거 첨부','확인됨'];
+const consent={self_ai:true,matching:false};
+let cards=[
+ {id:1,title:'주문 조회 API 캐시 도입',src:'주문 조회가 느리다는 CS가 매주 들어왔다. 내가 맡아서 Redis 캐시를 붙였다. 조회 p95가 1.2초에서 210ms로 줄었다.',when:'live',date:'2025.08.14',trust:2,pub:true,unread:false,fixed:false,
+  c:['주문 조회가 느리다는 CS가 매주 들어왔고, 내가 맡아서 Redis 캐시를 붙였다.','','','','조회 p95가 1.2초에서 210ms로 줄었다.',''],q:[[0,1],null,null,null,[2],null]},
+ {id:2,title:'배포 롤백 자동화',src:'배포 후 장애 때 롤백이 수동이라 20분 걸렸다. 헬스체크 실패 시 이전 버전으로 돌리는 스크립트를 만들었다.',when:'retro',date:'2026.10.20',trust:0,pub:false,unread:true,fixed:false,
+  c:['헬스체크 실패 시 이전 버전으로 돌리는 스크립트를 만들었다.','배포 후 장애 때 롤백이 수동이라 20분 걸렸다.','','','',''],q:[[1],[0],null,null,null,null]}
+];
+let edit=null,next=3;
+const whenChip=c=>c.when==='live'?`<span class="chip when">📌 활동 당시 작성 · ${c.date}</span>`:`<span class="chip when">↺ 회고 입력(입력일 기준) · ${c.date}</span>`;
+const trustChip=c=>`<span class="chip t${c.trust+1}">${['○','◐','●'][c.trust]} ${TRUST[c.trust]}</span>`;
+function renderInbox(){
+ const priv=cards.filter(c=>!c.pub);
+ $('#inbox').innerHTML=priv.length?priv.map(c=>`<li class="${c.unread?'unread':''}"><button class="item" data-open="${c.id}"><span class="dot" aria-hidden="true"></span><span style="min-width:0"><span class="whenrow">${whenChip(c)}</span><span class="ttl">${c.unread?'<span class="sr">안 읽음, </span>':''}${esc(c.title)}</span><span class="meta">${trustChip(c)}<span class="chip">${c.c.filter(Boolean).length}/6칸 채움</span></span></span></button></li>`).join(''):'<li class="empty">비공개 기록이 없어요.</li>';
+ const n=priv.filter(c=>c.unread).length;$('#unread-n').textContent='안 읽음 '+n;
+}
+function renderShelf(){
+ const pub=cards.filter(c=>c.pub);
+ $('#match-note').textContent=consent.matching?'기업 매칭 켜짐: 추천에 쓰일 수 있어요.':'기업 매칭 꺼짐: 지금은 어떤 기업에도 추천되지 않아요.';
+ $('#shelf').innerHTML=pub.length?pub.map(c=>`<article class="pcard"><h3>${esc(c.title)}</h3><div class="meta">${whenChip(c)}${trustChip(c)}${c.fixed?'<span class="chip ai">AI 교정</span>':'<span class="chip">본인 작성</span>'}</div>${c.c.map((t,i)=>t?`<p><strong>${CELLS[i]}</strong> ${esc(t)}</p>`:'').join('')}<div class="actions"><button class="btn" data-open="${c.id}">편집</button><button class="btn dng" data-pull="${c.id}">내리기</button></div></article>`).join(''):'<div class="empty">진열대가 비어 있어요. 기록함에서 고른 카드만 여기 올라와요.</div>';
+}
+function render(){renderInbox();renderShelf()}
+const sents=s=>s.split(/(?<=\.)\s*/).filter(Boolean);
+function openEditor(id){
+ edit=cards.find(c=>c.id==id);edit.unread=false;
+ $('#v-home').hidden=true;$('#v-edit').hidden=false;
+ $('#e-title').textContent=edit.title;
+ $('#e-meta').innerHTML=whenChip(edit)+'<span class="chip">기록 시점은 고칠 수 없어요</span>'+(edit.pub?'<span class="lock pub">👁 공개 중</span>':'<span class="lock">🔒 비공개</span>')+(edit.fixed?'<span class="chip ai">AI 교정 적용됨 · 숨길 수 없음</span>':'');
+ $('#cells').innerHTML=CELLS.map((n,i)=>`<div class="cell ${edit.c[i]?'':'emptyc'}"><h4><label for="cell${i}" style="margin:0;color:var(--ink)">${n}</label>${edit.q[i]!=null?edit.q[i].map(k=>`<button class="qref" data-q="${k}" aria-label="${n} 칸 근거 메시지 m${k+1} 보기">인용 m${k+1}</button>`).join(' '):edit.c[i]?'<span class="chip">직접 작성</span>':'<span class="chip">빈 칸 · 직접 채우기</span>'}</h4><textarea id="cell${i}" data-i="${i}">${esc(edit.c[i])}</textarea><div class="diff" id="diff${i}" hidden></div></div>`).join('');
+ $('#quotes').innerHTML=sents(edit.src).map((s,i)=>`<blockquote class="quote" id="q${i}"><strong>m${i+1}</strong> ${esc(s)}</blockquote>`).join('');
+ $('#trust').innerHTML=TRUST.map((t,i)=>`<button type="button" aria-pressed="${edit.trust===i}" data-t="${i}" ${i===2?'disabled title="운영팀 확인 후 부여돼요"':''}>${['○','◐','●'][i]} ${t}${i===2?' (확인 후)':''}</button>`).join('');
+ $('#move').hidden=edit.pub;$('#pull').hidden=!edit.pub;
+ $('#e-title').focus();fade($('#v-edit'));render();
+}
+function closeEditor(){$('#v-edit').hidden=true;$('#v-home').hidden=false;edit=null;render()}
+function ask(title,body,ok,label='확인'){
+ $('#d-h').textContent=title;$('#d-b').innerHTML=body;$('#d-ok').textContent=label;
+ const d=$('#dlg');d.showModal();
+ $('#d-ok').onclick=()=>{d.close();ok()};$('#d-no').onclick=()=>d.close();
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';fade(t);clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3200)}
+function publish(c){
+ const filled=c.c.map((t,i)=>t?CELLS[i]:null).filter(Boolean);
+ ask('진열대로 옮길까요?',`<p>옮기면 기업이 아래 내용을 볼 수 있어요.</p><ul><li>제목: ${esc(c.title)}</li><li>채운 칸: ${filled.join(', ')}</li><li>기록 시점 배지·신뢰 등급${c.fixed?'·AI 교정 라벨':''}</li></ul><p>원문 회고와 빈 칸은 계속 비공개예요.${consent.matching?'':' 기업 매칭이 꺼져 있어 추천에는 쓰이지 않아요.'}</p>`,()=>{c.pub=true;toast('진열대로 옮겼어요.');live('카드가 공개 진열대로 옮겨졌습니다');edit?openEditor(c.id):render()},'진열대로 옮기기');
+}
+function unpublish(c){
+ const cited=matches.filter(m=>m.cards.includes(c.id)&&!m.out).length;
+ ask('진열대에서 내릴까요?',`<p>카드가 다시 비공개가 돼요.</p><p>${cited?`이미 기업 리포트 ${cited}건에 인용됐어요. 해당 인용은 <strong>"비공개 전환됨"</strong>으로 바뀌어 내용이 가려져요.`:'아직 인용된 기업 리포트는 없어요.'}</p>`,()=>{c.pub=false;toast('비공개로 전환했어요.');live('카드가 비공개로 전환되었습니다');edit?openEditor(c.id):render()},'내리기');
+}
+document.addEventListener('click',e=>{
+ const o=e.target.closest('[data-open]');if(o)return openEditor(o.dataset.open);
+ const p=e.target.closest('[data-pull]');if(p)return unpublish(cards.find(c=>c.id==p.dataset.pull));
+ const q=e.target.closest('[data-q]');if(q){document.querySelectorAll('.quote').forEach(x=>x.classList.remove('hl'));const el=$('#q'+q.dataset.q);el.classList.add('hl');el.scrollIntoView({block:'nearest'});live('메시지 m'+(+q.dataset.q+1)+' 강조');return}
+ const t=e.target.closest('[data-t]');if(t&&edit){edit.trust=+t.dataset.t;openEditor(edit.id);return}
+});
+$('#cells').addEventListener('input',e=>{if(edit&&e.target.dataset.i!=null)edit.c[e.target.dataset.i]=e.target.value});
+$('#back').onclick=closeEditor;
+$('#save').onclick=()=>{toast('비공개로 저장했어요.');live('저장됨')};
+$('#move').onclick=()=>publish(edit);$('#pull').onclick=()=>unpublish(edit);
+$('#att').onchange=()=>{if(edit&&$('#att').value&&edit.trust<1){edit.trust=1;openEditor(edit.id);toast('근거가 첨부돼 등급이 올라갔어요.')}};
+const FIX=[['했다.','했습니다.'],['붙였다.','적용했습니다.'],['줄었다.','개선됐습니다.'],['만들었다.','작성했습니다.'],['들어왔고,','들어왔고'],['걸렸다.','소요됐습니다.']];
+$('#fix').onclick=()=>{
+ if(!consent.self_ai){toast('본인용 AI 정리 동의가 꺼져 있어 교정할 수 없어요.');return}
+ $('#fix').disabled=true;live('교정 중');
+ setTimeout(()=>{
+  const diffs={};
+  edit.c.forEach((t,i)=>{if(!t)return;let h=esc(t),n=t,hit=false;
+   FIX.forEach(([o,w])=>{if(n.includes(o)){n=n.replace(o,w);h=h.replace(esc(o),`<del aria-label="삭제">${esc(o)}</del><ins aria-label="추가">${esc(w)}</ins>`);hit=true}});
+   if(hit){edit.c[i]=n;diffs[i]=h}});
+  edit.fixed=true;$('#fix').disabled=false;openEditor(edit.id);
+  const k=Object.keys(diffs);
+  k.forEach(i=>{const d=$('#diff'+i);d.hidden=false;d.innerHTML='<strong>바뀐 구간</strong> (줄 그은 글자 = 지움, 밑줄 = 추가 · 내용 추가 없음)<br>'+diffs[i]});
+  live('AI 교정 완료. '+k.length+'개 칸이 바뀌었고 카드에 AI 교정 라벨이 붙었습니다');
+ },700);
+};
+$('#composer').onsubmit=e=>{
+ e.preventDefault();
+ if(!consent.self_ai){toast('본인용 AI 정리 동의를 켜야 정리할 수 있어요.');return}
+ const txt=$('#c-text').value.trim();if(!txt)return;
+ $('#c-go').disabled=true;$('#job').hidden=false;
+ const steps=[['접수됨 (요청 번호 #2481)',15],['원문을 메시지 단위로 나누는 중',45],['6칸 캔버스에 인용으로 배치하는 중',80],['완료 · 기록함에 도착',100]];
+ steps.forEach(([m,p],i)=>setTimeout(()=>{$('#job-t').textContent=m;$('#job-b').style.width=p+'%';live('정리 진행: '+m);
+  if(p===100){const s=sents(txt);cards.unshift({id:next++,title:$('#c-kind').value+' · '+(s[0]||'').slice(0,18)+'…',src:txt,when:'retro',date:'2026.10.28',trust:0,pub:false,unread:true,fixed:false,c:[[s[0],s[1]].filter(Boolean).join(' '),'','','',s[2]||'',''],q:[s[0]?(s[1]?[0,1]:[0]):null,null,null,null,s[2]?[2]:null,null]});
+   $('#c-go').disabled=false;render();fade($('#inbox li'))}},i*900));
+};
+document.querySelectorAll('.sw').forEach(b=>b.onclick=()=>{
+ const k=b.dataset.c,on=!consent[k];
+ const go=()=>{consent[k]=on;b.setAttribute('aria-checked',on);b.querySelector('.st').textContent=on?'켜짐':'꺼짐';render();renderMatches();live(b.firstChild.textContent.trim()+' '+(on?'동의함':'철회함'))};
+ if(!on)ask('동의를 철회할까요?',k==='matching'?'<p>철회하면 새 추천이 멈추고, 기존 추천 내역은 기업 쪽에서 더 이상 연락할 수 없게 돼요.</p>':'<p>철회하면 새 기록 정리와 AI 교정을 쓸 수 없어요. 이미 만든 카드는 그대로예요.</p>',go,'철회');else go();
+});
+// 추천 내역
+let matches=[{id:1,co:'예시페이',job:'백엔드 엔지니어 (결제)',why:'트래픽 병목 해결 경험',cards:[1,1,1],date:'2026.10.22',out:false},{id:2,co:'예시커머스',job:'서버 개발자',why:'캐시 설계 경험',cards:[1],date:'2026.10.15',out:false}];
+function renderMatches(){
+ $('#matches').innerHTML=(consent.matching?'':'<p class="empty">기업 매칭이 꺼져 있어 새 추천은 없어요. 아래는 이전 내역이에요.</p>')+matches.map(m=>{
+  const cs=[...new Set(m.cards)].map(id=>cards.find(c=>c.id==id));
+  return `<article class="pcard"><h3>${m.co} · ${m.job}</h3><p>${m.date} 추천 · 이유: ${m.why}</p><p>근거 카드 ${m.cards.length}장 인용: ${cs.map(c=>c.pub?`<span class="chip">${esc(c.title)}</span>`:'<span class="chip">🔒 비공개 전환됨</span>').join(' ')}</p><div class="actions">${m.out?'<span class="chip">✕ 추천 제외됨</span>':`<button class="btn dng" data-out="${m.id}">이 공고 추천 제외</button>`}</div></article>`}).join('');
+}
+$('#matches').addEventListener('click',e=>{const b=e.target.closest('[data-out]');if(!b)return;const m=matches.find(x=>x.id==b.dataset.out);ask('추천에서 제외할까요?',`<p>${m.co}에 더 이상 추천되지 않아요.</p>`,()=>{m.out=true;renderMatches();live('추천 제외됨')},'제외')});
+// 공고
+const jobs={관심:['예시페이 · 백엔드','예시클라우드 · SRE'],지원:['예시커머스 · 서버'],보류:['예시게임즈 · 플랫폼']};
+function renderBoard(){$('#board').innerHTML=Object.keys(jobs).map(k=>`<section class="pane" aria-label="${k}"><h2>${k} <span class="chip">${jobs[k].length}</span></h2><ul class="list">${jobs[k].map((j,i)=>`<li style="padding:8px 0"><span class="ttl">${j}</span><label class="sr" for="mv${k}${i}">상태 변경</label><select id="mv${k}${i}" data-k="${k}" data-i="${i}">${Object.keys(jobs).map(x=>`<option ${x===k?'selected':''}>${x}</option>`).join('')}</select></li>`).join('')}</ul></section>`).join('')}
+$('#board').addEventListener('change',e=>{const s=e.target;const [j]=jobs[s.dataset.k].splice(s.dataset.i,1);jobs[s.value].push(j);renderBoard();live(j+' → '+s.value)});
+// 탭
+const tabs=[...document.querySelectorAll('.tab')];
+function sel(t){tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;$('#'+x.getAttribute('aria-controls')).hidden=!on});$('#v-edit').hidden=true;edit=null;t.focus();fade($('#'+t.getAttribute('aria-controls')));render()}
+tabs.forEach((t,i)=>{t.onclick=()=>sel(t);t.onkeydown=e=>{if(e.key==='ArrowRight')sel(tabs[(i+1)%tabs.length]);if(e.key==='ArrowLeft')sel(tabs[(i+tabs.length-1)%tabs.length])}});
+document.querySelectorAll('.mswitch button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.mswitch button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#home-panes').className='panes m-'+b.dataset.pane;live((b.dataset.pane==='drawer'?'내 기록함, 비공개':'공개 진열대, 기업에 보이는 화면')+' 보기')});
+render();renderMatches();renderBoard();
+</script>
+</body>
+</html>

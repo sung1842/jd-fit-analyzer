@@ -1,0 +1,19 @@
+# 빌드 컨텍스트 = 레포 루트. 비밀값·산출물·무관 디렉터리 제외
+node_modules
+**/node_modules
+**/dist
+**/.next
+**/out
+web/
+crawler/
+docs/
+scripts/
+.git
+.claude
+.env*
+**/.env*
+*.log
+**/*.log
+Dockerfile*
+**/Dockerfile*
+.dockerignore

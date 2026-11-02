@@ -1,0 +1,127 @@
+# jd-fit 컨테이너 구성 (상세: docs/architecture/14_containers.md)
+#   docker compose up -d --build
+#   워커 확장: docker compose up -d --scale orchestrator-worker=2
+# 호스트 포트는 127.0.0.1 에만 바인딩. 호스트 dev 서버와 겹치면 *_HOST_PORT 로 변경.
+
+x-node-common: &node-common
+  restart: unless-stopped
+  env_file: .env.local          # node 서비스 전용 (크롤러에는 넘기지 않음)
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    networks: [backend]
+    volumes:
+      - redis-data:/data
+    # 호스트에 publish 하지 않음 (호스트 :6379 redis 와 충돌 방지)
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  mcp-server:
+    <<: *node-common
+    build: { context: ., dockerfile: mcp-server/Dockerfile }
+    networks: [backend]
+    read_only: true
+    tmpfs: [/tmp]
+    # rateLimiter(GEMINI_RPM) 가 프로세스 메모리 → scale 금지
+    environment:
+      MCP_SERVER_PORT: "3002"
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "127.0.0.1:${MCP_HOST_PORT:-3002}:3002"
+    depends_on:
+      redis: { condition: service_healthy }
+    # /health 없음 → GET /mcp 가 401 이면 살아있는 것으로 본다
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/mcp').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  orchestrator-api:
+    <<: *node-common
+    build: { context: ., dockerfile: orchestrator/Dockerfile }
+    image: jdfit-orchestrator
+    networks: [backend]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    read_only: true
+    tmpfs: [/tmp]
+    # promotion setInterval 이 인스턴스마다 돈다 → api 는 1개만
+    environment: &orch-env
+      ORCHESTRATOR_ROLE: api
+      REDIS_URL: redis://redis:6379
+      MCP_SERVER_URL: http://mcp-server:3002/mcp
+      # crawler 는 crawler 네트워크에만 있다 → 호스트에 publish 된 포트로 부른다 (크롤러→backend 는 여전히 불가)
+      CRAWLER_URL: ${CRAWLER_URL:-http://host.docker.internal:8010}
+      # 이미지가 NODE_ENV=production 이라 dev 기본 CORS 가 꺼짐 → talentfolio(:3000) 명시 허용
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000,http://localhost:3010,http://127.0.0.1:3010}
+      # TALENTFOLIO_URL 은 브라우저/Slack 링크용이라 .env.local 의 localhost 값을 그대로 둔다
+    ports:
+      - "127.0.0.1:${ORCHESTRATOR_HOST_PORT:-3001}:3001"
+    depends_on:
+      redis: { condition: service_healthy }
+      mcp-server: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/').then(()=>process.exit(0)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  orchestrator-worker:
+    <<: *node-common
+    # api 와 같은 build/image → worker 만 단독 기동 가능
+    build: { context: ., dockerfile: orchestrator/Dockerfile }
+    image: jdfit-orchestrator
+    networks: [backend]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    read_only: true
+    tmpfs: [/tmp]               # heartbeat 파일 위치
+    # 확장 대상: container_name / 호스트 포트 두지 않음
+    environment:
+      <<: *orch-env
+      ORCHESTRATOR_ROLE: worker
+      WORKER_HEARTBEAT_FILE: /tmp/worker-heartbeat
+    depends_on:
+      redis: { condition: service_healthy }
+      mcp-server: { condition: service_healthy }
+    # HTTP 없음 → 워커가 15초마다 갱신하는 heartbeat 파일 mtime 이 60초 이내인지
+    healthcheck:
+      test: ["CMD", "node", "-e", "const f=process.env.WORKER_HEARTBEAT_FILE||'/tmp/worker-heartbeat';try{process.exit(Date.now()-require('fs').statSync(f).mtimeMs<60000?0:1)}catch{process.exit(1)}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  crawler:
+    build: ./crawler
+    # CRAWLER_API_KEY 누락 등 설정 오류는 exit 1 → 무한 재시작 대신 5회 후 중단
+    restart: on-failure:5
+    # backend 와 분리: 내부 무인증(AUTH_MODE=legacy) orchestrator/mcp 에 접근 불가
+    networks: [crawler]
+    init: true
+    shm_size: "1gb"               # chromium /dev/shm 부족 방지
+    env_file: ./crawler/.env      # 크롤러 전용 키만 (Anthropic/Slack/Gemini 금지)
+    ports:
+      - "127.0.0.1:${CRAWLER_HOST_PORT:-8010}:8010"
+    volumes:
+      - ./crawler/out:/app/out    # 기존 수집 JSON 그대로 사용
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8010/health',timeout=3).status==200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+networks:
+  backend: {}
+  crawler: {}                 # 인터넷 egress + 호스트 publish 만 (Supabase 는 SUPABASE_DB_URL 로 직접)
+
+volumes:
+  redis-data:

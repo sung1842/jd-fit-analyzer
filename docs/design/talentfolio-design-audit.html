@@ -1,0 +1,433 @@
+<title>Talentfolio 디자인 통합 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Batang:wght@700&display=swap">
+<style>
+/* Layout: 메인 "맑은 아침 하늘"을 그대로 쓴 단일 라이트 문서. 좌측 정렬 본문 + 페이지별 전/후 시안 카드 */
+:root{
+  --white:#FFFFFF; --paper:#F5F9FF; --mist:#DCEBFF; --sky:#BFDDFF; --cerulean:#4AA3F2;
+  --cobalt:#1F4FD6; --ink:#0B1C45; --ink2:#44527A; --ink3:#5C6A8E; --sun:#FFE7A3; --line:#D3E3F7;
+  --ok:#0B6B45; --okbg:#DDF3E7; --warn:#7A4E00; --warnbg:#FFEFC2; --bad:#A82A23; --badbg:#FDE3E0;
+  --old:#020005; --oldsurf:#0b0812; --oldline:#271c32; --copper:#E07A5F; --oldtext:#f0ecf8; --oldmuted:#7a6a8a;
+  --f-body:'Pretendard Variable',Pretendard,'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  --f-accent:'Gowun Batang','MaruBuri',serif; --f-hand:'Nanum Pen Script',cursive;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--white);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.hero{background:linear-gradient(180deg,var(--mist),var(--white) 80%);padding-block:72px 40px;position:relative;overflow:hidden}
+header.hero::after{content:"";position:absolute;right:-80px;top:40px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,var(--sun) 0%,rgba(255,231,163,.4) 45%,rgba(255,231,163,0) 70%)}
+.label{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--cobalt)}
+h1{font-size:clamp(32px,5.4vw,60px);font-weight:800;letter-spacing:-.045em;line-height:1.08;margin:12px 0 0;text-wrap:balance;position:relative;z-index:1}
+h1 em,h2 em{font-family:var(--f-accent);font-style:normal;font-weight:700;color:var(--cobalt);letter-spacing:-.02em}
+.hand{font-family:var(--f-hand);color:var(--cobalt);font-size:24px;display:inline-block;transform:rotate(-3deg)}
+.lead{max-width:640px;color:var(--ink2);font-size:16px;margin-top:18px;position:relative;z-index:1}
+h2{font-size:clamp(24px,3.4vw,36px);font-weight:800;letter-spacing:-.04em;line-height:1.2;margin:0 0 6px;text-wrap:balance}
+h3{font-size:19px;font-weight:700;letter-spacing:-.02em;margin:0}
+section{padding-block:56px;border-top:1.5px solid var(--line)}
+section.tint{background:var(--paper)}
+p{margin:0}
+.sub{color:var(--ink2);max-width:680px;margin-bottom:28px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+.card{background:var(--white);border:1.5px solid var(--line);border-radius:24px;padding:22px;min-width:0}
+.card p{color:var(--ink2);font-size:14px;margin-top:6px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px;white-space:nowrap}
+.p-hi{background:var(--badbg);color:var(--bad)} .p-mid{background:var(--warnbg);color:var(--warn)} .p-lo{background:var(--mist);color:var(--cobalt)}
+.p-ok{background:var(--okbg);color:var(--ok)}
+.who{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.who span{font-size:12px;color:var(--ink2);border:1px solid var(--line);border-radius:99px;padding:1px 9px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+.tbl{overflow-x:auto;border:1.5px solid var(--line);border-radius:20px;background:var(--white)}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.06em;color:var(--ink2);font-weight:600;background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td code,p code,li code{font-size:12.5px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:0 5px;color:var(--ink)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:6px;border:1px solid rgba(11,28,69,.15)}
+/* loop diagram */
+.loop{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:12px;counter-reset:s}
+.step{border:1.5px solid var(--line);border-radius:20px;padding:16px;background:var(--white);position:relative}
+.step b{display:block;font-size:15px}
+.step small{color:var(--ink2);font-size:13px;display:block;margin-top:4px}
+.step .no{font-family:var(--f-accent);font-size:30px;color:var(--cobalt);line-height:1}
+/* page proposals */
+.page{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:start;padding-block:32px;border-top:1px dashed var(--line)}
+.page:first-of-type{border-top:0}
+.page .route{font-size:13px;font-weight:600;color:var(--cobalt);letter-spacing:.02em}
+.page ul{margin:10px 0 0;padding-left:18px;color:var(--ink2);font-size:14px}
+.page li{margin-top:4px}
+.page li strong{color:var(--ink)}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ba figure{margin:0;min-width:0}
+.ba figcaption{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;font-weight:600}
+.mock{border-radius:16px;overflow:hidden;font-size:11px;line-height:1.4;height:210px;position:relative}
+.mock .bar{height:22px;display:flex;align-items:center;gap:6px;padding:0 10px;font-size:9px;font-weight:700}
+.old{background:var(--old);color:var(--oldtext);border:1px solid var(--oldline)}
+.old .bar{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
+.old .box{background:var(--oldsurf);border:1px solid var(--oldline);border-radius:10px;padding:8px;margin:8px}
+.old .btn{background:linear-gradient(135deg,var(--copper),#C96F4A);color:#fff;border-radius:8px;padding:3px 8px;display:inline-block;font-size:9px;box-shadow:0 4px 14px rgba(224,122,95,.4)}
+.old .mut{color:var(--oldmuted);font-size:9px}
+.gray{background:#F6F7F9;color:#1f2937;border:1px solid #E5E7EB}
+.gray .bar{background:#fff;color:var(--ink);border-bottom:1px solid #E5E7EB}
+.gray .box{background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:8px;margin:8px}
+.gray .btn{background:#3B6FFE;color:#fff;border-radius:6px;padding:3px 8px;display:inline-block;font-size:9px}
+.gray .mut{color:#94A3B8;font-size:9px}
+.new{background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
+.new .bar{background:#fff;border-bottom:1.5px solid var(--line);color:var(--ink)}
+.new .bar i{margin-left:auto;background:var(--cobalt);color:#fff;border-radius:99px;padding:1px 7px;font-style:normal}
+.new .box{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:9px;margin:8px}
+.new .btn{background:var(--cobalt);color:#fff;border-radius:99px;padding:3px 10px;display:inline-block;font-size:9px;font-weight:600}
+.new .btn.o{background:#fff;color:var(--ink);border:1.2px solid var(--ink)}
+.new .mut{color:var(--ink2);font-size:9.5px}
+.new .t{font-weight:800;font-size:13px;letter-spacing:-.03em}
+.new .t em{font-family:var(--f-accent);font-style:normal;color:var(--cobalt)}
+.new .h{font-family:var(--f-hand);color:var(--cobalt);font-size:14px}
+.chip{display:inline-block;border-radius:99px;padding:0 6px;font-size:8.5px;margin:2px 2px 0 0}
+.new .chip{background:var(--mist);color:var(--cobalt)}
+.old .chip{background:rgba(246,4,46,.15);color:#f6042e;border:1px solid rgba(246,4,46,.4)}
+.sk{background:linear-gradient(90deg,var(--mist),#eef5ff,var(--mist));border-radius:6px;height:8px;margin-top:5px}
+.row{display:flex;gap:6px;align-items:center}
+.av{width:18px;height:18px;border-radius:50%;background:var(--sky);display:grid;place-items:center;font-family:var(--f-hand);color:var(--cobalt);font-size:12px;flex:none}
+.peep{position:absolute;right:8px;bottom:6px;width:58px;height:58px}
+.note{border-left:3px solid var(--sun);background:#FFFBEE;padding:12px 16px;border-radius:0 14px 14px 0;color:var(--ink2);font-size:14px;margin-top:16px}
+.tree{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--white);border:1.5px solid var(--line);border-radius:20px;padding:18px;white-space:pre;overflow-x:auto;color:var(--ink);line-height:1.7}
+footer{padding-block:40px;color:var(--ink3);font-size:13px;border-top:1.5px solid var(--line)}
+footer a{color:var(--cobalt)}
+a:focus-visible{outline:3px solid var(--cerulean);outline-offset:3px;border-radius:6px}
+@media (max-width:760px){.page{grid-template-columns:1fr}.ba{grid-template-columns:1fr}.mock{height:180px}}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="label">Talentfolio · 디자인 통합 감사 · 2026.10.30</span>
+    <h1>모든 페이지를<br>메인의 <em>아침 하늘</em>로</h1>
+    <span class="hand" style="margin-top:12px">19개 페이지 · 5인 팀 · 2라운드 ✎</span>
+    <p class="lead">메인(<code>/</code>)을 기준으로 전 페이지를 실제 화면, 실측값, 코드로 확인했습니다. UI·UX·그래픽 디자이너와 구직자·기업 사용자 다섯 명이 1라운드에서 문제를 찾았고, 2라운드에서 서로의 주장을 코드로 교차 검증했습니다. 아래는 그 결과 나온 공용 수정안과 페이지별 시안입니다.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <span class="label">진단 한 줄</span>
+    <h2>지금 사이트는 <em>세 개의 제품</em>처럼 보입니다</h2>
+    <p class="sub">같은 흰 헤더 아래에 디자인 세계가 셋 섞여 있습니다. 한 기업 사용자가 후보 → 승인 → 상세로 이동하면 라이트, 회색, 다크로 세 번 바뀝니다.</p>
+    <div class="grid3">
+      <div class="card"><span class="pill p-ok">기준 · 유지</span><h3 style="margin-top:10px">아침 하늘</h3><p>메인, <code>/start</code>, <code>/login</code>. Wanted Sans·Pretendard, cobalt <code>#1F4FD6</code>, pill 버튼, 24~28px 카드, 손그림 군중과 손글씨.</p></div>
+      <div class="card"><span class="pill p-mid">톤 보정</span><h3 style="margin-top:10px">회색 제품 셸</h3><p><code>/studio/*</code>, <code>/desk</code>, <code>/review</code>, <code>/desk/candidates</code>. Noto Sans KR, <code>#F6F7F9</code>, 각진 8~10px 버튼, 임의 파랑 <code>#3B6FFE</code>.</p></div>
+      <div class="card"><span class="pill p-hi">전면 이식</span><h3 style="margin-top:10px">구 다크 테마</h3><p><code>/discover</code>, <code>/sourcing</code>, <code>/sourcing/review</code>, <code>/settings/integrations</code>, <code>/talent</code>, <code>/brief</code>. DM Sans·Syne, midnight <code>#020005</code>, copper·crimson 글로우.</p></div>
+    </div>
+    <div class="note"><strong>근본 원인:</strong> <code>src/app/globals.css</code>가 아직 구 다크 팔레트(midnight·copper·DM Sans)이고, <code>DESIGN.md</code>도 그 시절 사양입니다. 다크 페이지들은 이 전역값을 그대로 상속합니다. 전역 토큰 한 번 교체로 문제의 절반이 사라집니다.</div>
+  </div>
+</section>
+
+<section class="tint">
+  <div class="wrap">
+    <span class="label">작업 전 조사</span>
+    <h2>2026 웹 UI/UX 트렌드</h2>
+    <p class="sub">검색 결과는 대부분 에이전시·도구 회사 블로그라 의견 성격이 강합니다. 여러 출처에서 반복된 것만 추렸습니다.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>트렌드</th><th>내용</th><th>우리 사이트 상태</th></tr></thead>
+      <tbody>
+        <tr><td><strong>목적 있는 모션</strong></td><td>스크롤 스토리텔링은 유지되지만 절제. 과한 패럴랙스·스크롤재킹은 비권장. 모션 정지와 reduced-motion 존중.</td><td><span class="pill p-ok">메인 충족</span> 제품 화면은 정적이고 상태 전환 모션 없음</td></tr>
+        <tr><td><strong>AI 생성 느낌 회피</strong></td><td>다크+네온 글로우, 보라 그라데이션, 기본 Tailwind 룩, 범용 카드 그리드가 "AI 사이트" 인상. 손맛과 실제 작업물이 차별점.</td><td><span class="pill p-hi">다크 6페이지 해당</span> 글로우 배지·펄스·블러 유리</td></tr>
+        <tr><td><strong>볼드 타이포 + 미니멀</strong></td><td>큰 제목, 절제된 레이아웃, 벤토·보이는 그리드.</td><td><span class="pill p-mid">메인만 충족</span></td></tr>
+        <tr><td><strong>접근성 우선</strong></td><td>시맨틱 HTML, ARIA, 대비 AA, 44px 탭 타깃.</td><td><span class="pill p-hi">미달</span> <code>/discover</code> 12px 미만 글씨 163개, 작은 탭 175개</td></tr>
+        <tr><td><strong>신뢰 기반 UI</strong></td><td>AI 판단 근거 노출, AI는 copilot이고 사람이 승인.</td><td><span class="pill p-mid">부분</span> <code>/review</code>만 근거 카드 있음</td></tr>
+        <tr><td><strong>스켈레톤·빈 상태</strong></td><td>로딩·빈 상태를 디자인된 화면으로.</td><td><span class="pill p-hi">없음</span> 전부 "불러오는 중" 텍스트, <code>/discover</code> 수초간 빈 검정</td></tr>
+        <tr><td><strong>앰비언트 개인화</strong></td><td>OS 다크모드 등 사용자 설정 존중.</td><td><span class="pill p-lo">2차 과제</span> 다크는 의도된 모드가 아닌 잔재</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">루프 엔지니어링</span>
+    <h2>어떻게 찾았나</h2>
+    <p class="sub">한 번 훑고 끝내지 않고, 증거 → 다섯 시선의 독립 리뷰 → 코드 교차 검증 → 시안 순서로 돌렸습니다.</p>
+    <div class="loop">
+      <div class="step"><span class="no">1</span><b>증거 수집</b><small>19개 라우트 화면 캡처, 390px 모바일에서 배경·폰트·12px 미만 글씨·탭 타깃 자동 측정</small></div>
+      <div class="step"><span class="no">2</span><b>5인 독립 리뷰</b><small>UI · UX · 그래픽 디자이너, 구직자, 기업 헤드헌터가 같은 증거를 각자 시선으로</small></div>
+      <div class="step"><span class="no">3</span><b>교차 검증</b><small>상충 주장은 코드로 판정. 예: 이모지 "대량" 주장 → 실제 15개로 기각</small></div>
+      <div class="step"><span class="no">4</span><b>시안</b><small>공용 수정 먼저, 그다음 페이지별 전/후. 다음 루프는 적용 후 재측정</small></div>
+    </div>
+    <div class="note">2라운드에서 확정된 사실: 모바일 햄버거에 역할 메뉴(<code>actions</code>)가 빠짐 (<code>SiteHeader.tsx:120-127</code>), 동의 카드 영문 키 노출 (<code>ConsentCard.tsx:134,138</code>), 추천 내역 영문 판정값 (<code>studio/matches/page.tsx:93</code>), <code>#3B6FFE</code>는 <code>product.css</code>와 demo 컴포넌트에서 유입. 기각된 주장: 이모지 남용(전체 15개, <code>StudioCards</code> 6개가 최다).</div>
+  </div>
+</section>
+
+<section class="tint">
+  <div class="wrap">
+    <span class="label">P0 · 공용 먼저</span>
+    <h2>페이지를 고치기 전에 <em>바닥</em>부터</h2>
+    <p class="sub">아래 다섯 개를 먼저 하면 페이지별 작업은 대부분 클래스 교체 수준으로 줄어듭니다.</p>
+    <div class="grid2">
+      <div class="card"><span class="pill p-hi">P0-1 · 전역 토큰</span><h3 style="margin-top:10px">globals.css를 아침 하늘로</h3><p><code>--background</code> #F5F9FF, <code>--surface</code> #FFF, <code>--border-color</code> #D3E3F7, <code>--accent</code> #1F4FD6, <code>--text-primary</code> #0B1C45, <code>--text-secondary</code> #44527A. 본문 Pretendard. DM Sans import, copper 글로우 변수, <code>.fit-pulse-strong</code> 삭제. 하드코딩 <code>#271c32 #0b0812 #f6042e #ffae2e</code>는 var()로 일괄 치환.</p><div class="who"><span>UI</span><span>그래픽</span><span>UX</span></div></div>
+      <div class="card"><span class="pill p-hi">P0-2 · 컴포넌트</span><h3 style="margin-top:10px">버튼·카드·칩을 하나로</h3><p><code>.btn-brand</code>, <code>.dk-btn</code>, <code>product-*</code>, <code>ui/button.tsx</code>를 통합. 버튼은 pill 99px + 1.5px ink 테두리, 채움은 cobalt, hover는 위로 2px. 카드는 24px + 1.5px #D3E3F7 + 얕은 파란 그림자. <code>product.css</code>의 <code>!important</code> 폰트·배경 제거.</p><div class="who"><span>UI</span></div></div>
+      <div class="card"><span class="pill p-hi">P0-3 · 내비</span><h3 style="margin-top:10px">역할별 헤더, 모바일과 공유</h3><p>비로그인은 랜딩 앵커 메뉴, 로그인 구직자는 "스튜디오 · 추천", 기업은 "데스크". 메뉴를 데이터 한 벌로 정의해 햄버거에도 그대로. 로그인 후 "시작하기" CTA는 "내 스튜디오/데스크"로.</p><div class="who"><span>UX</span><span>구직자</span><span>기업</span></div></div>
+      <div class="card"><span class="pill p-mid">P0-4 · 상태 화면</span><h3 style="margin-top:10px">스켈레톤·빈 상태·오류</h3><p><code>Skeleton</code>, <code>EmptyState</code>(손그림 + 손글씨 한 줄 + pill CTA), <code>not-found.tsx</code>, <code>error.tsx</code> 신설. 비로그인 상태는 오류 원문 대신 로그인 유도 화면.</p><div class="who"><span>UX</span><span>그래픽</span></div></div>
+      <div class="card"><span class="pill p-mid">P0-5 · 말</span><h3 style="margin-top:10px">사용자 말로 바꾸는 사전</h3><p><code>lib/labels.ts</code> 한 곳에서 <code>self_ai</code>→"내 기록 AI 정리", <code>strong_fit</code>→"잘 맞음", stage·status·SQL 번호·jdHash·"B2B" 등 내부어를 한글 라벨로. 용어는 "스카우트 건 → 후보 → 승인 → 제안"으로 통일.</p><div class="who"><span>구직자</span><span>기업</span><span>UX</span></div></div>
+      <div class="card"><span class="pill p-mid">P0-6 · 접근성</span><h3 style="margin-top:10px">14 · 12 · 44 규칙</h3><p>본문 14px 이상, 캡션 12px 이상, 탭 타깃 44px 이상. 모든 페이지에 <code>&lt;main&gt;</code>, H1 하나, skip link. 탭에는 <code>role="tablist"</code>. 포커스 링은 메인과 같은 3px cerulean.</p><div class="who"><span>UX</span><span>UI</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">페이지별 시안</span>
+    <h2>지금 → <em>이렇게</em></h2>
+    <p class="sub">심각도 순입니다. 각 카드의 왼쪽 그림이 현재, 오른쪽이 제안입니다. 구조만 보여주는 축약 와이어이며 실제 비율과는 다릅니다.</p>
+
+    <div class="page">
+      <div>
+        <span class="route">/discover · 인재 탐색</span> <span class="pill p-hi">상</span>
+        <h3 style="margin-top:6px">구 다크 전체 + 로딩 없는 빈 검정</h3>
+        <ul>
+          <li><strong>UI</strong> DM Sans, copper 버튼, 카드 글로우·무한 펄스(<code>CandidateCard.tsx:122,162</code>), 3색 글로우 점수 배지(<code>FitScoreBadge.tsx:43</code>)</li>
+          <li><strong>UX</strong> 첫 진입 수초간 빈 화면, aria 0개, 12px 미만 163·작은 탭 175, 필터 사이드바가 모바일 부담</li>
+          <li><strong>기업</strong> <code>/desk/candidates</code>와 같은 일을 함. 적합도 %에 근거 없음</li>
+          <li><strong>시안</strong> 라이트 전환, 카드 스켈레톤, 필터는 상단 pill 칩 + 모바일 바텀시트, 점수 옆 "근거 2건" 칩. 기업용은 <code>/desk/candidates</code>로 흡수하고 구직자 입구와 분리</li>
+        </ul>
+      </div>
+      <div class="ba">
+        <figure><figcaption>현재</figcaption><div class="mock old"><div class="bar">talentfolio</div><div class="box" style="height:140px;background:radial-gradient(ellipse at 50% 50%,rgba(224,122,95,.15),transparent 70%),var(--oldsurf)"><span class="mut">(수초간 아무것도 없음)</span></div></div></figure>
+        <figure><figcaption>제안</figcaption><div class="mock new"><div class="bar">talentfolio<i>데스크</i></div>
+          <div style="padding:6px 8px 0"><span class="chip">전체</span><span class="chip">개발자</span><span class="chip">디자이너</span><span class="chip">React ✕</span></div>
+          <div class="box"><div class="row"><span class="av">하</span><b>하*린</b><span class="pill p-ok" style="font-size:8px;margin-left:auto;padding:0 6px">잘 맞음 92</span></div><span class="mut">근거 2건 · 디자인 시스템 12건</span></div>
+          <div class="box"><div class="sk" style="width:60%"></div><div class="sk"></div></div></div></figure>
+      </div>
+    </div>
+
+    <div class="page">
+      <div>
+        <span class="route">/sourcing · /sourcing/review</span> <span class="pill p-hi">상</span>
+        <h3 style="margin-top:6px">승인 화면이 두 개, 디자인은 다크</h3>
+        <ul>
+          <li><strong>UI</strong> Syne 인라인 폰트, 각진 번호 배지, 하드코딩 <code>#271c32</code>, 흰 헤더와 검정 본문의 단절</li>
+          <li><strong>UX</strong> <code>/review</code>와 역할 중복. 상단 링크가 "메인으로"라 데스크 복귀 불가. 실제 Slack 발송 경고가 작은 부제에 묻힘</li>
+          <li><strong>기업</strong> "AI가 찾은 후보 승인"이 아니라 "내가 요청서 작성" 흐름. 발송 실패 후 다음 행동 없음</li>
+          <li><strong>시안</strong> <code>/sourcing</code> → 데스크 하위 "스카우트 건 만들기", <code>/sourcing/review</code> → <code>/review</code>로 합친 "승인함". 승인 버튼 옆에 받는 사람·메시지 미리보기와 확인 단계, 실패 시 "다시 보내기"</li>
+        </ul>
+      </div>
+      <div class="ba">
+        <figure><figcaption>현재</figcaption><div class="mock old"><div class="bar">talentfolio</div><div style="padding:8px"><b style="font-size:12px">B2B 인재 소싱</b></div><div class="box"><span class="chip" style="background:var(--copper);color:#fff;border:0">1</span> 인재 DB 검색 <span class="btn" style="float:right">검색</span></div><div class="box"><span class="chip" style="background:var(--copper);color:#fff;border:0">2</span> Slack 승인 요청<div class="mut">#recruiting</div></div></div></figure>
+        <figure><figcaption>제안</figcaption><div class="mock new"><div class="bar">데스크 › 승인함<i>3</i></div>
+          <div class="box"><div class="row"><span class="av">윤</span><b>윤*호</b><span class="mut" style="margin-left:auto">AI 제안 → <b style="color:var(--cobalt)">사람 확인</b> → 발송</span></div><div class="mut" style="margin-top:4px">받는 곳 #recruiting · "성능 개선 사례 7건…"</div><div style="margin-top:6px"><span class="btn">승인하고 보내기</span> <span class="btn o">반려</span></div></div>
+          <div class="box"><div class="sk" style="width:50%"></div></div></div></figure>
+      </div>
+    </div>
+
+    <div class="page">
+      <div>
+        <span class="route">/talent/[id] · /brief/[id]</span> <span class="pill p-hi">상</span>
+        <h3 style="margin-top:6px">기업이 보는 "나"가 가장 어둡다</h3>
+        <ul>
+          <li><strong>구직자</strong> 공개 포트폴리오가 다크라서 스튜디오의 "기업에게 보이는 화면" 미리보기와 다른 사이트처럼 보임</li>
+          <li><strong>기업</strong> <code>/brief</code>에 "?jd=&lt;jdHash&gt;를 붙이면" 같은 개발자 문구. 후보 상세가 talent·brief·review 패널로 3중</li>
+          <li><strong>UI</strong> crimson 직군 배지, 테두리만 있는 작은 신뢰 배지, rounded-md/lg 혼용</li>
+          <li><strong>시안</strong> 라이트 프로필: 손그림 아바타(E9), 이름은 Wanted Sans 800, 직군은 라벨 텍스트. 근거 카드를 크게. <code>/brief</code>는 review 패널과 같은 컴포넌트, JD는 드롭다운 선택. 미리보기와 공개 화면을 같은 컴포넌트로</li>
+        </ul>
+      </div>
+      <div class="ba">
+        <figure><figcaption>현재</figcaption><div class="mock old"><div class="bar">talentfolio</div><div class="box"><div class="row"><span style="width:22px;height:22px;border-radius:8px;background:rgba(246,4,46,.2);border:1px solid #f6042e;display:inline-block"></span><b>김민준</b><span class="chip">개발자</span></div><span class="mut" style="color:#f6042e">Full-Stack Engineer</span><div><span class="chip">React</span><span class="chip">Node</span></div></div><div class="box"><span class="mut">?jd=&lt;jdHash&gt;를 붙이면…</span></div></div></figure>
+        <figure><figcaption>제안</figcaption><div class="mock new"><div class="bar">talentfolio<i>제안하기</i></div>
+          <div style="padding:8px 10px"><div class="row"><span class="av" style="width:30px;height:30px;font-size:17px">김</span><div><div class="t">김민준</div><span class="mut">개발자 · 풀스택 5년</span></div></div></div>
+          <div class="box"><span class="mut">JD 기준</span> <b>Northline 프론트엔드 ▾</b><div class="row" style="margin-top:4px"><span class="pill p-ok" style="font-size:8px;padding:0 6px">● 필수 4/5 충족</span><span class="pill p-mid" style="font-size:8px;padding:0 6px">◐ 면접 확인 1</span></div></div>
+          <div class="box"><b>근거</b> <span class="mut">SaaS 결제 모듈 성능 40% 개선 · 출처 회고 2025-03</span></div></div></figure>
+      </div>
+    </div>
+
+    <div class="page">
+      <div>
+        <span class="route">/studio · /studio/log · cards · matches</span> <span class="pill p-hi">상</span>
+        <h3 style="margin-top:6px">같은 스튜디오인데 화면이 둘</h3>
+        <ul>
+          <li><strong>UX</strong> <code>/studio</code> 탭은 URL 없는 state(새로고침·공유·뒤로가기 불가), <code>/studio/*</code>는 다른 셸. 비로그인 시 헤더 없이 작은 버튼 하나</li>
+          <li><strong>구직자</strong> "기록함/회고 붙여넣기/나를 보여주기" 용어 혼란, 글을 다 쓴 뒤에야 동의 요구, "(self_ai)" 노출, "strong fit" 영문 판정, 현직장 차단 없음</li>
+          <li><strong>UI</strong> Noto Sans, 회색 #F6F7F9, 8~10px 각진 버튼</li>
+          <li><strong>시안</strong> <code>/studio/layout.tsx</code> 하나에 라우트 탭: 홈 · 기록하기 · 내 카드 · 프로필 · 받은 추천 · 개인정보. 비로그인은 샘플 스튜디오 미리보기 + E1 일러스트. 동의는 작성 전에. "기업에게 보이는 화면" 버튼을 홈 상단으로</li>
+        </ul>
+      </div>
+      <div class="ba">
+        <figure><figcaption>현재</figcaption><div class="mock gray"><div style="padding:16px"><span class="mut">스튜디오</span><div style="font-weight:700;font-size:13px">내 스튜디오</div><span class="mut">로그인하면 관리할 수 있어요</span><div style="margin-top:6px"><span class="btn">로그인</span></div></div><div class="box"><input type="checkbox" disabled> AI 기록 정리 (self_ai)</div></div></figure>
+        <figure><figcaption>제안</figcaption><div class="mock new"><div class="bar">talentfolio<i>스튜디오</i></div>
+          <div style="padding:6px 8px 0"><span class="chip" style="background:var(--cobalt);color:#fff">홈</span><span class="chip">기록하기</span><span class="chip">내 카드</span><span class="chip">받은 추천</span></div>
+          <div class="box" style="position:relative"><div class="t">아직 <em>기록</em>이 없어요</div><span class="h">오늘 한 일 한 줄이면 충분해요</span><div style="margin-top:6px"><span class="btn">첫 기록 쓰기</span></div>
+          <svg class="peep" viewBox="0 0 60 60" fill="none" stroke="#0B1C45" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="30" cy="18" r="9" fill="#fff"/><path d="M26 18h.1M34 18h.1M27 22q3 2 6 0"/><path d="M16 56q2-22 14-24 12 2 14 24" fill="#BFDDFF"/><rect x="34" y="38" width="18" height="12" rx="2" fill="#fff"/><path d="M37 42h12M37 46h8"/></svg></div></div></figure>
+      </div>
+    </div>
+
+    <div class="page">
+      <div>
+        <span class="route">/desk/candidates · 인재 작업대</span> <span class="pill p-hi">상</span>
+        <h3 style="margin-top:6px">밀도 과다, 다른 파랑, 기본 폰트</h3>
+        <ul>
+          <li><strong>UI</strong> demo 컴포넌트(<code>glass-folder-cards.tsx</code>)의 <code>ui-sans-serif</code>와 <code>#3B6FFE</code>가 그대로 유입, 12px 미만 193개</li>
+          <li><strong>기업</strong> 메인 CTA "JD로 인재 찾기"가 검색 작업대로 옴. 블러 이미지로 누군지 모름. "비교에 담기"와 "Northline에 담기"가 섞임, 비교에 점수·근거 없음</li>
+          <li><strong>시안</strong> 첫 칸은 "JD 붙여넣기 → 조건 자동 추출". 카드는 이름·직무·적합도·근거 1줄만 크게, 나머지는 펼침. "담기" 하나로 합치고 담을 곳은 드롭다운. 비교표는 요건별 충족/근거 열</li>
+        </ul>
+      </div>
+      <div class="ba">
+        <figure><figcaption>현재</figcaption><div class="mock gray"><div style="padding:8px"><b>인재 작업대</b> <span class="btn" style="float:right">JD 매칭</span></div><div style="display:flex"><div class="box" style="flex:1;filter:blur(.6px)"><span class="mut">조건 2/3 · 겹침 React…</span><div><span class="btn" style="font-size:7px">비교에 담기</span> <span class="btn" style="font-size:7px">Northline에 담기</span></div></div><div class="box" style="flex:1;filter:blur(.6px)"><span class="mut">조건 1/3…</span></div></div></div></figure>
+        <figure><figcaption>제안</figcaption><div class="mock new"><div class="bar">데스크 › 인재풀</div>
+          <div class="box" style="background:var(--mist);border-color:var(--sky)"><span class="mut">JD를 붙여넣으면 조건을 뽑아 드려요</span><div><span class="chip" style="background:#fff">React 필수</span><span class="chip" style="background:#fff">3~6년</span></div></div>
+          <div class="box"><div class="row"><span class="av">서</span><b>서*아</b><span class="pill p-mid" style="font-size:8px;padding:0 6px;margin-left:auto">◐ 부분 77</span></div><span class="mut">컴포넌트 라이브러리 운영 근거 1건</span><div style="margin-top:4px"><span class="btn o">담기 ▾</span></div></div></div></figure>
+      </div>
+    </div>
+
+    <div class="page">
+      <div>
+        <span class="route">/settings/integrations · 연동</span> <span class="pill p-mid">중</span>
+        <h3 style="margin-top:6px">제목 없는 다크 카드, 개발자 설정</h3>
+        <ul>
+          <li><strong>UX</strong> H1 없음, 데스크 탭이 사라짐. 성공/실패를 문구 안의 "실패" 단어로 판정</li>
+          <li><strong>기업</strong> Slack 채널 ID("C로 시작하는 ID")와 Notion 컬럼을 직접 맞춰야 함</li>
+          <li><strong>시안</strong> 데스크 › 설정으로 이동, H1 "연동", 카드 상단에 연결 상태 배지(● 연결됨 / ○ 미연결). Slack은 채널 목록에서 고르기, Notion은 DB 자동 생성 버튼</li>
+        </ul>
+      </div>
+      <div class="ba">
+        <figure><figcaption>현재</figcaption><div class="mock old"><div class="bar">talentfolio</div><div class="box"><b>Notion 연동</b><div class="mut">AI 소싱이 Slack 승인 후…</div><span class="btn">로그인 후 연동하기</span></div><div class="box"><b># Slack 채널 자동 소싱</b><div class="mut">채널 ID(C로 시작)…</div><span class="btn">로그인 후 설정</span></div></div></figure>
+        <figure><figcaption>제안</figcaption><div class="mock new"><div class="bar">데스크 › 설정</div><div style="padding:6px 10px"><div class="t">연동</div></div>
+          <div class="box"><div class="row"><b>Slack</b><span class="pill p-ok" style="font-size:8px;padding:0 6px;margin-left:auto">● 연결됨</span></div><span class="mut">승인 알림 채널 <b>#recruiting ▾</b></span></div>
+          <div class="box"><div class="row"><b>Notion</b><span class="pill p-lo" style="font-size:8px;padding:0 6px;margin-left:auto">○ 미연결</span></div><span class="btn">연결하고 DB 만들기</span></div></div></figure>
+      </div>
+    </div>
+
+    <div class="page">
+      <div>
+        <span class="route">/desk · /review</span> <span class="pill p-mid">중</span>
+        <h3 style="margin-top:6px">토대는 좋고, 톤과 말만 다르다</h3>
+        <ul>
+          <li><strong>기업</strong> "오늘 판단할 일", J/K/A/R 단축키, "근거 없음은 탈락 사유가 아님" 철학은 좋음. 다만 KPI에 "SQL 017 필요", "C2" 뱃지 노출, "AI 추천 뒤집기" 의미 불명, 승인 후 다음 행동 없음</li>
+          <li><strong>UI</strong> <code>desk.css</code> 토큰은 메인에 가깝지만 <code>--line</code> #E2E8F2, 버튼 10px, 카드 14px, 10.5~11px 글씨</li>
+          <li><strong>시안</strong> <code>--line</code>→#D3E3F7, 버튼 pill, 카드 24px, 최소 12px. 준비 중 KPI·"공고" 탭은 숨기거나 "아직 제안을 보내지 않았어요"처럼 사람 말로. 지표마다 한 줄 설명. 승인 직후 "연락 초안 보기" 다음 단계. 단축키는 <code>&lt;kbd&gt;</code>와 "?" 도움말</li>
+        </ul>
+      </div>
+      <div class="ba">
+        <figure><figcaption>현재</figcaption><div class="mock gray"><div style="padding:8px;font-size:9px">홈 · 후보 검토 · 스카우트 건 · 후보 관리 · 공고 · 설정</div><div style="display:flex"><div class="box" style="flex:1"><span class="mut">마감 임박</span><div class="mut">준비 중 · SQL 017 필요</div></div><div class="box" style="flex:1"><span class="mut">AI 추천 뒤집기</span><b>2</b></div></div></div></figure>
+        <figure><figcaption>제안</figcaption><div class="mock new"><div class="bar">데스크<i>홈</i></div><div style="padding:6px 10px"><div class="t">오늘 <em>판단할 일</em> 5건</div></div>
+          <div style="display:flex"><div class="box" style="flex:1"><span class="mut">승인 대기</span><div class="t">3</div><span class="btn" style="font-size:8px">검토 시작</span></div><div class="box" style="flex:1"><span class="mut">AI와 다르게 판단</span><div class="t">2</div><span class="mut">사람이 AI 추천을 바꾼 수</span></div></div></div></figure>
+      </div>
+    </div>
+
+    <div class="page">
+      <div>
+        <span class="route">/login · /start</span> <span class="pill p-lo">하</span>
+        <h3 style="margin-top:6px">기준에 가장 가깝다. 흐름만 다듬기</h3>
+        <ul>
+          <li><strong>구직자</strong> 소셜 로그인 전부 "준비 중" 비활성, 가입 화면이 안 보임, 역할 선택을 <code>/start</code>와 <code>/login</code>에서 두 번</li>
+          <li><strong>UX</strong> 로그인 상태에서도 <code>/start</code> 노출. body 배경이 #020005라 오버스크롤 시 검정이 비침</li>
+          <li><strong>시안</strong> 안 되는 버튼은 숨기고 "이메일로 가입" 우선. 로그인 사용자는 역할 홈으로 바로. 구직자·기업 카드에 스팟 일러스트(E6·E7). "스카우트 건" → "채용 의뢰"</li>
+        </ul>
+      </div>
+      <div class="ba">
+        <figure><figcaption>현재</figcaption><div class="mock new" style="background:#fff"><div style="padding:10px"><div class="t">어느 문으로<br><em>들어오시나요?</em></div></div><div style="display:flex"><div class="box" style="flex:1"><b>구직자</b><div><span class="chip" style="opacity:.4">Google 준비 중</span></div></div><div class="box" style="flex:1;background:var(--ink);color:#fff"><b>기업</b></div></div></div></figure>
+        <figure><figcaption>제안</figcaption><div class="mock new" style="background:#fff"><div style="padding:10px"><div class="t">어느 문으로<br><em>들어오시나요?</em></div></div><div style="display:flex"><div class="box" style="flex:1;position:relative"><b>구직자</b><div class="h" style="font-size:12px">작업물로 보여 주기</div><span class="btn">이메일로 시작</span></div><div class="box" style="flex:1;background:var(--cobalt);color:#fff;border-color:var(--cobalt)"><b>기업</b><div class="h" style="color:var(--sun);font-size:12px">JD 한 장이면 돼요</div><span class="btn o">데스크 열기</span></div></div></div></figure>
+      </div>
+    </div>
+
+    <div class="page">
+      <div>
+        <span class="route">/demo/* · 임시 시안 4장</span> <span class="pill p-mid">중</span>
+        <h3 style="margin-top:6px">프로덕션 라우트에 남은 고아 페이지</h3>
+        <ul>
+          <li>베이지 세리프 영문, 민트 유리, Linear풍 사이드바로 각각 다른 세계. 어디서도 링크되지 않지만 URL로 접근 가능</li>
+          <li><code>/desk/candidates</code>가 demo 공용 컴포넌트를 가져다 써서 #3B6FFE·기본 폰트가 새는 원인</li>
+          <li><strong>시안</strong> 쓸 컴포넌트만 제품 토큰으로 이식한 뒤 라우트 삭제. 당장은 개발 환경 가드 + <code>noindex</code></li>
+        </ul>
+      </div>
+      <div class="ba">
+        <figure><figcaption>현재</figcaption><div class="mock" style="background:#F2EEE6;color:#2a2620;border:1px solid #ddd5c7;padding:14px"><div style="font-family:Georgia,serif;font-size:20px;line-height:1">Quiet glass.<br>Loud talent.</div></div></figure>
+        <figure><figcaption>제안</figcaption><div class="mock new" style="display:grid;place-items:center;text-align:center"><div><div class="t">404</div><span class="h">이 길은 정리됐어요</span><div style="margin-top:6px"><span class="btn">홈으로</span></div></div></div></figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tint">
+  <div class="wrap">
+    <span class="label">그래픽 보충</span>
+    <h2>전 사이트용 <em>색</em>과 <em>그림</em></h2>
+    <p class="sub">메인 팔레트를 상태색까지 확장했습니다. 대비는 WCAG 상대휘도로 계산했고 모두 AA(4.5) 이상입니다. crimson·amber 직군색은 빨강이 오류로 읽혀 폐기합니다.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>토큰</th><th>값</th><th>대비</th><th>용도</th></tr></thead>
+      <tbody>
+        <tr><td><span class="sw" style="background:#F5F9FF"></span>--bg</td><td>#F5F9FF</td><td>-</td><td>페이지 바탕 (회색 #F6F7F9 대체)</td></tr>
+        <tr><td><span class="sw" style="background:#0B1C45"></span>--text</td><td>#0B1C45</td><td>16.6</td><td>제목·본문</td></tr>
+        <tr><td><span class="sw" style="background:#44527A"></span>--text-2</td><td>#44527A</td><td>7.7</td><td>보조 글</td></tr>
+        <tr><td><span class="sw" style="background:#5C6A8E"></span>--text-3 <span class="pill p-lo">신설</span></td><td>#5C6A8E</td><td>5.4</td><td>캡션 (슬레이트 #94A3B8 대체, 대비 미달이었음)</td></tr>
+        <tr><td><span class="sw" style="background:#1F4FD6"></span>--primary</td><td>#1F4FD6</td><td>6.7</td><td>CTA, 링크, 개발자 직군</td></tr>
+        <tr><td><span class="sw" style="background:#4AA3F2"></span>--cerulean</td><td>#4AA3F2</td><td>2.7</td><td>텍스트 금지. 장식·차트 선·포커스 링</td></tr>
+        <tr><td><span class="sw" style="background:#7A3FB0"></span>디자이너 직군</td><td>#7A3FB0 / #EFE4FA</td><td>5.4</td><td>amber 대체</td></tr>
+        <tr><td><span class="sw" style="background:#0B6B45"></span>잘 맞음 ●</td><td>#0B6B45 / #DDF3E7</td><td>5.6</td><td>strong_fit, 성공</td></tr>
+        <tr><td><span class="sw" style="background:#7A4E00"></span>부분 ◐</td><td>#7A4E00 / #FFEFC2</td><td>6.3</td><td>partial, 경고 (sun과 같은 계열)</td></tr>
+        <tr><td><span class="sw" style="background:#44527A"></span>덜 맞음 ○</td><td>#44527A / #E8EDF5</td><td>6.5</td><td>weak. 빨강을 쓰지 않아 낙인 느낌 줄임</td></tr>
+        <tr><td><span class="sw" style="background:#A82A23"></span>위험</td><td>#A82A23 / #FDE3E0</td><td>5.7</td><td>오류·삭제만</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 style="margin-top:36px">필요한 일러스트</h3>
+    <p class="sub" style="margin-top:6px">메인의 손그림 군중(<code>public/images/peeps/all-peeps.png</code>)과 같은 2px ink 선, cobalt·sky·sun 소량 채색, 손글씨 캡션 한 줄. 현재 public에는 이 한 장 외 일러스트가 없습니다. 굵게 표시한 넷이 1순위입니다.</p>
+    <div class="grid3">
+      <div class="card"><b>E1 · 비로그인</b><p>열쇠를 든 인물이 문 앞에, 문틈으로 하늘빛. "로그인하면 열려요". <code>/studio</code> <code>/desk</code> <code>/review</code> 연동</p></div>
+      <div class="card"><b>E2 · 결과 없음</b><p>돋보기로 빈 서랍을 들여다봄. "조건을 조금 풀어볼까요". discover, 인재풀, 추천, 승인함</p></div>
+      <div class="card"><b>E3 · 로딩</b><p>해를 향해 연을 날리는 인물, 연 꼬리만 천천히. 스켈레톤과 함께, reduced-motion 시 정지</p></div>
+      <div class="card"><b>E9 · 아바타 6~8종</b><p>군중에서 얼굴만 원형 크롭, 배경 4색 로테이션, candidateId 해시로 고정. 블러 이미지 대체</p></div>
+      <div class="card"><b>E4 · 404 / E5 · 오류</b><p>지도를 거꾸로 든 인물 / 우산 쓴 인물. <code>not-found.tsx</code>, <code>error.tsx</code></p></div>
+      <div class="card"><b>E6 · 구직자 / E7 · 기업 스팟</b><p>노트북 앞 일기 쓰는 인물 / JD에 도장 찍는 인물(메인의 "리포트 ✓" 도장 재사용). <code>/start</code> <code>/login</code></p></div>
+      <div class="card"><b>E8 · 승인 완료</b><p>도장 찍힌 서류 위로 종이비행기. 승인 후 토스트</p></div>
+      <div class="card"><b>아이콘</b><p>이미 쓰는 lucide 유지, stroke 1.75·round cap, 16/20/24 세 크기, 기본 ink-2. 이모지 15개는 lucide로 교체(<code>StudioCards</code> 우선)</p></div>
+      <div class="card"><b>다크 모드</b><p>1차는 라이트 단일. 토큰만 다크 대응 구조로 두고, 2차에 오래 보는 <code>/desk</code>만 OS 설정 따라 제공. 메인·로그인은 라이트 고정</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">정보 구조</span>
+    <h2>메뉴를 <em>역할별 한 곳</em>으로</h2>
+    <p class="sub">기업은 "후보 찾기" 3곳, "JD 매칭" 4곳, "승인" 3곳을 오갑니다. 프로젝트 루프(스카우트 건 → 후보 → 승인 → 제안) 그대로 데스크 하나에 모읍니다. 구 경로는 리다이렉트로 남깁니다.</p>
+    <div class="grid2">
+<div class="tree">구직자 · /studio (라우트 탭)
+├ /studio            홈 · 다음 할 일 · 새 추천
+├ /studio/log        기록하기
+├ /studio/cards      내 카드
+├ /studio/profile    프로필 + 기업에게 보이는 화면
+├ /studio/matches    받은 추천 · 제안
+└ /studio/privacy    동의 · 회사 숨기기
+/talent/[id]         공개 포트폴리오</div>
+<div class="tree">기업 · /desk (DeskTabs)
+├ /desk              홈 · 오늘 판단할 일
+├ /desk/cases        스카우트 건  ← /sourcing
+├ /desk/review       승인함      ← /review + /sourcing/review
+├ /desk/candidates   인재풀      ← /discover 기업 기능
+├ /desk/offers       제안 · 응답
+└ /desk/settings     연동        ← /settings/integrations
+/brief/[id]          Slack 공유용 브리프</div>
+    </div>
+  </div>
+</section>
+
+<section class="tint">
+  <div class="wrap">
+    <span class="label">다음 루프</span>
+    <h2>적용 순서</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>순서</th><th>작업</th><th>끝났는지 확인하는 법</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>P0-1 전역 토큰 + P0-2 공용 컴포넌트</td><td>390px 실측에서 body 배경 #020005·DM Sans·Noto Sans KR·#3B6FFE 0건</td></tr>
+        <tr><td>2</td><td>다크 6페이지 라이트 이식 (talent → discover → sourcing → settings → brief)</td><td>스크린샷 비교, 흰 헤더-검정 본문 단절 0곳</td></tr>
+        <tr><td>3</td><td>P0-3 헤더 + P0-5 라벨 사전</td><td>모바일 햄버거에 역할 메뉴 표시, 화면 내 영문 키·SQL 번호 grep 0건</td></tr>
+        <tr><td>4</td><td>P0-4 상태 화면 + 일러스트 E1·E2·E3·E9</td><td>"불러오는 중" 텍스트 0건, 비로그인 진입 시 빈 상태 화면</td></tr>
+        <tr><td>5</td><td>IA 통합 (스튜디오 레이아웃, 데스크 하위 이전, demo 정리)</td><td>같은 일을 하는 화면 1곳씩, 구 경로 리다이렉트</td></tr>
+        <tr><td>6</td><td>P0-6 접근성 일괄</td><td>12px 미만 글씨 0, 44px 미만 탭 타깃 0, 모든 페이지 H1 1개</td></tr>
+      </tbody>
+    </table></div>
+    <p class="sub" style="margin-top:20px">각 단계 뒤 같은 5인 리뷰를 다시 돌리고, 새 문제가 0이 될 때까지 반복합니다. <code>DESIGN.md</code>도 이 토큰으로 다시 써야 다음 작업자가 구 다크 사양을 따라가지 않습니다.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    트렌드 출처: <a href="https://www.netguru.com/blog/top-web-design-trends">Netguru</a> · <a href="https://trends.daisyui.com/ui-design-trends-2026/">daisyUI</a> · <a href="https://pixelplex.io/blog/ui-ux-trends/">PixelPlex</a> · <a href="https://www.thedigitalbunch.com/blog/uxui-design-trends-in-2026-what-is-actually-changing-and-why-it-matters">The Digital Bunch</a> · <a href="https://reallygooddesigns.com/web-design-trends-2026/">Really Good Designs</a> · <a href="https://enter.converge.ai/page/ko-KR/blog/web-design-trends">Converge</a> · <a href="https://www.figma.com/ko-kr/resource-library/web-design-trends/">Figma</a>. 실측은 localhost:3000, 390px, 비로그인 기준입니다.
+  </div>
+</footer>

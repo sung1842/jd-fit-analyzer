@@ -1,0 +1,90 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&display=swap">
+<link rel="stylesheet" href="_base.css">
+<title>talentfolio 로그인 · LG3 두 개의 문</title>
+<style>
+body{background:var(--paper)}
+.wrap{max-width:1120px;margin:0 auto;padding:56px 24px 72px}
+.top{text-align:left;margin-bottom:32px}
+.top h1{font-family:var(--f-disp);font-size:clamp(30px,4.4vw,56px);font-weight:700;letter-spacing:-.035em;line-height:1.12}
+.top p{margin-top:12px;color:var(--ink-2);font-size:16px}
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.door{position:relative;border-radius:24px;border:1px solid var(--line);background:#fff;overflow:hidden;transition:flex .5s,box-shadow .3s,border-color .3s}
+.door.company{background:var(--ink);color:#fff;border-color:var(--ink)}
+.dh{font:inherit}
+.door-head{width:100%;text-align:left;border:0;background:transparent;color:inherit;font:inherit;padding:28px 28px 24px;cursor:pointer;display:grid;gap:8px}
+.door-head .k{font-size:12px;letter-spacing:.16em;font-weight:600;color:var(--cobalt)}
+.company .door-head .k{color:var(--sun)}
+.door-head .t{font-family:var(--f-disp);font-size:26px;font-weight:700;letter-spacing:-.02em}
+.door-head .d{font-size:15px;line-height:1.55;color:var(--ink-2)}
+.company .door-head .d{color:#B9C6E6}
+.door-head .go{margin-top:6px;font-weight:600;font-size:14px;color:var(--cobalt)}
+.company .door-head .go{color:var(--sun)}
+.door[data-open=true] .go{display:none}
+.door-body{padding:0 28px 28px}
+.door-body[hidden]{display:none}
+.company .input{background:#13285C;border-color:#2A4486;color:#fff}
+.company .input::placeholder{color:#8496C4}
+.company .field label,.company .row,.company .row a{color:#E6ECFA}
+.company .btn{background:var(--sun);color:var(--ink)}
+.company .err{color:#FFB4A6}.company .input[aria-invalid=true]{border-color:#FFB4A6}
+.company .alert{background:#3A1F2A;color:#FFC9BE}
+.company .pw button{color:#B9C6E6}
+.company :focus-visible{outline-color:var(--sun)}
+.company .input:focus{border-color:var(--sun);box-shadow:0 0 0 4px rgba(255,231,163,.2)}
+.door[data-open=false]{opacity:.82}
+.door[data-open=false]:hover{opacity:1}
+.door[data-open=true]{box-shadow:0 30px 60px -40px rgba(11,28,69,.5)}
+.door-body{animation:open .45s var(--ease)}@keyframes open{from{opacity:0;transform:translateY(-8px)}}
+.jump{display:none;margin:-12px 0 16px}.jump button{border:0;background:none;color:var(--cobalt);font:inherit;font-weight:600;font-size:14px;padding:8px 0;cursor:pointer}
+@media (max-width:760px){.jump{display:block}}
+.below{max-width:520px;margin:28px auto 0}
+.foot2{text-align:center;font-size:14px;color:var(--ink-2);margin-top:18px}
+@media (max-width:760px){.wrap{padding:32px 16px 56px}.doors{grid-template-columns:1fr}.door-head{padding:22px 20px 18px}.door-body{padding:0 20px 22px}.door-head .t{font-size:22px}}
+</style></head><body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="nav"><a class="logo" href="#" aria-label="talentfolio 홈"><span class="logo-type">talent<b>folio</b><svg class="logo-swash" viewBox="0 0 80 9" preserveAspectRatio="none" aria-hidden="true"><path d="M2 6 C 22 1, 48 1, 78 5" fill="none" stroke="#4AA3F2" stroke-width="2.2" stroke-linecap="round"/></svg></span></a><a class="nav-help" href="#">도움이 필요하신가요?</a></header>
+<main id="main" class="wrap">
+  <div class="top"><h1>어느 문으로<br><span class="acc">들어오시나요?</span></h1><p>입장에 맞는 화면으로 바로 안내해 드려요. 로그인 뒤에도 메뉴에서 입장을 바꿀 수 있어요.</p></div>
+  <p class="jump"><button type="button" id="jump">기업 · 헤드헌터이신가요? <span aria-hidden="true">↓</span></button></p>
+  <div class="doors">
+    <section class="door seeker" data-open="true" aria-labelledby="h-seeker">
+      <h2 class="dh"><button class="door-head" type="button" aria-expanded="true" aria-controls="b-seeker"><span class="k">FOR TALENT</span><span class="t" id="h-seeker">구직자로 로그인</span><span class="d">포트폴리오를 관리하고, 내게 온 제안과 핏 리포트를 확인합니다.</span><span class="go">이 문으로 →</span></button></h2>
+      <div class="door-body" id="b-seeker">
+        <form data-demo novalidate aria-label="구직자 로그인">
+          <div class="alert" role="alert" tabindex="-1"><span aria-hidden="true">!</span><span>시안 데모: 이메일 또는 비밀번호가 올바르지 않습니다.</span></div>
+  <div class="field"><label for="email">이메일</label><input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" data-v="email" aria-describedby="email-err" aria-invalid="false" placeholder="name@example.com"><p class="err" id="email-err" aria-live="polite"></p></div>
+  <div class="field"><label for="pw">비밀번호</label><div class="pw"><input class="input" id="pw" name="password" type="password" autocomplete="current-password" data-v="pw" aria-describedby="pw-err pw-hint" aria-invalid="false"><button type="button" aria-controls="pw" aria-pressed="false">보기</button></div><p class="err" id="pw-err" aria-live="polite"></p><span class="sr-only" id="pw-hint">6자 이상</span></div>
+  <div class="row"><label class="check"><input type="checkbox" name="remember"> 로그인 상태 유지</label><a href="#">비밀번호 찾기</a></div>
+          <button class="btn" type="submit">구직자로 로그인 <i aria-hidden="true">→</i></button>
+        </form>
+        <div class="or">또는</div><div class="social"><button class="btn ghost" type="button">Google로 계속 <span class="tag">미연결</span></button><button class="btn ghost" type="button">카카오로 계속 <span class="tag">미연결</span></button></div>
+      </div>
+    </section>
+    <section class="door company" data-open="false" aria-labelledby="h-company">
+      <h2 class="dh"><button class="door-head" type="button" aria-expanded="false" aria-controls="b-company"><span class="k">FOR TEAMS</span><span class="t" id="h-company">기업 · 헤드헌터로 로그인</span><span class="d">스카우트 건을 열고, AI가 찾은 후보를 검토·승인합니다.</span><span class="go">이 문으로 →</span></button></h2>
+      <div class="door-body" id="b-company" hidden>
+        <form data-demo novalidate aria-label="기업 로그인">
+          <div class="alert" role="alert" tabindex="-1"><span aria-hidden="true">!</span><span>시안 데모: 이메일 또는 비밀번호가 올바르지 않습니다.</span></div>
+  <div class="field"><label for="c-email">이메일</label><input class="input" id="c-email" name="email" type="email" autocomplete="email" inputmode="email" data-v="email" aria-describedby="c-email-err" aria-invalid="false" placeholder="name@company.com"><p class="err" id="c-email-err" aria-live="polite"></p></div>
+  <div class="field"><label for="c-pw">비밀번호</label><div class="pw"><input class="input" id="c-pw" name="password" type="password" autocomplete="current-password" data-v="pw" aria-describedby="c-pw-err c-pw-hint" aria-invalid="false"><button type="button" aria-controls="c-pw" aria-pressed="false">보기</button></div><p class="err" id="c-pw-err" aria-live="polite"></p><span class="sr-only" id="c-pw-hint">6자 이상</span></div>
+  <div class="row"><label class="check"><input type="checkbox" name="remember"> 로그인 상태 유지</label><a href="#">비밀번호 찾기</a></div>
+          <button class="btn" type="submit">기업 계정으로 로그인 <i aria-hidden="true">→</i></button>
+        </form>
+        <div class="or" style="color:#8496C4">또는</div>
+        <button class="btn ghost" type="button" style="background:transparent;color:#fff;border-color:#2A4486">회사 SSO로 계속 <span class="tag" style="color:#B9C6E6;border-color:#2A4486">미연결</span></button>
+      </div>
+    </section>
+  </div>
+  <p class="foot2">계정이 없나요? <a href="#">구직자 회원가입</a> · <a href="#">기업 도입 문의</a></p>
+</main>
+<script src="_form.js"></script>
+<script>
+const doors=[...document.querySelectorAll('.door')];
+doors.forEach(d=>d.querySelector('.door-head').addEventListener('click',()=>{doors.forEach(x=>{const on=x===d;x.dataset.open=on;x.querySelector('.door-head').setAttribute('aria-expanded',on);x.querySelector('.door-body').hidden=!on});
+  d.querySelector('input').focus({preventScroll:matchMedia('(min-width:761px)').matches})}));
+document.getElementById('jump').addEventListener('click',()=>{const h=document.querySelector('.company .door-head');h.click();h.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
+</script></body></html>

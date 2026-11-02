@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talentfolio 제목 폰트 후보</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@900&family=Noto+Serif+KR:wght@700&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@500;700&family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/variable/woff2/SUIT-Variable.css">
+<style>
+@font-face{font-family:'Paperlogy';font-weight:800;src:url(https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2) format('woff2')}
+:root{--ink:#0B1C45;--ink-2:#44527A;--cobalt:#1F4FD6;--cerulean:#4AA3F2;--mist:#DCEBFF;--line:#D3E3F7;--sun:#FFE7A3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#F5F9FF;color:var(--ink);font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;padding:48px 24px 80px}
+.wrap{max-width:1180px;margin:0 auto}
+header h1{font-size:28px;font-weight:800;letter-spacing:-.03em}
+header p{color:var(--ink-2);margin-top:8px;line-height:1.6;max-width:760px}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:24px;margin-top:22px;overflow:hidden}
+.meta{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;padding:18px 24px;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink-2)}
+.meta b{font-size:16px;color:var(--ink)}
+.tag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cobalt);background:var(--mist);padding:3px 9px;border-radius:99px}
+.tag.now{background:#eee;color:#666}
+.demo{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;padding:30px 24px 32px;background:linear-gradient(180deg,var(--mist),#fff 70%)}
+.hero{font-size:clamp(40px,6vw,82px);line-height:1.02;letter-spacing:-.03em}
+.hero em{font-style:normal;color:var(--cobalt)}
+.side h3{font-size:clamp(24px,2.6vw,34px);line-height:1.2;letter-spacing:-.02em}
+.side h3 i{color:var(--cobalt)}
+.side p{margin-top:12px;font-size:14px;line-height:1.65;color:var(--ink-2)}
+@media (max-width:760px){.demo{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>제목 폰트 후보 — 현재 vs 추천 3안</h1>
+  <p>어워드 수상작 쪽 흐름은 ① Neue Montreal·Aeonik 같은 <b>네오그로테스크</b>(군더더기 없는 산세리프, 자간 좁게)와 ② Editorial New·Instrument Serif 같은 <b>에디토리얼 세리프</b>(얇고 우아한 명조, 이탤릭 포인트) 조합이 강세입니다. 본문은 지금처럼 Pretendard 유지 기준.</p>
+</header>
+
+<section class="card">
+  <div class="meta"><span class="tag now">현재</span><b>Hahmlet 900 · Noto Serif KR</b><span>굵은 붓 세리프 → 옛 신문 제목 같은 인상 (촌스러움의 원인)</span></div>
+  <div class="demo">
+    <h2 class="hero" style="font-family:'Hahmlet';font-weight:900">오늘 아침,<br>모두의 <em>출발</em></h2>
+    <div class="side"><h3 style="font-family:'Noto Serif KR';font-weight:700">어느 쪽으로 <i>걸어가시나요?</i></h3><p>지원자는 작업물로, 헤드헌터는 AI 추천으로 만납니다.</p></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="meta"><span class="tag">추천 A · 그로테스크</span><b>Wanted Sans 800</b><span>+ 영문 Inter Tight · 트렌드: Neue Montreal / Aeonik 계열. 깔끔·현대적, 무료(OFL), 가변 폰트</span></div>
+  <div class="demo">
+    <h2 class="hero" style="font-family:'Wanted Sans Variable';font-weight:800;letter-spacing:-.05em">오늘 아침,<br>모두의 <em>출발</em></h2>
+    <div class="side"><h3 style="font-family:'Wanted Sans Variable';font-weight:700;letter-spacing:-.04em">어느 쪽으로 <i style="font-style:normal">걸어가시나요?</i></h3><p>지원자는 작업물로, 헤드헌터는 AI 추천으로 만납니다.</p></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="meta"><span class="tag">추천 B · 에디토리얼 세리프</span><b>마루 부리 (MaruBuri)</b><span>+ 영문 Instrument Serif Italic · 트렌드: Editorial New / Instrument Serif 계열. 얇고 우아한 명조, 무료(네이버)</span></div>
+  <div class="demo">
+    <h2 class="hero" style="font-family:'MaruBuri';font-weight:600;letter-spacing:-.04em">오늘 아침,<br>모두의 <em style="font-family:'Instrument Serif','MaruBuri';font-style:italic">출발</em></h2>
+    <div class="side"><h3 style="font-family:'MaruBuri';font-weight:600;letter-spacing:-.03em">어느 쪽으로 <i style="font-family:'Instrument Serif','MaruBuri';font-style:italic">걸어가시나요?</i></h3><p>지원자는 작업물로, 헤드헌터는 AI 추천으로 만납니다.</p></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="meta"><span class="tag">추천 C · 믹스 (가장 트렌디)</span><b>제목 Wanted Sans 800 + 강조 마루 부리</b><span>그로테스크 본체에 세리프 한두 단어로 포인트 — 수상작에서 가장 흔한 조합</span></div>
+  <div class="demo">
+    <h2 class="hero" style="font-family:'Wanted Sans Variable';font-weight:800;letter-spacing:-.05em">오늘 아침,<br>모두의 <em style="font-family:'MaruBuri';font-weight:600;letter-spacing:-.03em">출발</em></h2>
+    <div class="side"><h3 style="font-family:'Wanted Sans Variable';font-weight:700;letter-spacing:-.04em">어느 쪽으로 <i style="font-family:'MaruBuri';font-style:normal;font-weight:600">걸어가시나요?</i></h3><p>지원자는 작업물로, 헤드헌터는 AI 추천으로 만납니다.</p></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="meta"><span class="tag">참고 · 디스플레이</span><b>Paperlogy 800</b><span>트렌드: Clash Display 계열의 굵고 단단한 포스터형. 임팩트는 크지만 고급스러움은 A·B보다 덜함</span></div>
+  <div class="demo">
+    <h2 class="hero" style="font-family:'Paperlogy';font-weight:800;letter-spacing:-.04em">오늘 아침,<br>모두의 <em>출발</em></h2>
+    <div class="side"><h3 style="font-family:'Paperlogy';font-weight:800;letter-spacing:-.03em">어느 쪽으로 <i style="font-style:normal">걸어가시나요?</i></h3><p>지원자는 작업물로, 헤드헌터는 AI 추천으로 만납니다.</p></div>
+  </div>
+</section>
+</div>
+</body>
+</html>

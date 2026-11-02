@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desk 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&display=swap">
+<style>
+:root{--ink:#0B1C45;--ink2:#44527A;--mute:#7A86A6;--line:#E2E8F2;--line2:#EEF2F8;--paper:#F7F9FC;--white:#fff;--blue:#1F4FD6;--blue-s:#EAF0FD;--sky:#4AA3F2;--sun:#FFE7A3;--green:#1F8A5B;--green-s:#E6F4EC;--red:#B42318;--red-s:#FDECEA;--amber:#9A6700;--amber-s:#FFF4D6}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;color:var(--ink);background:var(--paper);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+a{color:inherit}
+.top{position:sticky;top:0;z-index:20;height:60px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:24px;padding:0 24px}
+.logo{font-family:Lora,serif;font-style:italic;font-weight:500;font-size:22px;letter-spacing:-.03em}
+.logo b{font-weight:700;background:linear-gradient(100deg,#1F4FD6,#4AA3F2);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tabs{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none}
+.tabs a{padding:8px 12px;border-radius:8px;text-decoration:none;color:var(--ink2);font-size:13.5px;white-space:nowrap}
+.tabs a[aria-current]{background:var(--blue-s);color:var(--blue);font-weight:700}
+.badge{display:inline-block;min-width:18px;padding:0 6px;margin-left:4px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;line-height:18px;text-align:center;font-weight:700}
+.av{width:32px;height:32px;border-radius:50%;background:var(--sun);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+main{max-width:1200px;margin:0 auto;padding:28px 24px 80px}
+.hello{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.eyebrow{font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.04em}
+h1{font-size:26px;letter-spacing:-.02em;margin-top:4px}
+h1 em{font-style:normal;color:var(--blue)}
+.sub{color:var(--ink2);font-size:13.5px;margin-top:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;background:var(--white);padding:3px}
+.seg button{padding:6px 12px;border-radius:7px;font-size:13px;color:var(--ink2)}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff;font-weight:600}
+.ctrls{display:flex;gap:8px;flex-wrap:wrap}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi{display:block;text-align:left;text-decoration:none;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px;transition:border-color .15s,transform .15s}
+.kpi:hover,.kpi:focus-visible{border-color:var(--blue);transform:translateY(-1px);outline:none}
+.kpi .k{font-size:12.5px;color:var(--ink2);font-weight:600}
+.kpi .v{font-size:28px;font-weight:800;letter-spacing:-.03em;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:14px;font-weight:600;color:var(--ink2);margin-left:2px}
+.kpi .d{font-size:12px;color:var(--mute)}
+.up{color:var(--green);font-weight:700}.dn{color:var(--red);font-weight:700}
+.kpi.alert{border-color:#F3C6C0;background:linear-gradient(var(--white),var(--red-s))}
+.split{display:flex;gap:10px;font-size:12px;color:var(--ink2);margin-top:4px}
+.soon{display:inline-block;font-size:10.5px;font-weight:700;color:var(--amber);background:var(--amber-s);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+/* panels */
+.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;align-items:start}
+.col{display:grid;gap:16px}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:14px}
+.ph h2{font-size:15px;letter-spacing:-.01em}
+.ph a{font-size:12.5px;color:var(--blue);text-decoration:none}
+/* funnel */
+.funnel{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;align-items:end}
+.st{display:grid;gap:6px;text-align:center;text-decoration:none}
+.bar{border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,var(--sky),var(--blue));min-height:8px}
+.st .n{font-weight:800;font-size:16px;font-variant-numeric:tabular-nums}
+.st .l{font-size:11.5px;color:var(--ink2)}
+.st .r{font-size:11px;color:var(--mute)}
+.st.leak .r{color:var(--red);font-weight:700}
+.st.leak .bar{background:linear-gradient(180deg,#F59E8B,var(--red))}
+.note{font-size:12.5px;color:var(--ink2);background:var(--paper);border-radius:10px;padding:10px 12px;margin-top:14px}
+/* cases */
+.cases{display:grid;gap:10px}
+.case{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 14px;border:1px solid var(--line2);border-radius:12px;text-decoration:none}
+.case:hover{border-color:var(--blue)}
+.case .t{font-weight:700;font-size:14px}
+.case .m{font-size:12px;color:var(--mute);margin-top:2px}
+.dday{font-size:11px;font-weight:700;border-radius:5px;padding:1px 6px;margin-left:6px;background:var(--line2);color:var(--ink2)}
+.dday.hot{background:var(--red-s);color:var(--red)}
+.mini{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--line2)}
+.mini i{display:block}
+.mini i:nth-child(1){background:#C9D8FB}.mini i:nth-child(2){background:#8FB0F5}.mini i:nth-child(3){background:var(--blue)}.mini i:nth-child(4){background:var(--green)}
+.mini-l{font-size:11px;color:var(--mute);margin-top:4px}
+.pill{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.pill.wait{background:var(--red-s);color:var(--red)}
+.pill.ok{background:var(--green-s);color:var(--green)}
+.diff{font-size:11px;color:var(--ink2)}
+/* feed */
+.feed{list-style:none;padding:0;display:grid;gap:2px}
+.feed li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:9px 4px;border-bottom:1px solid var(--line2)}
+.feed li:last-child{border:0}
+.ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:13px;font-weight:800}
+.ic.ag{background:var(--blue-s);color:var(--blue)}.ic.re{background:var(--green-s);color:var(--green)}.ic.tm{background:var(--sun);color:var(--ink)}.ic.wd{background:var(--red-s);color:var(--red)}
+.feed p{font-size:13px}
+.feed time{font-size:11.5px;color:var(--mute)}
+.fl{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink2)}
+.chip[aria-pressed=true]{border-color:var(--ink);color:var(--ink);font-weight:700}
+/* supply */
+.sd{display:grid;gap:10px}
+.sd-row{display:grid;grid-template-columns:72px minmax(0,1fr) 64px;gap:8px;align-items:center;font-size:12.5px}
+.sd-bars{display:grid;gap:3px}
+.sd-bars i{display:block;height:7px;border-radius:4px}
+.sd-bars i.s{background:var(--blue)}.sd-bars i.q{background:#F2A65A}
+.lvl{font-size:11px;font-weight:700;text-align:right}
+.legend{display:flex;gap:12px;font-size:11.5px;color:var(--ink2);margin-bottom:10px}
+.legend span::before{content:"";display:inline-block;width:10px;height:7px;border-radius:3px;margin-right:4px;vertical-align:middle}
+.legend .s::before{background:var(--blue)}.legend .q::before{background:#F2A65A}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tags span{font-size:12px;background:var(--line2);border-radius:6px;padding:2px 8px}
+/* quality */
+.q{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qi{background:var(--paper);border-radius:10px;padding:10px 12px}
+.qi .k{font-size:11.5px;color:var(--ink2)}
+.qi .v{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.reasons{margin-top:12px;display:grid;gap:6px;font-size:12.5px}
+.reasons div{display:grid;grid-template-columns:minmax(0,1fr) 90px 24px;gap:8px;align-items:center}
+.reasons b{display:block;height:6px;border-radius:3px;background:var(--ink2)}
+.warn{font-size:12px;color:var(--red);background:var(--red-s);border-radius:8px;padding:8px 10px;margin-top:12px}
+.foot{font-size:12px;color:var(--mute);margin-top:24px;text-align:center}
+@media (max-width:1020px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
+@media (max-width:820px){
+  .top{padding:0 16px;gap:12px}
+  main{padding:20px 16px 60px}
+  .kpis{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px}
+  .kpi{flex:0 0 72%;scroll-snap-align:start}
+  .funnel{grid-template-columns:1fr;gap:8px}
+  .st{grid-template-columns:90px minmax(0,1fr) 44px 48px;text-align:left;align-items:center}
+  .st .bar{height:10px!important;border-radius:4px;order:2}
+  .st .l{order:1}.st .n{order:3;font-size:14px}.st .r{order:4}
+  .case{grid-template-columns:1fr}
+  .q{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="logo">talent<b>folio</b></span>
+  <nav class="tabs" aria-label="데스크 메뉴">
+    <a href="#" aria-current="page">홈</a>
+    <a href="#">스카우트 건</a>
+    <a href="#">후보 검토<span class="badge" aria-label="대기 7건">7</span></a>
+    <a href="#">후보 관리</a>
+    <a href="#">공고</a>
+    <a href="#">설정</a>
+  </nav>
+  <span class="av" aria-label="내 계정">김</span>
+</header>
+
+<main>
+  <section class="hello">
+    <div>
+      <p class="eyebrow">데스크 · 10월 28일 화요일</p>
+      <h1>오늘 판단할 일 <em>9건</em></h1>
+      <p class="sub">에이전트가 밤사이 후보 42명을 찾아 18명을 분석했습니다. 승인 7건, 응답 확인 2건이 남았습니다.</p>
+    </div>
+    <div class="ctrls">
+      <div class="seg" role="group" aria-label="범위">
+        <button aria-pressed="true" data-g="scope">나</button><button aria-pressed="false" data-g="scope">팀</button>
+      </div>
+      <div class="seg" role="group" aria-label="기간">
+        <button aria-pressed="true" data-g="range">7일</button><button aria-pressed="false" data-g="range">30일</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="kpis" aria-label="핵심 지표">
+    <a class="kpi alert" href="#">
+      <div class="k">승인 대기</div>
+      <div class="v">7<small>건</small></div>
+      <div class="d">가장 오래 기다림 <b class="dn">31시간</b> · 48시간 뒤 만료</div>
+    </a>
+    <a class="kpi" href="#">
+      <div class="k">진행 중 스카우트 건<span class="soon">C2</span></div>
+      <div class="v">5<small>건</small></div>
+      <div class="d">지난주 대비 <span class="up">+1</span> · 마감 임박 1</div>
+    </a>
+    <a class="kpi" href="#">
+      <div class="k">첫 제안까지<span class="soon">C2</span></div>
+      <div class="v">2.4<small>일</small></div>
+      <div class="d">중앙값 · 지난주 3.1일 <span class="up">▼0.7</span></div>
+    </a>
+    <a class="kpi" href="#">
+      <div class="k">후보 응답률<span class="soon">D4</span></div>
+      <div class="v">38<small>%</small></div>
+      <div class="split"><span>근거 공유 제안 44%</span><span>일반 29%</span></div>
+    </a>
+    <a class="kpi" href="#">
+      <div class="k">제안 → 면접<span class="soon">D4</span></div>
+      <div class="v">27<small>%</small></div>
+      <div class="d">지난주 대비 <span class="dn">−4%p</span></div>
+    </a>
+  </section>
+
+  <div class="grid">
+    <div class="col">
+      <section class="panel" aria-labelledby="h-funnel">
+        <div class="ph"><h2 id="h-funnel">파이프라인 (최근 7일 · 전체 건)</h2><a href="#">단계별 후보 보기</a></div>
+        <div class="funnel">
+          <a class="st" href="#"><span class="bar" style="height:120px"></span><span class="n">42</span><span class="l">매칭</span><span class="r">—</span></a>
+          <a class="st" href="#"><span class="bar" style="height:52px"></span><span class="n">18</span><span class="l">분석 완료</span><span class="r">43%</span></a>
+          <a class="st" href="#"><span class="bar" style="height:32px"></span><span class="n">11</span><span class="l">승인</span><span class="r">61%</span></a>
+          <a class="st" href="#"><span class="bar" style="height:26px"></span><span class="n">9</span><span class="l">제안 발송</span><span class="r">82%</span></a>
+          <a class="st leak" href="#"><span class="bar" style="height:12px"></span><span class="n">3</span><span class="l">응답</span><span class="r">33%</span></a>
+          <a class="st" href="#"><span class="bar" style="height:8px"></span><span class="n">2</span><span class="l">면접</span><span class="r">67%</span></a>
+        </div>
+        <p class="note"><b>가장 많이 빠지는 단계: 제안 → 응답 (33%)</b>. 근거 카드를 함께 보낸 제안의 응답률이 더 높습니다. 미응답 6명에게 근거를 붙여 다시 보낼 수 있습니다.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="h-cases">
+        <div class="ph"><h2 id="h-cases">스카우트 건 현황</h2><a href="#">새 스카우트 건 +</a></div>
+        <div class="cases">
+          <a class="case" href="#">
+            <div><div class="t">백엔드 시니어 (Node.js)<span class="dday hot">D-3</span></div><div class="m">핀테크 A사 · 담당 김하늘</div></div>
+            <div><div class="mini"><i style="width:40%"></i><i style="width:25%"></i><i style="width:15%"></i><i style="width:5%"></i></div><div class="mini-l">매칭 16 · 분석 10 · 승인 6 · 응답 2</div><div class="diff">채용 난이도 높음 · 후보 34 / 공고 120</div></div>
+            <span class="pill wait">승인 대기 4</span>
+          </a>
+          <a class="case" href="#">
+            <div><div class="t">프로덕트 디자이너<span class="dday">D-12</span></div><div class="m">커머스 B사 · 담당 김하늘</div></div>
+            <div><div class="mini"><i style="width:35%"></i><i style="width:30%"></i><i style="width:20%"></i><i style="width:10%"></i></div><div class="mini-l">매칭 12 · 분석 8 · 승인 4 · 응답 1</div><div class="diff">난이도 보통 · 후보 58 / 공고 64</div></div>
+            <span class="pill wait">승인 대기 2</span>
+          </a>
+          <a class="case" href="#">
+            <div><div class="t">데이터 엔지니어<span class="dday">D-20</span></div><div class="m">물류 C사 · 담당 이준</div></div>
+            <div><div class="mini"><i style="width:30%"></i><i style="width:0%"></i><i style="width:0%"></i><i style="width:0%"></i></div><div class="mini-l">매칭 14 · 분석 중</div><div class="diff">난이도 높음 · 후보 21 / 공고 88</div></div>
+            <span class="pill ok">분석 진행 중</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-q">
+        <div class="ph"><h2 id="h-q">검토 품질</h2><a href="#">거절 사유 전체</a></div>
+        <div class="q">
+          <div class="qi"><div class="k">근거 카드 열람 후 승인<span class="soon">D4</span></div><div class="v">91%</div></div>
+          <div class="qi"><div class="k">검토 시간 중앙값<span class="soon">D4</span></div><div class="v">2분 40초</div></div>
+          <div class="qi"><div class="k">AI 추천 뒤집기율</div><div class="v">18%</div></div>
+          <div class="qi"><div class="k">승인률</div><div class="v">61%</div></div>
+        </div>
+        <div class="reasons" aria-label="거절 사유 분포">
+          <div><span>필수 역량 근거 부족</span><b style="width:90px"></b><span>5</span></div>
+          <div><span>경력 범위 불일치</span><b style="width:54px"></b><span>3</span></div>
+          <div><span>포지션 조건 불일치</span><b style="width:18px"></b><span>1</span></div>
+        </div>
+        <p class="warn">근거 카드를 열지 않고 승인한 건이 1건 있습니다. 사람의 판단이 실질적이어야 자동화된 결정으로 보지 않습니다 (개인정보보호법 37조의2).</p>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="panel" aria-labelledby="h-feed">
+        <div class="ph"><h2 id="h-feed">소식</h2><a href="#">모두 보기</a></div>
+        <div class="fl" role="group" aria-label="소식 필터">
+          <button class="chip" aria-pressed="true" data-f="all">전체</button>
+          <button class="chip" aria-pressed="false" data-f="ag">에이전트</button>
+          <button class="chip" aria-pressed="false" data-f="re">후보 응답</button>
+          <button class="chip" aria-pressed="false" data-f="tm">팀</button>
+        </div>
+        <ul class="feed">
+          <li data-k="re"><span class="ic re">↩</span><div><p><b>박서연</b>님이 백엔드 시니어 제안에 <b>관심 있음</b>으로 답했습니다.</p><time>12분 전</time></div></li>
+          <li data-k="ag"><span class="ic ag">AI</span><div><p>에이전트가 데이터 엔지니어 건에서 새 후보 <b>14명</b>을 찾았습니다. 분석 중.</p><time>1시간 전</time></div></li>
+          <li data-k="tm"><span class="ic tm">이</span><div><p><b>이준</b>님이 정우진 후보를 <b>거절</b>했습니다 · 경력 범위 불일치</p><time>3시간 전</time></div></li>
+          <li data-k="ag"><span class="ic ag">AI</span><div><p>프로덕트 디자이너 건 분석 <b>8명 완료</b>. 근거 충분 3 · 확인 필요 5.</p><time>어제 23:10</time></div></li>
+          <li data-k="re"><span class="ic wd">−</span><div><p>승인한 후보 1명이 근거 카드 1장의 <b>공개를 철회</b>했습니다.</p><time>어제 18:42</time></div></li>
+          <li data-k="tm"><span class="ic tm">!</span><div><p>백엔드 시니어 건 마감까지 <b>3일</b> 남았습니다.</p><time>오늘 09:00</time></div></li>
+        </ul>
+      </section>
+
+      <section class="panel" aria-labelledby="h-sd">
+        <div class="ph"><h2 id="h-sd">인재풀 공급·수요</h2><a href="#">후보 탐색</a></div>
+        <div class="legend"><span class="s">공개 후보</span><span class="q">시장 공고</span></div>
+        <div class="sd">
+          <div class="sd-row"><span>백엔드</span><span class="sd-bars"><i class="s" style="width:28%"></i><i class="q" style="width:100%"></i></span><span class="lvl dn">어려움</span></div>
+          <div class="sd-row"><span>프론트엔드</span><span class="sd-bars"><i class="s" style="width:46%"></i><i class="q" style="width:70%"></i></span><span class="lvl">보통</span></div>
+          <div class="sd-row"><span>디자이너</span><span class="sd-bars"><i class="s" style="width:52%"></i><i class="q" style="width:54%"></i></span><span class="lvl up">수월</span></div>
+          <div class="sd-row"><span>데이터</span><span class="sd-bars"><i class="s" style="width:18%"></i><i class="q" style="width:74%"></i></span><span class="lvl dn">어려움</span></div>
+        </div>
+        <p class="sub" style="font-size:12px;margin-top:12px">공고에서 많이 요구하지만 공개 근거 카드가 적은 역량</p>
+        <div class="tags"><span>Kafka</span><span>대용량 트래픽</span><span>Kubernetes</span><span>디자인 시스템</span></div>
+      </section>
+    </div>
+  </div>
+
+  <p class="foot">시안 · 더미 수치. <span class="soon">C2/D4</span> 표시는 데이터가 아직 없어 이후 단계에서 채울 지표입니다. 평균 점수·후보 순위표는 일부러 넣지 않았습니다.</p>
+</main>
+<script>
+document.querySelectorAll('.seg').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))}));
+document.querySelector('.fl').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('.fl button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  document.querySelectorAll('.feed li').forEach(li=>{li.hidden=b.dataset.f!=='all'&&li.dataset.k!==b.dataset.f})});
+</script>
+</body>
+</html>

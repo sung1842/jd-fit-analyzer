@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Studio 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&display=swap">
+<style>
+:root{--ink:#0B1C45;--ink2:#44527A;--mute:#7A86A6;--line:#E2E8F2;--line2:#EEF2F8;--paper:#F7F9FC;--white:#fff;--blue:#1F4FD6;--blue-s:#EAF0FD;--sky:#4AA3F2;--sun:#FFE7A3;--green:#1F8A5B;--green-s:#E6F4EC}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;color:var(--ink);background:var(--paper);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+/* top bar */
+.top{position:sticky;top:0;z-index:20;height:60px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.logo{position:relative;font-family:Lora,serif;font-style:italic;font-weight:500;font-size:22px;letter-spacing:-.03em;line-height:1}
+.logo b{font-weight:700;background:linear-gradient(100deg,#1F4FD6,#4AA3F2);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
+.logo svg{position:absolute;right:-2px;bottom:-.27em;width:58%;height:.35em;overflow:visible}
+.top-r{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--ink2)}
+.av{width:32px;height:32px;border-radius:50%;background:var(--sun);display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--ink)}
+.preview-tg{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--white)}
+.sw{width:28px;height:16px;border-radius:99px;background:#CBD5E6;position:relative;transition:background .2s}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
+.preview-tg[aria-pressed=true] .sw{background:var(--blue)}
+.preview-tg[aria-pressed=true] .sw::after{transform:translateX(12px)}
+/* layout */
+.app{display:grid;grid-template-columns:232px 1fr;max-width:1240px;margin:0 auto;min-height:calc(100vh - 60px)}
+.side{border-right:1px solid var(--line);padding:28px 16px;position:sticky;top:60px;height:calc(100vh - 60px)}
+.me{padding:0 8px 20px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.me strong{display:block;font-size:15px}
+.me span{font-size:12px;color:var(--mute)}
+.meter{margin-top:14px}
+.meter-row{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);margin-bottom:6px}
+.meter-row b{color:var(--ink)}
+.bar{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--blue);border-radius:2px}
+.nav{display:grid;gap:2px}
+.nav button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:9px 10px;border-radius:7px;font-size:14px;color:var(--ink2);text-align:left;position:relative}
+.nav button:hover{background:var(--line2)}
+.nav button[aria-current=true]{color:var(--ink);font-weight:650;background:var(--white);box-shadow:inset 0 0 0 1px var(--line)}
+.nav button[aria-current=true]::before{content:"";position:absolute;left:-16px;top:8px;bottom:8px;width:2px;background:var(--blue);border-radius:2px}
+.nav em{font-style:normal;font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.nav .dot{width:6px;height:6px;border-radius:50%;background:#F0A43C}
+.side-foot{position:absolute;left:24px;right:24px;bottom:24px;font-size:12px;color:var(--mute)}
+main{padding:32px 40px 80px;min-width:0}
+.view{display:none}.view.on{display:block}
+.eyebrow{font-size:12px;color:var(--mute);letter-spacing:.02em}
+h1{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:4px 0 6px}
+.lede{color:var(--ink2);max-width:620px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:24px}
+.btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--white);white-space:nowrap}
+.btn:hover{border-color:#C9D4E6}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.pri:hover{background:#1A44BC}
+.card{background:var(--white);border:1px solid var(--line);border-radius:12px}
+.sec-t{font-size:13px;font-weight:650;color:var(--ink);margin:28px 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+.sec-t span{font-weight:400;color:var(--mute);font-size:12px}
+/* ask (그려 보세요) */
+.ask{padding:22px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start;background:var(--white);border:1px solid var(--line);border-radius:12px;position:relative;overflow:hidden}
+.ask::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--sun)}
+.ask .q-label{font-size:12px;color:var(--mute)}
+.ask .q{font-size:18px;font-weight:650;letter-spacing:-.01em;margin:4px 0 12px}
+.ask textarea{width:100%;min-height:84px;border:1px solid var(--line);border-radius:8px;padding:12px 14px;resize:vertical;background:var(--paper);line-height:1.6}
+.ask textarea:focus,.field:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px var(--blue-s)}
+.ask-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:10px;flex-wrap:wrap}
+.ask-row small{color:var(--mute);font-size:12px}
+.qs{display:flex;gap:6px;flex-wrap:wrap}
+.chip{height:28px;padding:0 10px;border-radius:99px;border:1px solid var(--line);font-size:12px;color:var(--ink2);background:#fff}
+.chip:hover{border-color:#C9D4E6;color:var(--ink)}
+.chip[data-on=true]{border-color:var(--ink);color:var(--ink);font-weight:600}
+.ask-side{width:150px;font-size:12px;color:var(--mute);line-height:1.6;border-left:1px solid var(--line2);padding-left:16px}
+.ask-side b{display:block;color:var(--ink2);font-weight:600;margin-bottom:4px}
+/* drafts */
+.drafts{display:none;margin-top:14px}
+.drafts.on{display:block}
+.drafts-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--ink2);margin-bottom:10px}
+.drafts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.draft{padding:16px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;display:flex;flex-direction:column;gap:10px;min-height:210px}
+.draft:hover{border-color:#C9D4E6}
+.draft[data-on=true]{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-s)}
+.tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:4px;font-size:11px;font-weight:600;background:var(--line2);color:var(--ink2);width:fit-content}
+.tag.draft-b{background:#FFF6DB;color:#8A6410}
+.tag.pub{background:var(--green-s);color:var(--green)}
+.draft h4{font-size:15px;font-weight:650;letter-spacing:-.01em}
+/* piece mini renderers */
+.tl{display:grid;gap:6px;font-size:12.5px}
+.tl div{display:grid;grid-template-columns:44px 1fr;gap:8px;color:var(--ink2)}
+.tl time{color:var(--mute);font-variant-numeric:tabular-nums}
+.nums{display:flex;gap:18px}
+.nums div b{display:block;font-size:22px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.nums div span{font-size:12px;color:var(--mute)}
+.star{display:grid;gap:6px;font-size:12.5px;color:var(--ink2)}
+.star p span{display:inline-block;width:36px;color:var(--mute);font-size:11px}
+/* board */
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.piece{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s}
+.piece:hover{border-color:#C9D4E6}
+.piece .ph{height:132px;background:#E9EEF6 center/cover no-repeat;position:relative}
+.piece .ph.ph1{background-image:linear-gradient(135deg,#F3E3CF,#E6C7A5)}
+.piece .ph.ph2{background-image:linear-gradient(135deg,#DCE8F6,#BFD3EC)}
+.piece .ph em{position:absolute;left:12px;bottom:10px;font-style:normal;font-size:11px;color:rgba(11,28,69,.55)}
+.piece-b{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.piece-top{display:flex;justify-content:space-between;align-items:center}
+.piece h4{font-size:15px;font-weight:650;letter-spacing:-.01em}
+.piece p.d{font-size:13px;color:var(--ink2)}
+.piece-foot{margin-top:auto;padding-top:10px;border-top:1px solid var(--line2);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mute)}
+.star-btn{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:4px}
+.star-btn[aria-pressed=true]{color:var(--blue);font-weight:600}
+.add-tile{border:1px dashed #C9D4E6;border-radius:12px;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:18px;background:transparent;text-align:left;min-height:220px}
+.add-tile:hover{border-color:var(--blue);background:#fff}
+.add-tile strong{font-size:14px}
+.types{display:flex;flex-wrap:wrap;gap:6px}
+.types span{font-size:12px;color:var(--ink2);border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:#fff}
+/* overview */
+.ov{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.stat{padding:18px 20px}
+.stat span{font-size:12px;color:var(--mute)}
+.stat b{display:block;font-size:28px;font-weight:700;letter-spacing:-.02em;margin-top:2px;font-variant-numeric:tabular-nums}
+.stat small{font-size:12px;color:var(--green)}
+.todo{padding:6px 0}
+.todo li{list-style:none;display:grid;grid-template-columns:20px 1fr auto;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid var(--line2)}
+.todo li:first-child{border-top:0}
+.todo .ck{width:16px;height:16px;border-radius:4px;border:1.5px solid #C9D4E6}
+.todo li.done .ck{background:var(--blue);border-color:var(--blue)}
+.todo li.done span{color:var(--mute);text-decoration:line-through}
+.todo small{color:var(--mute);font-size:12px}
+.feed li{list-style:none;padding:12px 20px;border-top:1px solid var(--line2);display:flex;justify-content:space-between;gap:12px;font-size:13px}
+.feed li:first-child{border-top:0}
+.feed time{color:var(--mute);font-size:12px;white-space:nowrap}
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+/* profile */
+.form-card{padding:4px 0}
+.row{display:grid;grid-template-columns:160px 1fr;gap:16px;padding:14px 22px;border-top:1px solid var(--line2);align-items:center}
+.row:first-child{border-top:0}
+.row label{font-size:13px;color:var(--ink2)}
+.field{height:38px;border:1px solid var(--line);border-radius:8px;padding:0 12px;width:100%;max-width:420px;background:#fff}
+.vis{display:flex;align-items:center;gap:10px}
+.vis small{font-size:12px;color:var(--mute);white-space:nowrap}
+.career{padding:4px 0}
+.career li{list-style:none;display:grid;grid-template-columns:120px 1fr auto;gap:16px;padding:16px 22px;border-top:1px solid var(--line2)}
+.career li:first-child{border-top:0}
+.career time{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.career strong{display:block;font-size:14px}
+.career p{font-size:13px;color:var(--ink2)}
+.link{font-size:12px;color:var(--blue);font-weight:600}
+/* letters */
+.letters{display:grid;grid-template-columns:240px 1fr;gap:14px}
+.ver{padding:6px}
+.ver button{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:8px}
+.ver button[aria-current=true]{background:var(--blue-s)}
+.ver strong{display:block;font-size:13.5px}
+.ver span{font-size:12px;color:var(--mute)}
+.editor{padding:22px 26px}
+.editor h3{font-size:17px;margin-bottom:12px}
+.editor p{color:var(--ink2);margin-bottom:12px;line-height:1.75}
+/* jobs */
+.lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.lane{padding:16px}
+.lane-h{display:flex;justify-content:space-between;font-size:13px;font-weight:650;margin-bottom:10px}
+.lane-h span{color:var(--mute);font-weight:400}
+.ji{padding:10px 12px;border:1px solid var(--line2);border-radius:8px;margin-top:8px;font-size:13px}
+.ji small{display:block;color:var(--mute);font-size:12px}
+/* company preview */
+.pv{display:none}
+body.preview .pv{display:block}
+body.preview .edit-only{display:none}
+.pv-bar{background:var(--ink);color:#fff;font-size:12.5px;padding:10px 16px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.pv-bar b{color:var(--sun)}
+.scout{padding:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;background:#fff}
+.scout-h{grid-column:1/-1;display:flex;gap:14px;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--line2)}
+.scout-h .av{width:48px;height:48px;font-size:18px}
+.scout-h strong{font-size:17px;display:block}
+.scout-h span{font-size:13px;color:var(--ink2)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-size:13px;padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none}
+/* evidence: canvas question */
+.steps{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:2px 0 12px}
+.steps button{height:26px;border-radius:6px;font-size:11.5px;color:var(--mute);background:var(--line2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px}
+.steps button[data-st=done]{background:var(--blue-s);color:var(--blue)}
+.steps button[aria-current=true]{background:var(--ink);color:#fff;font-weight:600}
+.rec{display:inline-flex;align-items:center;gap:6px}
+.rec i{width:8px;height:8px;border-radius:50%;background:#D64545;display:inline-block}
+.rec[aria-pressed=true]{border-color:#D64545;color:#D64545}
+.priv{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--ink2)}
+.canvas6{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cell{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff;display:flex;flex-direction:column;gap:6px;min-width:0}
+.cell b{font-size:12px;color:var(--ink2)}
+.cell textarea{border:1px solid var(--line2);border-radius:6px;padding:8px;min-height:64px;resize:vertical;background:var(--paper);font-size:13px;line-height:1.55;width:100%}
+.cell q{font-size:11.5px;color:var(--mute);quotes:"“" "”";border-left:2px solid var(--sun);padding-left:6px;display:block}
+.cell.empty q{border-left-color:var(--line)}
+/* badges */
+.badges{display:flex;flex-wrap:wrap;gap:4px}
+.bd{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
+.bd.t-live{background:var(--green-s);color:var(--green)}
+.bd.t-retro{background:#FFF6DB;color:#8A6410}
+.bd.r-self{background:var(--line2);color:var(--ink2)}
+.bd.r-att{background:var(--blue-s);color:var(--blue)}
+.bd.r-ok{background:var(--blue);color:#fff}
+.bd.ai{background:#F1E9FB;color:#6B3FA0}
+.card-acts{display:flex;flex-wrap:wrap;gap:6px}
+.mini{height:26px;padding:0 9px;border-radius:6px;border:1px solid var(--line);font-size:12px;color:var(--ink2);background:#fff;white-space:nowrap}
+.mini:hover{border-color:#C9D4E6;color:var(--ink)}
+.mini[disabled]{opacity:.55;cursor:default}
+.vis-tg{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+.vis-tg[aria-pressed=true] .sw{background:var(--green)}
+.vis-tg[aria-pressed=true] .sw::after{transform:translateX(12px)}
+.piece.priv-card{background:#FBFCFE}
+.piece .src{font-size:12px;color:var(--mute)}
+.note{font-size:12px;color:var(--mute);margin-top:10px}
+/* letters */
+.picks{display:grid;gap:6px;margin:6px 0 16px}
+.pick{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line2);border-radius:8px;font-size:13px}
+.pick em{font-style:normal;font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums}
+.pick span.o{display:flex;gap:2px}
+.sent{border:1px solid var(--line2);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.sent p{margin:0 0 6px!important;color:var(--ink)!important}
+.sent .m{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:11.5px;color:var(--mute)}
+.lk{font-size:11.5px;color:var(--blue);background:var(--blue-s);border-radius:4px;padding:1px 6px}
+.lk.none{color:#C27A12;background:#FFF6DB}
+/* jobs */
+.gap{margin-top:6px;font-size:12px;color:#8A6410}
+.rec-job{padding:16px 18px;display:grid;gap:8px}
+.rec-job+.rec-job{margin-top:10px}
+.rec-job h4{font-size:15px}
+.why{font-size:12.5px;color:var(--ink2);display:grid;gap:3px}
+/* overview */
+.used li{list-style:none;padding:12px 20px;border-top:1px solid var(--line2);font-size:13px;display:grid;gap:4px}
+.used li:first-child{border-top:0}
+.used small{color:var(--mute);font-size:12px}
+.cons li{list-style:none;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:14px 22px;border-top:1px solid var(--line2)}
+.cons li:first-child{border-top:0}
+.cons strong{display:block;font-size:14px}
+.cons p{font-size:12.5px;color:var(--ink2)}
+.danger{color:#B23B3B;border-color:#F0C9C9}
+body.preview .piece-foot,body.preview .card-acts,body.preview #filters{display:none}
+#filters i{font-style:normal}
+.mtabs{display:none}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .mtabs{display:flex;gap:4px;overflow-x:auto;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:60px;z-index:10;scrollbar-width:none}
+  .mtabs button{flex:none;height:32px;padding:0 12px;border-radius:99px;font-size:13px;color:var(--ink2)}
+  .mtabs button[aria-current=true]{background:var(--ink);color:#fff;font-weight:600}
+  main{padding:20px 16px 60px}
+  .top{padding:0 16px}.top-r .nm{display:none}.preview-tg .lb{display:none}
+  .head{flex-direction:column;align-items:flex-start}
+  .ask{grid-template-columns:1fr;padding:18px}.ask-side{display:none}
+  .drafts-grid,.ov,.two,.lanes,.letters,.scout{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr;gap:6px}
+  .career li{grid-template-columns:1fr;gap:4px}
+  .canvas6{grid-template-columns:1fr}.steps{grid-template-columns:repeat(3,1fr)}.cons li{grid-template-columns:1fr}.pick{grid-template-columns:22px 1fr}.pick span.o{grid-column:2}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="logo">talent<b>folio</b><svg viewBox="0 0 80 9" preserveAspectRatio="none"><path d="M2 6 C 22 1, 48 1, 78 5" fill="none" stroke="#4AA3F2" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+  <div class="top-r">
+    <button class="preview-tg" id="pvBtn" aria-pressed="false"><span class="sw"></span><span class="lb">기업에게 보이는 화면</span></button>
+    <span class="nm">김서연</span><span class="av">서</span>
+  </div>
+</header>
+<nav class="mtabs" id="mtabs"></nav>
+<div class="app">
+  <aside class="side">
+    <div class="me">
+      <strong>김서연</strong><span>수셰프 · 조리 9년 · 서울</span>
+      <div class="meter"><div class="meter-row"><span>프로필 완성도</span><b id="pct">0%</b></div><div class="bar"><i id="pctBar"></i></div></div>
+    </div>
+    <div class="nav" id="nav">
+      <button data-v="overview">개요</button>
+      <button data-v="profile">프로필 <span class="dot" title="빈 항목 있음"></span></button>
+      <button data-v="pieces" aria-current="true">나를 보여주기 <em id="navCnt">5</em></button>
+      <button data-v="letters">자기소개서 <em>3</em></button>
+      <button data-v="jobs">공고 <em>5</em></button>
+    </div>
+    <div class="side-foot">마지막 저장 · 방금 전</div>
+  </aside>
+
+  <main>
+    <!-- company preview bar -->
+    <div class="pv"><div class="pv-bar"><span>지금 보이는 화면은 <b>기업 채용 담당자</b>가 보는 모습이에요. 연락처·생년은 숨겨져 있어요.</span><button class="btn" style="height:28px" onclick="togglePv()">편집으로 돌아가기</button></div></div>
+
+    <!-- 1. PIECES (근거 카드) -->
+    <section class="view on" id="v-pieces">
+      <div class="head">
+        <div><p class="eyebrow">나를 보여주기</p><h1>내가 한 일을 근거 카드로</h1>
+        <p class="lede">질문에 답하면 여섯 칸으로 나눠 근거 카드로 만들어요.</p></div>
+        <button class="btn pri edit-only" onclick="document.getElementById('askText').focus()">+ 카드 만들기</button>
+      </div>
+
+      <div class="ask edit-only">
+        <div>
+          <p class="q-label">오늘의 질문 · <span id="stepNo">1</span>/6 <span class="priv">· 🔒 나만 보기</span></p>
+          <div class="steps" id="steps">
+            <button aria-current="true">상황</button><button>역할</button><button>행동</button><button>어려움</button><button>결과</button><button>배운 점</button>
+          </div>
+          <p class="q" id="qText">최근에 기억에 남는 일, 어떤 상황이었나요?</p>
+          <textarea id="askText" placeholder="말하듯 적거나 녹음하세요. 정답은 없어요."></textarea>
+          <div class="ask-row">
+            <span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn rec" id="recBtn" aria-pressed="false"><i></i><span>녹음</span></button><button class="btn" id="nextQ">다음 질문</button></span>
+            <button class="btn pri" id="draftBtn">AI로 칸 나누기</button>
+          </div>
+          <small class="note" style="display:block">답은 원문 그대로 저장되고 칸마다 내 원문을 인용해 보여 줘요. AI는 칸만 나누고 내용을 더하지 않으며, 교정은 맞춤법·문장만 해요.</small>
+        </div>
+        <div class="ask-side"><b>이렇게 쓰여요</b>여섯 칸을 다 채우지 않아도 돼요. 저장한 카드는 공개로 바꾸기 전까지 나만 봐요.</div>
+      </div>
+
+      <div class="drafts edit-only" id="drafts">
+        <div class="drafts-head"><span>AI가 칸별로 나눈 초안</span><button class="btn" style="height:30px" id="drop">닫기</button></div>
+        <div class="canvas6" id="canvas6"></div>
+        <div class="ask-row"><small></small><button class="btn pri" id="useBtn">근거 카드로 저장 (비공개)</button></div>
+      </div>
+
+      <div class="sec-t"><span style="color:var(--ink);font-size:13px;font-weight:650">내 근거 카드</span><span>공개한 카드만 기업에게 보여요 · ★ 3개가 맨 앞</span></div>
+      <div class="filters edit-only" style="margin-bottom:12px" id="filters">
+        <button class="chip" data-on="true" data-f="all">전체 <i>5</i></button><button class="chip" data-f="pub">공개 <i>3</i></button><button class="chip" data-f="priv">비공개 <i>2</i></button>
+      </div>
+      <div class="board" id="board">
+        <article class="piece" data-pub="true">
+          <div class="ph ph1"><em>사진 · 시그니처 플레이팅</em></div>
+          <div class="piece-b">
+            <div class="badges"><span class="bd t-live">활동 당시 작성</span><span class="bd r-att">첨부</span></div>
+            <h4>봄 코스 첫 접시, 원가율 맞추기</h4>
+            <p class="d"><b>상황</b> 원가율 28% 안에서 봄 코스 첫 접시가 필요했어요. <b>행동</b> 도미 손질 방식을 세 번 바꿨어요.</p>
+            <p class="src">근거: 메뉴 원가표 사진 4장 · 2024.03.12 기록</p>
+            <div class="card-acts edit-only"><button class="mini ai-btn">AI 교정</button><button class="mini att-btn">근거 링크 첨부</button></div>
+            <div class="piece-foot"><button class="vis-tg" aria-pressed="true"><span class="sw"></span><span>공개</span></button><button class="star-btn" aria-pressed="true">★ 대표</button></div>
+          </div>
+        </article>
+        <article class="piece" data-pub="true">
+          <div class="piece-b">
+            <div class="badges"><span class="bd t-retro">회고 입력 · 2026.10.20 입력</span><span class="bd r-att">첨부</span><span class="bd ai">AI 교정</span></div>
+            <h4>발주표를 바꿔 폐기 줄이기</h4>
+            <div class="nums" style="margin:6px 0"><div><b>-14%</b><span>식재료 폐기</span></div></div>
+            <p class="d"><b>어려움</b> 주말마다 남는 재료가 달랐어요. <b>배운 점</b> 매일 적어야 패턴이 보여요.</p>
+            <p class="src">근거: 폐기 기록 시트 링크</p>
+            <div class="card-acts edit-only"><button class="mini ai-btn" data-done="1" disabled>AI 교정됨</button><button class="mini att-btn">근거 링크 첨부</button></div>
+            <div class="piece-foot"><button class="vis-tg" aria-pressed="true"><span class="sw"></span><span>공개</span></button><button class="star-btn" aria-pressed="true">★ 대표</button></div>
+          </div>
+        </article>
+        <article class="piece" data-pub="true">
+          <div class="piece-b">
+            <div class="badges"><span class="bd t-live">활동 당시 작성</span><span class="bd r-ok">확인됨</span></div>
+            <h4>140석 금요일, 한 명 없이</h4>
+            <p class="d"><b>역할</b> 그날 라인 순서를 정하는 사람이었어요. <b>결과</b> 컴플레인 없이 마감, 순서표는 주말 기본이 됐어요.</p>
+            <p class="src">확인: 박○○ 헤드셰프 (2024.12)</p>
+            <div class="card-acts edit-only"><button class="mini ai-btn">AI 교정</button><button class="mini att-btn" disabled>확인 완료</button></div>
+            <div class="piece-foot"><button class="vis-tg" aria-pressed="true"><span class="sw"></span><span>공개</span></button><button class="star-btn" aria-pressed="true">★ 대표</button></div>
+          </div>
+        </article>
+        <article class="piece priv-card edit-only" data-pub="false">
+          <div class="ph ph2"><em>PDF · 위생 교육 자료</em></div>
+          <div class="piece-b">
+            <div class="badges"><span class="bd t-retro">회고 입력 · 2026.10.25 입력</span><span class="bd r-self">본인 주장</span></div>
+            <h4>신입 위생 교육 1시간 만들기</h4>
+            <p class="d"><b>행동</b> HACCP 기준을 우리 주방 동선 순서로 다시 묶었어요.</p>
+            <p class="src">근거 없음 · 링크를 붙이면 '첨부'가 돼요</p>
+            <div class="card-acts"><button class="mini ai-btn">AI 교정</button><button class="mini att-btn">근거 링크 첨부</button></div>
+            <div class="piece-foot"><button class="vis-tg" aria-pressed="false"><span class="sw"></span><span>비공개</span></button><button class="star-btn" aria-pressed="false">☆ 대표</button></div>
+          </div>
+        </article>
+        <article class="piece priv-card edit-only" data-pub="false">
+          <div class="piece-b">
+            <div class="badges"><span class="bd t-live">활동 당시 작성</span><span class="bd r-self">본인 주장</span></div>
+            <h4>평범한 화요일의 프렙 분담</h4>
+            <p class="d"><b>상황</b> 런치 프렙을 후배 둘과 나눴어요. <b>배운 점</b> 순서를 말로 먼저 맞추면 빨라요.</p>
+            <p class="src">2026.10.21 퇴근 직후 녹음</p>
+            <div class="card-acts"><button class="mini ai-btn">AI 교정</button><button class="mini att-btn">근거 링크 첨부</button></div>
+            <div class="piece-foot"><button class="vis-tg" aria-pressed="false"><span class="sw"></span><span>비공개</span></button><button class="star-btn" aria-pressed="false">☆ 대표</button></div>
+          </div>
+        </article>
+      </div>
+      <p class="note edit-only">배지(기록 시점·신뢰 등급·AI 교정)는 기업 화면에도 그대로 보이고 숨길 수 없어요.</p>
+    </section>
+
+    <!-- 2. OVERVIEW -->
+    <section class="view" id="v-overview">
+      <div class="head"><div><p class="eyebrow">개요</p><h1>안녕하세요, 서연 님</h1><p class="lede">이번 주에 기업 3곳이 프로필을 열어 봤어요. 어떤 카드가 보였는지 알려 드릴게요.</p></div></div>
+      <div class="ov">
+        <div class="card stat"><span>이번 주 포트폴리오 열람</span><b data-n="12">0</b><small>지난주보다 +5</small></div>
+        <div class="card stat"><span>받은 컨택</span><b data-n="2">0</b><small>답장 대기 1건</small></div>
+        <div class="card stat"><span>공개한 근거 카드</span><b data-n="3">0</b><small style="color:var(--mute)">비공개 2장</small></div>
+      </div>
+      <div class="two" style="margin-top:14px">
+        <div><p class="sec-t">최근 컨택</p>
+          <ul class="card feed">
+            <li><span><b>호텔 ○○</b> 채용팀이 수셰프 공고와 함께 연락했어요</span><time>2시간 전</time></li>
+            <li><span><b>비스트로 △△</b>가 프로필을 열어 봤어요</span><time>어제</time></li>
+            <li><span><b>다이닝 ◇◇</b>가 프로필을 열어 봤어요</span><time>3일 전</time></li>
+          </ul></div>
+        <div><p class="sec-t">열람·추천 근거로 쓰인 카드</p>
+          <ul class="card used">
+            <li><span>"140석 금요일, 한 명 없이"</span><small>호텔 ○○ 연락의 근거 · 열람 5회</small></li>
+            <li><span>"발주표를 바꿔 폐기 줄이기"</span><small>비스트로 △△ 추천 근거 · 열람 4회</small></li>
+            <li><span>"봄 코스 첫 접시, 원가율 맞추기"</span><small>열람 3회 · 추천 근거로는 아직 안 쓰였어요</small></li>
+          </ul></div>
+      </div>
+      <p class="sec-t">기록 이어가기 <span>매일 쓰지 않아도 괜찮아요</span></p>
+      <ul class="card todo">
+        <li class="done"><span class="ck"></span><span>10월에 카드 2장 저장 · 마지막 기록 10월 25일</span><small></small></li>
+        <li><span class="ck"></span><span>연말 연회 시즌이 끝나는 12월 마지막 주에 알려 드릴게요</span><button class="link" onclick="go('profile')">알림 시점 바꾸기</button></li>
+        <li><span class="ck"></span><span>비공개 카드 2장 · 공개할지 정하기</span><button class="link" onclick="go('pieces')">보기</button></li>
+        <li><span class="ck"></span><span>근거 없는 카드 1장 · 링크 붙이기</span><button class="link" onclick="go('pieces')">보기</button></li>
+      </ul>
+    </section>
+
+    <!-- 3. PROFILE -->
+    <section class="view" id="v-profile">
+      <div class="head"><div><p class="eyebrow">프로필</p><h1>기본 정보와 경력</h1><p class="lede">항목마다 기업에게 보일지 정할 수 있어요. 연락처는 기본으로 숨겨 둬요.</p></div><button class="btn edit-only">PDF로 내보내기</button></div>
+      <p class="sec-t" style="margin-top:0">기본 정보</p>
+      <div class="card form-card">
+        <div class="row"><label>이름</label><div class="vis"><input class="field" value="김서연"><small>공개</small></div></div>
+        <div class="row"><label>직군</label><div class="vis"><select class="field"><option>외식·조리 &gt; 셰프·조리사</option></select><small>공개</small></div></div>
+        <div class="row"><label>한 줄 소개</label><div class="vis"><input class="field" value="코스 요리 9년, 주방 운영을 숫자로 관리하는 수셰프"><small>공개</small></div></div>
+        <div class="row"><label>연락처</label><div class="vis"><input class="field" value="010-****-1234"><small>연락 수락 후 공개</small></div></div>
+        <div class="row"><label>희망 근무 지역</label><div class="vis"><input class="field" placeholder="예: 서울 강남·성수"><small style="color:#C27A12">비어 있음</small></div></div>
+      </div>
+      <p class="sec-t">경력 <button class="link edit-only">+ 경력 추가</button></p>
+      <ul class="card career">
+        <li><time>2022.03 — 현재</time><div><strong>레스토랑 ○○ · 수셰프</strong><p>코스 8종 메뉴 개발, 주방 인원 6명 운영, 발주·원가 관리</p></div><button class="link edit-only">편집</button></li>
+        <li><time>2019.01 — 2022.02</time><div><strong>호텔 △△ 양식당 · 라인 쿡 → 파트장</strong><p>콜드 파트장, 연회 300석 운영 참여</p></div><button class="link edit-only">편집</button></li>
+        <li><time>2017.03 — 2018.12</time><div><strong>비스트로 □□ · 조리사</strong><p>런치·디너 라인 담당</p></div><button class="link edit-only">편집</button></li>
+      </ul>
+      <p class="sec-t">학력 · 자격</p>
+      <ul class="card career">
+        <li><time>2017</time><div><strong>○○조리고등학교 졸업</strong></div><span></span></li>
+        <li><time>2016</time><div><strong>양식조리기능사</strong><p style="color:#C27A12">증빙 사진이 없어요</p></div><button class="link edit-only">올리기</button></li>
+      </ul>
+      <div class="edit-only">
+        <p class="sec-t">동의와 내 데이터 <span>언제든 바꿀 수 있어요</span></p>
+        <ul class="card cons">
+          <li><div><strong>AI 기록 정리 <small style="color:var(--mute);font-weight:400">self_ai</small></strong><p>내 답을 칸별로 나누고 맞춤법을 다듬는 데만 써요. 끄면 AI 버튼이 꺼지고 원문은 남아요.</p></div><button class="vis-tg cons-tg" data-k="AI 기록 정리" aria-pressed="true"><span class="sw"></span><span>동의함</span></button></li>
+          <li><div><strong>기업 매칭 노출 <small style="color:var(--mute);font-weight:400">matching</small></strong><p>공개 카드를 기업 검색·추천에 써요. 철회하면 공개 카드도 추천에서 빠져요.</p></div><button class="vis-tg cons-tg" data-k="기업 매칭 노출" aria-pressed="true"><span class="sw"></span><span>동의함</span></button></li>
+          <li><div><strong>공고 추천 받기</strong><p>공개 카드를 근거로 공고를 추천받아요. 공고 탭에서 전체 제외하면 여기도 꺼져요.</p></div><button class="vis-tg cons-tg" data-k="공고 추천 받기" aria-pressed="true"><span class="sw"></span><span>동의함</span></button></li>
+          <li><div><strong>데이터 삭제</strong><p>녹음·답·근거 카드를 모두 지워요. 되돌릴 수 없어요.</p></div><button class="btn danger" id="delBtn">삭제 요청</button></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. LETTERS -->
+    <section class="view" id="v-letters">
+      <div class="head"><div><p class="eyebrow">자기소개서</p><h1>지원처마다 버전을 따로</h1><p class="lede">AI가 대신 쓰지 않아요. 내 카드를 골라 순서를 정하고, 문장은 내가 써요. 문장마다 어떤 카드가 근거인지 보여요.</p></div><button class="btn pri edit-only">+ 새 버전</button></div>
+      <div class="letters">
+        <div class="card ver"><button data-l="0" aria-current="true"><strong>호텔 ○○ · 수셰프</strong><span>10월 27일 수정 · 카드 3장</span></button><button data-l="1"><strong>비스트로 △△ · 주방장</strong><span>10월 20일 수정 · 카드 2장</span></button><button data-l="2"><strong>기본본</strong><span>9월 2일 수정 · 카드 2장</span></button></div>
+        <div class="card editor"><h3 id="lTitle">숫자로 관리하는 주방을 만듭니다</h3>
+          <p class="eyebrow" style="margin:0">고른 카드 · 순서</p>
+          <div class="picks" id="picks">
+            <div class="pick"><em>1</em><span>140석 금요일, 한 명 없이</span><span class="o edit-only"><button class="mini up">↑</button><button class="mini dn">↓</button></span></div>
+            <div class="pick"><em>2</em><span>발주표를 바꿔 폐기 줄이기</span><span class="o edit-only"><button class="mini up">↑</button><button class="mini dn">↓</button></span></div>
+            <div class="pick"><em>3</em><span>봄 코스 첫 접시, 원가율 맞추기</span><span class="o edit-only"><button class="mini up">↑</button><button class="mini dn">↓</button></span></div>
+          </div>
+          <p class="eyebrow" style="margin:0 0 6px">내가 쓴 문장</p>
+          <div id="sents"></div>
+          <div class="ask-row edit-only"><small>공고에 맞춰 다시 쓰기는 없어요. 맞춤법 교정만 할 수 있어요.</small><span style="display:flex;gap:8px"><button class="btn">카드 고르기</button><button class="btn">문장 추가</button></span></div></div>
+      </div>
+    </section>
+
+    <!-- 5. JOBS -->
+    <section class="view" id="v-jobs">
+      <div class="head"><div><p class="eyebrow">공고</p><h1>둘러본 공고 정리</h1><p class="lede">관심, 지원할 곳, 보류 세 칸으로 나눠 둬요. 공고마다 내 공개 카드에 없는 증거를 알려 드려요.</p></div><input class="field edit-only" placeholder="회사, 직무, 지역" style="max-width:260px"></div>
+      <div class="lanes">
+        <div class="card lane"><div class="lane-h">관심 <span>2</span></div><div class="ji">호텔 ○○ · 수셰프<small>서울 중구 · ~11.15</small><p class="gap">부족한 증거 · 연회 300석 이상 운영</p></div><div class="ji">다이닝 ◇◇ · 헤드셰프<small>성수 · 상시</small><p class="gap">부족한 증거 · 메뉴 개발 결과물, 인원 관리</p></div></div>
+        <div class="card lane"><div class="lane-h">지원할 곳 <span>2</span></div><div class="ji">비스트로 △△ · 주방장<small>연남 · ~11.02</small><p class="gap" style="color:var(--green)">요구 증거가 공개 카드에 모두 있어요</p></div><div class="ji">케이터링 ☆☆ · 메뉴 개발<small>판교 · ~11.30</small><p class="gap">부족한 증거 · 대량 조리 레시피 표준화</p></div></div>
+        <div class="card lane"><div class="lane-h">보류 <span>1</span></div><div class="ji">프랜차이즈 R&amp;D · 연구원<small>경기 · ~12.01</small><p class="gap">부족한 증거 · 위생 교육 · 공개 카드에 없어요</p></div></div>
+      </div>
+      <p class="sec-t">추천받은 공고 <span>왜 추천됐는지 근거 카드로 보여 드려요</span></p>
+      <div id="recs">
+        <div class="card rec-job"><h4>호텔 ◎◎ 연회 주방 · 수셰프 <small style="font-weight:400;color:var(--mute)">· 서울 · ~11.20</small></h4>
+          <div class="why"><span>근거 카드 2장으로 추천했어요</span><span>· 140석 금요일, 한 명 없이 (확인됨)</span><span>· 발주표를 바꿔 폐기 줄이기 (첨부)</span></div>
+          <div class="card-acts"><button class="mini ex1">이 공고 추천 제외</button><button class="mini exall">추천 전체 받지 않기</button></div></div>
+        <div class="card rec-job"><h4>레스토랑 ▽▽ · 주방장 <small style="font-weight:400;color:var(--mute)">· 한남 · 상시</small></h4>
+          <div class="why"><span>근거 카드 1장으로 추천했어요</span><span>· 봄 코스 첫 접시, 원가율 맞추기 (첨부)</span></div>
+          <div class="card-acts"><button class="mini ex1">이 공고 추천 제외</button><button class="mini exall">추천 전체 받지 않기</button></div></div>
+      </div>
+    </section>
+
+    <!-- company view of the board -->
+    <section class="pv" style="margin-top:28px">
+      <p class="sec-t" style="margin-top:0">기업 검색 결과에 뜨는 카드 <span>공개 카드만 · 배지 그대로</span></p>
+      <div class="card scout">
+        <div class="scout-h"><span class="av">서</span><div><strong>김서연 · 수셰프</strong><span>외식·조리 · 9년 · 서울 · 코스 요리, 주방 운영</span></div></div>
+        <div id="scoutCards" style="display:contents"></div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { animate, stagger, utils } from "https://cdn.jsdelivr.net/npm/animejs@4.0.2/+esm";
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const D = (ms) => (RM ? 0 : ms);
+
+// mobile tabs mirror the side nav
+const mt = $("#mtabs");
+$$("#nav button").forEach((b) => { const c = document.createElement("button"); c.dataset.v = b.dataset.v; c.textContent = b.childNodes[0].textContent.trim(); mt.append(c); });
+
+function go(v) {
+  $$("#nav button, #mtabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.v === v));
+  $$(".view").forEach((s) => s.classList.toggle("on", s.id === "v-" + v));
+  const view = $("#v-" + v);
+  animate(view, { opacity: [0, 1], y: [6, 0], duration: D(220), ease: "outQuad" });
+  if (v === "overview") $$("[data-n]", view).forEach((el) => {
+    const o = { n: 0 }; animate(o, { n: +el.dataset.n, duration: D(600), ease: "outQuad", modifier: utils.round(0), onUpdate: () => (el.textContent = o.n) });
+  });
+  scrollTo({ top: 0, behavior: RM ? "auto" : "smooth" });
+}
+window.go = go;
+$$("#nav button, #mtabs button").forEach((b) => b.addEventListener("click", () => go(b.dataset.v)));
+
+// completeness meter
+const pct = { v: 0 };
+animate(pct, { v: 72, duration: D(800), delay: D(200), ease: "outQuad", modifier: utils.round(0), onUpdate: () => ($("#pct").textContent = pct.v + "%") });
+animate("#pctBar", { width: ["0%", "72%"], duration: D(800), delay: D(200), ease: "outQuad" });
+
+// board entrance
+animate(".board > *", { opacity: [0, 1], y: [8, 0], duration: D(260), delay: stagger(D(40)), ease: "outQuad" });
+
+// 6-cell canvas: one open question at a time (no leading questions)
+const CELLS = ["상황", "역할", "행동", "어려움", "결과", "배운 점"];
+const QS = ["최근에 기억에 남는 일, 어떤 상황이었나요?", "그 안에서 서연 님은 어떤 자리에 있었나요?", "그때 무엇을 했나요?", "어려웠던 점이 있었다면 무엇이었나요?", "어떻게 끝났나요?", "그 일로 알게 된 게 있나요?"];
+const ans = ["작년 연말 금요일, 예약이 140석이었는데 라인 쿡 한 명이 아파서 빠졌어요.", "", "", "", "", ""];
+let cur = 0;
+const ta = $("#askText"); ta.value = ans[0];
+function setStep(i) {
+  ans[cur] = ta.value.trim(); cur = Math.max(0, Math.min(5, i));
+  $$("#steps button").forEach((b, k) => { b.setAttribute("aria-current", k === cur); b.dataset.st = ans[k] ? "done" : ""; });
+  $("#stepNo").textContent = cur + 1; $("#qText").textContent = QS[cur]; ta.value = ans[cur];
+  $("#nextQ").textContent = cur === 5 ? "마지막 질문" : "다음 질문";
+  animate("#qText", { opacity: [0, 1], duration: D(180) });
+}
+$$("#steps button").forEach((b, k) => b.addEventListener("click", () => setStep(k)));
+$("#nextQ").addEventListener("click", () => setStep(cur + 1));
+$("#recBtn").addEventListener("click", (e) => {
+  const b = e.currentTarget, on = b.getAttribute("aria-pressed") !== "true";
+  b.setAttribute("aria-pressed", on); b.querySelector("span").textContent = on ? "녹음 중 · 멈추기" : "녹음";
+  if (!on) { ta.value = (ta.value + " 오후 3시에 프렙 순서를 다시 짰어요.").trim(); toast("녹음을 글로 옮겼어요 · 원문 그대로예요"); }
+});
+let curF = "all";
+function applyFilter() {
+  const all = $$("#board .piece"), pub = all.filter((p) => p.dataset.pub === "true");
+  const n = { all: all.length, pub: pub.length, priv: all.length - pub.length };
+  $$("#filters .chip").forEach((c) => (c.querySelector("i").textContent = n[c.dataset.f]));
+  $("#navCnt").textContent = n.all;
+  all.forEach((p) => (p.style.display = curF === "all" || (curF === "pub") === (p.dataset.pub === "true") ? "" : "none"));
+  renderScout();
+}
+function renderScout() {
+  const pubs = $$("#board .piece").filter((p) => p.dataset.pub === "true");
+  const star = pubs.filter((p) => p.querySelector('.star-btn[aria-pressed="true"]'));
+  $("#scoutCards").innerHTML = star.slice(0, 3).map((p) => `<div>${p.querySelector(".badges").outerHTML}<h4 style="margin:8px 0 4px">${p.querySelector("h4").innerHTML}</h4><p style="font-size:13px;color:var(--ink2)">${p.querySelector("p.d").innerHTML}</p></div>`).join("") || '<p class="note">대표(★)로 고른 공개 카드가 없어요</p>';
+}
+$$("#filters .chip").forEach((c) => c.addEventListener("click", () => {
+  $$("#filters .chip").forEach((x) => (x.dataset.on = x === c)); curF = c.dataset.f; applyFilter();
+}));
+const aiOn = () => $('.cons-tg[data-k="AI 기록 정리"]').getAttribute("aria-pressed") === "true";
+function syncAI() {
+  const on = aiOn(); $("#draftBtn").disabled = !on; $("#draftBtn").title = on ? "" : "AI 기록 정리 동의가 꺼져 있어요";
+  $$(".ai-btn:not([data-done])").forEach((b) => (b.disabled = !on));
+}
+
+// AI split draft (demo): quotes are the user's own words
+const esc = (t) => t.replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[m]);
+const dr = $("#drafts");
+$("#draftBtn").addEventListener("click", (e) => {
+  if (!aiOn()) return toast("AI 기록 정리 동의가 꺼져 있어요");
+  ans[cur] = ta.value.trim();
+  const b = e.currentTarget; b.textContent = "칸 나누는 중…"; b.disabled = true;
+  setTimeout(() => {
+    b.textContent = "다시 나누기"; b.disabled = false;
+    $("#canvas6").innerHTML = CELLS.map((c, k) => ans[k]
+      ? `<div class="cell"><b>${c}</b><textarea>${esc(ans[k])}</textarea><q>${esc(ans[k])}</q></div>`
+      : `<div class="cell empty"><b>${c}</b><textarea placeholder="비워 둬도 돼요"></textarea><q>원문 없음 · AI가 채우지 않았어요</q></div>`).join("");
+    dr.classList.add("on");
+    animate(".cell", { opacity: [0, 1], y: [8, 0], duration: D(240), delay: stagger(D(50)), ease: "outQuad" });
+    dr.scrollIntoView({ behavior: RM ? "auto" : "smooth", block: "nearest" });
+  }, D(700));
+});
+$("#drop").addEventListener("click", () => dr.classList.remove("on"));
+$("#useBtn").addEventListener("click", () => {
+  const parts = $$("#canvas6 .cell").map((c) => [c.querySelector("b").textContent, c.querySelector("textarea").value.trim()]).filter((p) => p[1]);
+  if (!parts.length) return toast("한 칸 이상 채워 주세요");
+  const today = "2026.10.28";
+  const art = document.createElement("article"); art.className = "piece priv-card edit-only"; art.dataset.pub = "false";
+  art.innerHTML = `<div class="piece-b"><div class="badges"><span class="bd t-retro">회고 입력 · ${today} 입력</span><span class="bd r-self">본인 주장</span></div><h4>${esc(parts[0][1].slice(0, 22))}…</h4><p class="d">${parts.map((p) => `<b>${p[0]}</b> ${esc(p[1])}`).join(" ")}</p><p class="src">근거 없음 · 링크를 붙이면 '첨부'가 돼요</p><div class="card-acts"><button class="mini ai-btn">AI 교정</button><button class="mini att-btn">근거 링크 첨부</button></div><div class="piece-foot"><button class="vis-tg" aria-pressed="false"><span class="sw"></span><span>비공개</span></button><button class="star-btn" aria-pressed="false">☆ 대표</button></div></div>`;
+  $("#board").prepend(art); bindCard(art); syncAI(); applyFilter(); dr.classList.remove("on");
+  animate(art, { opacity: [0, 1], y: [-6, 0], duration: D(260), ease: "outQuad" });
+  toast("근거 카드로 저장했어요 · 비공개 상태예요");
+});
+
+// card actions
+function bindCard(root = document) {
+  $$(".star-btn", root).forEach((s) => s.addEventListener("click", () => {
+    const on = s.getAttribute("aria-pressed") === "true";
+    if (!on && $$('#board .star-btn[aria-pressed="true"]').length >= 3) return toast("대표는 3개까지예요. 하나를 먼저 빼 주세요");
+    if (!on && s.closest(".piece").dataset.pub !== "true") return toast("공개한 카드만 대표로 고를 수 있어요");
+    s.setAttribute("aria-pressed", !on); s.textContent = !on ? "★ 대표" : "☆ 대표"; renderScout();
+    animate(s, { scale: [0.9, 1], duration: D(180), ease: "outBack" });
+  }));
+  $$("#board .vis-tg", root).forEach((t) => t.addEventListener("click", () => {
+    const on = t.getAttribute("aria-pressed") !== "true", card = t.closest(".piece");
+    t.setAttribute("aria-pressed", on); t.lastElementChild.textContent = on ? "공개" : "비공개";
+    card.dataset.pub = on; card.classList.toggle("priv-card", !on); card.classList.toggle("edit-only", !on);
+    const st = card.querySelector(".star-btn"); if (!on && st.getAttribute("aria-pressed") === "true") { st.setAttribute("aria-pressed", "false"); st.textContent = "☆ 대표"; }
+    applyFilter();
+    toast(on ? "공개했어요 · 기업에게 배지와 함께 보여요" : "비공개로 바꿨어요");
+  }));
+  $$(".ai-btn:not([data-done])", root).forEach((a) => a.addEventListener("click", () => {
+    if (!aiOn()) return toast("AI 기록 정리 동의가 꺼져 있어요");
+    const bd = a.closest(".piece").querySelector(".badges");
+    if (!bd.querySelector(".ai")) bd.insertAdjacentHTML("beforeend", '<span class="bd ai">AI 교정</span>');
+    a.disabled = true; a.dataset.done = "1"; a.textContent = "AI 교정됨"; renderScout(); toast("맞춤법·문장만 다듬었어요 · 'AI 교정' 배지가 붙어요");
+  }));
+  $$(".att-btn:not([disabled])", root).forEach((a) => a.addEventListener("click", () => {
+    const card = a.closest(".piece"), self = card.querySelector(".r-self");
+    if (self) { self.className = "bd r-att"; self.textContent = "첨부"; }
+    card.querySelector(".src").textContent = "근거: 첨부한 링크 1개"; toast("근거를 붙여 '첨부' 등급이 됐어요"); renderScout();
+  }));
+}
+bindCard();
+
+// letters: card order
+$("#picks").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  const row = b.closest(".pick"), box = $("#picks");
+  if (b.classList.contains("up") && row.previousElementSibling) box.insertBefore(row, row.previousElementSibling);
+  if (b.classList.contains("dn") && row.nextElementSibling) box.insertBefore(row.nextElementSibling, row);
+  $$(".pick em", box).forEach((m, k) => (m.textContent = k + 1));
+});
+const LV = [
+  { t: "숫자로 관리하는 주방을 만듭니다", p: ["140석 금요일, 한 명 없이", "발주표를 바꿔 폐기 줄이기", "봄 코스 첫 접시, 원가율 맞추기"], s: [["바쁜 날일수록 라인 전원과 10분 먼저 순서를 맞춥니다. 140석 예약에 결원이 생긴 날에도 이 방식으로 컴플레인 없이 마쳤습니다.", "140석 금요일", 0], ["주간 발주표와 폐기 기록을 바꿔 식재료 폐기를 14% 줄였습니다.", "발주표 카드", 1], ["호텔 연회의 큰 물량도 순서로 다룰 수 있다고 생각합니다.", "", 0]] },
+  { t: "작은 주방일수록 기록이 힘입니다", p: ["발주표를 바꿔 폐기 줄이기", "평범한 화요일의 프렙 분담"], s: [["재료가 남는 패턴은 매일 적어야 보였습니다. 그래서 폐기를 매일 기록합니다.", "발주표 카드", 0], ["프렙은 후배 둘과 말로 먼저 순서를 맞추고 나눕니다.", "화요일 프렙 분담", 0]] },
+  { t: "맛만큼 순서가 중요합니다", p: ["봄 코스 첫 접시, 원가율 맞추기", "140석 금요일, 한 명 없이"], s: [["원가율 안에서 한 접시를 세 번 고쳐 완성했습니다.", "봄 코스 첫 접시", 1], ["결원이 생긴 날에도 순서표로 서비스를 지켰습니다.", "140석 금요일", 0]] },
+];
+function renderLetter(i) {
+  const v = LV[i]; $("#lTitle").textContent = v.t;
+  $("#picks").innerHTML = v.p.map((x, k) => `<div class="pick"><em>${k + 1}</em><span>${x}</span><span class="o edit-only"><button class="mini up">↑</button><button class="mini dn">↓</button></span></div>`).join("");
+  $("#sents").innerHTML = v.s.map(([t, c, ai]) => `<div class="sent"><p>${t}</p><div class="m">${c ? `<span class="lk">근거 · ${c}</span>` : '<span class="lk none">연결된 카드 없음</span>'}${ai ? '<span class="bd ai">AI 교정</span>' : '<span class="bd r-self">본인 작성</span>'}</div></div>`).join("");
+}
+$$(".ver button").forEach((v) => v.addEventListener("click", () => { $$(".ver button").forEach((x) => x.setAttribute("aria-current", x === v)); renderLetter(+v.dataset.l); }));
+renderLetter(0);
+
+// jobs: recommendation opt-out
+const recsHTML = $("#recs").innerHTML;
+function setRecs(on) {
+  const t = $('.cons-tg[data-k="공고 추천 받기"]'); t.setAttribute("aria-pressed", on); t.lastElementChild.textContent = on ? "동의함" : "동의 안 함";
+  $("#recs").innerHTML = on ? recsHTML : '<p class="note">공고 추천을 받지 않고 있어요. 프로필 › 동의에서 다시 켤 수 있어요.</p>';
+  if (on) bindRecs();
+}
+function bindRecs() {
+  $$("#recs .ex1").forEach((b) => b.addEventListener("click", () => { b.closest(".rec-job").remove(); toast("이 공고는 다시 추천하지 않아요"); }));
+  $$("#recs .exall").forEach((b) => b.addEventListener("click", () => { setRecs(false); toast("공고 추천을 모두 껐어요"); }));
+}
+bindRecs();
+
+// profile: consents (separate) and delete
+$$(".cons-tg").forEach((t) => t.addEventListener("click", () => {
+  const on = t.getAttribute("aria-pressed") !== "true";
+  t.setAttribute("aria-pressed", on); t.lastElementChild.textContent = on ? "동의함" : "동의 안 함";
+  if (t.dataset.k === "AI 기록 정리") syncAI();
+  if (t.dataset.k === "공고 추천 받기") setRecs(on);
+  toast(`${t.dataset.k} · ${on ? "동의했어요" : "철회했어요"}`);
+}));
+$("#delBtn").addEventListener("click", () => { if (confirm("녹음·답·근거 카드를 모두 지울까요? 되돌릴 수 없어요.")) toast("삭제 요청을 받았어요 (시안)"); });
+
+syncAI(); applyFilter();
+function toast(t) { const el = $("#toast"); el.textContent = t; animate(el, { opacity: [0, 1, 1, 0], y: [20, 0, 0, 0], duration: D(2200) || 1, ease: "outQuad" }); }
+
+// company preview
+function togglePv() { const on = document.body.classList.toggle("preview"); $("#pvBtn").setAttribute("aria-pressed", on); }
+window.togglePv = togglePv;
+$("#pvBtn").addEventListener("click", togglePv);
+</script>
+</body>
+</html>

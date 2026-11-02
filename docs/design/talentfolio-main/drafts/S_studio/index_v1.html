@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Studio 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&display=swap">
+<style>
+:root{--ink:#0B1C45;--ink2:#44527A;--mute:#7A86A6;--line:#E2E8F2;--line2:#EEF2F8;--paper:#F7F9FC;--white:#fff;--blue:#1F4FD6;--blue-s:#EAF0FD;--sky:#4AA3F2;--sun:#FFE7A3;--green:#1F8A5B;--green-s:#E6F4EC}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;color:var(--ink);background:var(--paper);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+/* top bar */
+.top{position:sticky;top:0;z-index:20;height:60px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.logo{position:relative;font-family:Lora,serif;font-style:italic;font-weight:500;font-size:22px;letter-spacing:-.03em;line-height:1}
+.logo b{font-weight:700;background:linear-gradient(100deg,#1F4FD6,#4AA3F2);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
+.logo svg{position:absolute;right:-2px;bottom:-.27em;width:58%;height:.35em;overflow:visible}
+.top-r{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--ink2)}
+.av{width:32px;height:32px;border-radius:50%;background:var(--sun);display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--ink)}
+.preview-tg{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--white)}
+.sw{width:28px;height:16px;border-radius:99px;background:#CBD5E6;position:relative;transition:background .2s}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
+.preview-tg[aria-pressed=true] .sw{background:var(--blue)}
+.preview-tg[aria-pressed=true] .sw::after{transform:translateX(12px)}
+/* layout */
+.app{display:grid;grid-template-columns:232px 1fr;max-width:1240px;margin:0 auto;min-height:calc(100vh - 60px)}
+.side{border-right:1px solid var(--line);padding:28px 16px;position:sticky;top:60px;height:calc(100vh - 60px)}
+.me{padding:0 8px 20px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.me strong{display:block;font-size:15px}
+.me span{font-size:12px;color:var(--mute)}
+.meter{margin-top:14px}
+.meter-row{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);margin-bottom:6px}
+.meter-row b{color:var(--ink)}
+.bar{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--blue);border-radius:2px}
+.nav{display:grid;gap:2px}
+.nav button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:9px 10px;border-radius:7px;font-size:14px;color:var(--ink2);text-align:left;position:relative}
+.nav button:hover{background:var(--line2)}
+.nav button[aria-current=true]{color:var(--ink);font-weight:650;background:var(--white);box-shadow:inset 0 0 0 1px var(--line)}
+.nav button[aria-current=true]::before{content:"";position:absolute;left:-16px;top:8px;bottom:8px;width:2px;background:var(--blue);border-radius:2px}
+.nav em{font-style:normal;font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.nav .dot{width:6px;height:6px;border-radius:50%;background:#F0A43C}
+.side-foot{position:absolute;left:24px;right:24px;bottom:24px;font-size:12px;color:var(--mute)}
+main{padding:32px 40px 80px;min-width:0}
+.view{display:none}.view.on{display:block}
+.eyebrow{font-size:12px;color:var(--mute);letter-spacing:.02em}
+h1{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:4px 0 6px}
+.lede{color:var(--ink2);max-width:620px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:24px}
+.btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--white);white-space:nowrap}
+.btn:hover{border-color:#C9D4E6}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.pri:hover{background:#1A44BC}
+.card{background:var(--white);border:1px solid var(--line);border-radius:12px}
+.sec-t{font-size:13px;font-weight:650;color:var(--ink);margin:28px 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+.sec-t span{font-weight:400;color:var(--mute);font-size:12px}
+/* ask (그려 보세요) */
+.ask{padding:22px 24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start;background:var(--white);border:1px solid var(--line);border-radius:12px;position:relative;overflow:hidden}
+.ask::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--sun)}
+.ask .q-label{font-size:12px;color:var(--mute)}
+.ask .q{font-size:18px;font-weight:650;letter-spacing:-.01em;margin:4px 0 12px}
+.ask textarea{width:100%;min-height:84px;border:1px solid var(--line);border-radius:8px;padding:12px 14px;resize:vertical;background:var(--paper);line-height:1.6}
+.ask textarea:focus,.field:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px var(--blue-s)}
+.ask-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:10px;flex-wrap:wrap}
+.ask-row small{color:var(--mute);font-size:12px}
+.qs{display:flex;gap:6px;flex-wrap:wrap}
+.chip{height:28px;padding:0 10px;border-radius:99px;border:1px solid var(--line);font-size:12px;color:var(--ink2);background:#fff}
+.chip:hover{border-color:#C9D4E6;color:var(--ink)}
+.chip[data-on=true]{border-color:var(--ink);color:var(--ink);font-weight:600}
+.ask-side{width:150px;font-size:12px;color:var(--mute);line-height:1.6;border-left:1px solid var(--line2);padding-left:16px}
+.ask-side b{display:block;color:var(--ink2);font-weight:600;margin-bottom:4px}
+/* drafts */
+.drafts{display:none;margin-top:14px}
+.drafts.on{display:block}
+.drafts-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--ink2);margin-bottom:10px}
+.drafts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.draft{padding:16px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;display:flex;flex-direction:column;gap:10px;min-height:210px}
+.draft:hover{border-color:#C9D4E6}
+.draft[data-on=true]{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-s)}
+.tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:4px;font-size:11px;font-weight:600;background:var(--line2);color:var(--ink2);width:fit-content}
+.tag.draft-b{background:#FFF6DB;color:#8A6410}
+.tag.pub{background:var(--green-s);color:var(--green)}
+.draft h4{font-size:15px;font-weight:650;letter-spacing:-.01em}
+/* piece mini renderers */
+.tl{display:grid;gap:6px;font-size:12.5px}
+.tl div{display:grid;grid-template-columns:44px 1fr;gap:8px;color:var(--ink2)}
+.tl time{color:var(--mute);font-variant-numeric:tabular-nums}
+.nums{display:flex;gap:18px}
+.nums div b{display:block;font-size:22px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.nums div span{font-size:12px;color:var(--mute)}
+.star{display:grid;gap:6px;font-size:12.5px;color:var(--ink2)}
+.star p span{display:inline-block;width:36px;color:var(--mute);font-size:11px}
+/* board */
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.piece{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s}
+.piece:hover{border-color:#C9D4E6}
+.piece .ph{height:132px;background:#E9EEF6 center/cover no-repeat;position:relative}
+.piece .ph.ph1{background-image:linear-gradient(135deg,#F3E3CF,#E6C7A5)}
+.piece .ph.ph2{background-image:linear-gradient(135deg,#DCE8F6,#BFD3EC)}
+.piece .ph em{position:absolute;left:12px;bottom:10px;font-style:normal;font-size:11px;color:rgba(11,28,69,.55)}
+.piece-b{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.piece-top{display:flex;justify-content:space-between;align-items:center}
+.piece h4{font-size:15px;font-weight:650;letter-spacing:-.01em}
+.piece p.d{font-size:13px;color:var(--ink2)}
+.piece-foot{margin-top:auto;padding-top:10px;border-top:1px solid var(--line2);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mute)}
+.star-btn{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:4px}
+.star-btn[aria-pressed=true]{color:var(--blue);font-weight:600}
+.add-tile{border:1px dashed #C9D4E6;border-radius:12px;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:18px;background:transparent;text-align:left;min-height:220px}
+.add-tile:hover{border-color:var(--blue);background:#fff}
+.add-tile strong{font-size:14px}
+.types{display:flex;flex-wrap:wrap;gap:6px}
+.types span{font-size:12px;color:var(--ink2);border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:#fff}
+/* overview */
+.ov{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.stat{padding:18px 20px}
+.stat span{font-size:12px;color:var(--mute)}
+.stat b{display:block;font-size:28px;font-weight:700;letter-spacing:-.02em;margin-top:2px;font-variant-numeric:tabular-nums}
+.stat small{font-size:12px;color:var(--green)}
+.todo{padding:6px 0}
+.todo li{list-style:none;display:grid;grid-template-columns:20px 1fr auto;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid var(--line2)}
+.todo li:first-child{border-top:0}
+.todo .ck{width:16px;height:16px;border-radius:4px;border:1.5px solid #C9D4E6}
+.todo li.done .ck{background:var(--blue);border-color:var(--blue)}
+.todo li.done span{color:var(--mute);text-decoration:line-through}
+.todo small{color:var(--mute);font-size:12px}
+.feed li{list-style:none;padding:12px 20px;border-top:1px solid var(--line2);display:flex;justify-content:space-between;gap:12px;font-size:13px}
+.feed li:first-child{border-top:0}
+.feed time{color:var(--mute);font-size:12px;white-space:nowrap}
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+/* profile */
+.form-card{padding:4px 0}
+.row{display:grid;grid-template-columns:160px 1fr;gap:16px;padding:14px 22px;border-top:1px solid var(--line2);align-items:center}
+.row:first-child{border-top:0}
+.row label{font-size:13px;color:var(--ink2)}
+.field{height:38px;border:1px solid var(--line);border-radius:8px;padding:0 12px;width:100%;max-width:420px;background:#fff}
+.vis{display:flex;align-items:center;gap:10px}
+.vis small{font-size:12px;color:var(--mute);white-space:nowrap}
+.career{padding:4px 0}
+.career li{list-style:none;display:grid;grid-template-columns:120px 1fr auto;gap:16px;padding:16px 22px;border-top:1px solid var(--line2)}
+.career li:first-child{border-top:0}
+.career time{font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.career strong{display:block;font-size:14px}
+.career p{font-size:13px;color:var(--ink2)}
+.link{font-size:12px;color:var(--blue);font-weight:600}
+/* letters */
+.letters{display:grid;grid-template-columns:240px 1fr;gap:14px}
+.ver{padding:6px}
+.ver button{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:8px}
+.ver button[aria-current=true]{background:var(--blue-s)}
+.ver strong{display:block;font-size:13.5px}
+.ver span{font-size:12px;color:var(--mute)}
+.editor{padding:22px 26px}
+.editor h3{font-size:17px;margin-bottom:12px}
+.editor p{color:var(--ink2);margin-bottom:12px;line-height:1.75}
+/* jobs */
+.lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.lane{padding:16px}
+.lane-h{display:flex;justify-content:space-between;font-size:13px;font-weight:650;margin-bottom:10px}
+.lane-h span{color:var(--mute);font-weight:400}
+.ji{padding:10px 12px;border:1px solid var(--line2);border-radius:8px;margin-top:8px;font-size:13px}
+.ji small{display:block;color:var(--mute);font-size:12px}
+/* company preview */
+.pv{display:none}
+body.preview .pv{display:block}
+body.preview .edit-only{display:none}
+.pv-bar{background:var(--ink);color:#fff;font-size:12.5px;padding:10px 16px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.pv-bar b{color:var(--sun)}
+.scout{padding:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;background:#fff}
+.scout-h{grid-column:1/-1;display:flex;gap:14px;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--line2)}
+.scout-h .av{width:48px;height:48px;font-size:18px}
+.scout-h strong{font-size:17px;display:block}
+.scout-h span{font-size:13px;color:var(--ink2)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-size:13px;padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none}
+.mtabs{display:none}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .mtabs{display:flex;gap:4px;overflow-x:auto;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:60px;z-index:10;scrollbar-width:none}
+  .mtabs button{flex:none;height:32px;padding:0 12px;border-radius:99px;font-size:13px;color:var(--ink2)}
+  .mtabs button[aria-current=true]{background:var(--ink);color:#fff;font-weight:600}
+  main{padding:20px 16px 60px}
+  .top{padding:0 16px}.top-r .nm{display:none}.preview-tg .lb{display:none}
+  .head{flex-direction:column;align-items:flex-start}
+  .ask{grid-template-columns:1fr;padding:18px}.ask-side{display:none}
+  .drafts-grid,.ov,.two,.lanes,.letters,.scout{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr;gap:6px}
+  .career li{grid-template-columns:1fr;gap:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="logo">talent<b>folio</b><svg viewBox="0 0 80 9" preserveAspectRatio="none"><path d="M2 6 C 22 1, 48 1, 78 5" fill="none" stroke="#4AA3F2" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+  <div class="top-r">
+    <button class="preview-tg" id="pvBtn" aria-pressed="false"><span class="sw"></span><span class="lb">기업에게 보이는 화면</span></button>
+    <span class="nm">김서연</span><span class="av">서</span>
+  </div>
+</header>
+<nav class="mtabs" id="mtabs"></nav>
+<div class="app">
+  <aside class="side">
+    <div class="me">
+      <strong>김서연</strong><span>수셰프 · 조리 9년 · 서울</span>
+      <div class="meter"><div class="meter-row"><span>프로필 완성도</span><b id="pct">0%</b></div><div class="bar"><i id="pctBar"></i></div></div>
+    </div>
+    <div class="nav" id="nav">
+      <button data-v="overview">개요</button>
+      <button data-v="profile">프로필 <span class="dot" title="빈 항목 있음"></span></button>
+      <button data-v="pieces" aria-current="true">나를 보여주기 <em>6</em></button>
+      <button data-v="letters">자기소개서 <em>2</em></button>
+      <button data-v="jobs">공고 <em>5</em></button>
+    </div>
+    <div class="side-foot">마지막 저장 · 방금 전</div>
+  </aside>
+
+  <main>
+    <!-- company preview bar -->
+    <div class="pv"><div class="pv-bar"><span>지금 보이는 화면은 <b>기업 채용 담당자</b>가 보는 모습이에요. 연락처·생년은 숨겨져 있어요.</span><button class="btn" style="height:28px" onclick="togglePv()">편집으로 돌아가기</button></div></div>
+
+    <!-- 1. PIECES -->
+    <section class="view on" id="v-pieces">
+      <div class="head">
+        <div><p class="eyebrow">나를 보여주기</p><h1>어떤 사람인지, 어떻게 일하는지</h1>
+        <p class="lede">작업물이 없어도 괜찮아요. 하루, 숫자, 일하는 방식처럼 나를 보여 줄 조각을 모아 두면 기업이 이 보드를 보고 먼저 연락해요.</p></div>
+        <button class="btn pri edit-only" onclick="go('pieces');document.getElementById('askText').focus()">+ 조각 추가</button>
+      </div>
+
+      <div class="ask edit-only">
+        <div>
+          <p class="q-label">오늘의 질문</p>
+          <p class="q" id="qText">가장 바빴던 하루, 주방에서 어떻게 버텼나요?</p>
+          <div class="qs" id="qs">
+            <button class="chip" data-on="true">가장 바빴던 하루</button>
+            <button class="chip">시그니처 메뉴를 만든 과정</button>
+            <button class="chip">후배에게 꼭 알려 주는 것</button>
+            <button class="chip">숫자로 남은 성과</button>
+          </div>
+          <textarea id="askText" style="margin-top:12px" placeholder="생각나는 대로 적어 보세요. 정리는 나중에 해도 돼요.">작년 연말 금요일, 예약이 140석이었는데 라인 쿡 한 명이 아파서 빠졌어요. 오후 3시에 프렙 순서를 다시 짜고, 디저트 파트를 콜드 파트랑 합쳤어요. 마감까지 컴플레인 한 건 없이 끝냈고 그 뒤로 그 순서표를 주말 기본으로 쓰고 있어요.</textarea>
+          <div class="ask-row"><small>적은 내용은 초안을 만드는 데만 쓰고, 고르기 전에는 공개되지 않아요.</small><button class="btn pri" id="draftBtn">초안 받아 보기</button></div>
+        </div>
+        <div class="ask-side"><b>이렇게 쓰여요</b>답 하나로 하루·이야기·숫자 세 가지 모양의 초안을 만들어요. 마음에 드는 걸 골라 고치면 보드에 붙어요.</div>
+      </div>
+
+      <div class="drafts edit-only" id="drafts">
+        <div class="drafts-head"><span>초안 3개 · 하나를 골라 고쳐 쓰세요</span><button class="btn" style="height:30px" id="drop">닫기</button></div>
+        <div class="drafts-grid">
+          <button class="draft" data-on="true">
+            <span class="tag">나의 하루</span><h4>140석 금요일, 한 명 없이</h4>
+            <div class="tl"><div><time>15:00</time>결원 확인, 프렙 순서 재편성</div><div><time>16:30</time>디저트 + 콜드 파트 통합</div><div><time>18:00</time>첫 주문, 라인 5명 운영</div><div><time>23:10</time>마감, 컴플레인 0건</div></div>
+          </button>
+          <button class="draft">
+            <span class="tag">이야기</span><h4>결원 날의 프렙 순서표</h4>
+            <div class="star"><p><span>상황</span>예약 140석, 라인 쿡 1명 결원</p><p><span>행동</span>프렙 순서를 다시 짜고 파트 둘을 합침</p><p><span>결과</span>컴플레인 0건, 순서표를 주말 기본으로 채택</p></div>
+          </button>
+          <button class="draft">
+            <span class="tag">숫자</span><h4>그날의 숫자</h4>
+            <div class="nums"><div><b>140</b><span>예약 석</span></div><div><b>5명</b><span>라인 인원</span></div><div><b>0</b><span>컴플레인</span></div></div>
+          </button>
+        </div>
+        <div class="ask-row"><small>숫자와 사실은 적은 내용에서만 가져와요. 틀린 곳은 고쳐 주세요.</small><span style="display:flex;gap:8px"><button class="btn">고쳐서 쓰기</button><button class="btn pri" id="useBtn">이대로 보드에 붙이기</button></span></div>
+      </div>
+
+      <div class="sec-t"><span style="color:var(--ink);font-size:13px;font-weight:650">내 보드</span><span>★ 표시한 3개가 기업 카드 맨 앞에 보여요</span></div>
+      <div class="filters edit-only" style="margin-bottom:12px" id="filters">
+        <button class="chip" data-on="true">전체 6</button><button class="chip">작업물 2</button><button class="chip">나의 하루 1</button><button class="chip">숫자 1</button><button class="chip">일하는 방식 1</button><button class="chip">추천사 1</button>
+      </div>
+      <div class="board" id="board">
+        <article class="piece">
+          <div class="ph ph1"><em>사진 · 시그니처 플레이팅</em></div>
+          <div class="piece-b"><div class="piece-top"><span class="tag">작업물</span><span class="tag pub">공개</span></div>
+          <h4>제철 도미 카르파초</h4><p class="d">봄 코스 첫 접시. 원가율 28%에 맞춰 세 번 바꾼 버전.</p>
+          <div class="piece-foot"><span>사진 4장</span><button class="star-btn" aria-pressed="true">★ 대표</button></div></div>
+        </article>
+        <article class="piece">
+          <div class="piece-b"><div class="piece-top"><span class="tag">숫자</span><span class="tag pub">공개</span></div>
+          <h4>주방을 맡은 2년</h4>
+          <div class="nums" style="margin:6px 0"><div><b>-14%</b><span>식재료 폐기</span></div><div><b>3명</b><span>키운 후배</span></div></div>
+          <p class="d">주간 발주표를 바꾸고 폐기량을 매일 기록했어요.</p>
+          <div class="piece-foot"><span>직접 입력</span><button class="star-btn" aria-pressed="true">★ 대표</button></div></div>
+        </article>
+        <article class="piece">
+          <div class="piece-b"><div class="piece-top"><span class="tag">일하는 방식</span><span class="tag pub">공개</span></div>
+          <h4>제가 일하는 세 가지 방법</h4>
+          <div class="star"><p>1. 서비스 전 10분, 라인 전원과 순서를 맞춘다</p><p>2. 맛은 기록으로 남긴다 — 레시피 노트 300장</p><p>3. 실수는 그날 바로 이야기한다</p></div>
+          <div class="piece-foot"><span>초안에서 수정</span><button class="star-btn" aria-pressed="true">★ 대표</button></div></div>
+        </article>
+        <article class="piece">
+          <div class="ph ph2"><em>PDF · 위생 교육 자료</em></div>
+          <div class="piece-b"><div class="piece-top"><span class="tag">작업물</span><span class="tag draft-b">초안</span></div>
+          <h4>신입 위생 교육 1시간 자료</h4><p class="d">HACCP 기준을 우리 주방 동선에 맞춰 다시 만든 교육 자료.</p>
+          <div class="piece-foot"><span>파일 1개</span><button class="star-btn" aria-pressed="false">☆ 대표</button></div></div>
+        </article>
+        <article class="piece">
+          <div class="piece-b"><div class="piece-top"><span class="tag">추천사</span><span class="tag pub">공개</span></div>
+          <h4>"바쁠수록 목소리가 낮아지는 사람"</h4><p class="d">— 박○○ 헤드셰프, 2021~2024 함께 근무</p>
+          <div class="piece-foot"><span>요청해서 받음</span><button class="star-btn" aria-pressed="false">☆ 대표</button></div></div>
+        </article>
+        <article class="piece">
+          <div class="piece-b"><div class="piece-top"><span class="tag">나의 하루</span><span class="tag pub">공개</span></div>
+          <h4>평범한 화요일</h4>
+          <div class="tl"><div><time>09:30</time>입고 검수, 온도 기록</div><div><time>11:00</time>런치 프렙, 후배 둘과 분담</div><div><time>15:00</time>신메뉴 테스트 1건</div><div><time>21:30</time>마감 청소 체크리스트</div></div>
+          <div class="piece-foot"><span>초안에서 수정</span><button class="star-btn" aria-pressed="false">☆ 대표</button></div></div>
+        </article>
+        <button class="add-tile edit-only" onclick="document.getElementById('askText').focus()">
+          <strong>+ 조각 추가</strong>
+          <span style="font-size:12.5px;color:var(--mute)">질문에 답해서 초안을 받거나, 형식을 골라 직접 채워요.</span>
+          <div class="types"><span>작업물</span><span>이야기</span><span>나의 하루</span><span>숫자</span><span>일하는 방식</span><span>한 장</span><span>추천사</span></div>
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. OVERVIEW -->
+    <section class="view" id="v-overview">
+      <div class="head"><div><p class="eyebrow">개요</p><h1>안녕하세요, 서연 님</h1><p class="lede">이번 주에 기업 3곳이 프로필을 열어 봤어요.</p></div></div>
+      <div class="ov">
+        <div class="card stat"><span>이번 주 프로필 열람</span><b data-n="12">0</b><small>지난주보다 +5</small></div>
+        <div class="card stat"><span>받은 연락</span><b data-n="2">0</b><small>답장 대기 1건</small></div>
+        <div class="card stat"><span>공개된 조각</span><b data-n="5">0</b><small style="color:var(--mute)">초안 1개</small></div>
+      </div>
+      <div class="two" style="margin-top:14px">
+        <div><p class="sec-t">다음에 할 일</p>
+          <ul class="card todo">
+            <li class="done"><span class="ck"></span><span>경력 3개 입력</span><small></small></li>
+            <li><span class="ck"></span><span>자격증 사진 올리기 (조리기능사)</span><button class="link" onclick="go('profile')">채우기</button></li>
+            <li><span class="ck"></span><span>초안 1개 공개할지 정하기</span><button class="link" onclick="go('pieces')">보기</button></li>
+            <li><span class="ck"></span><span>희망 근무 지역 고르기</span><button class="link" onclick="go('profile')">채우기</button></li>
+          </ul></div>
+        <div><p class="sec-t">최근 소식</p>
+          <ul class="card feed">
+            <li><span><b>호텔 ○○</b> 채용팀이 수셰프 공고와 함께 연락했어요</span><time>2시간 전</time></li>
+            <li><span><b>비스트로 △△</b>가 프로필을 열어 봤어요</span><time>어제</time></li>
+            <li><span>"제철 도미 카르파초"가 기업 카드 대표로 보였어요</span><time>3일 전</time></li>
+          </ul></div>
+      </div>
+    </section>
+
+    <!-- 3. PROFILE -->
+    <section class="view" id="v-profile">
+      <div class="head"><div><p class="eyebrow">프로필</p><h1>기본 정보와 경력</h1><p class="lede">항목마다 기업에게 보일지 정할 수 있어요. 연락처는 기본으로 숨겨 둬요.</p></div><button class="btn edit-only">PDF로 내보내기</button></div>
+      <p class="sec-t" style="margin-top:0">기본 정보</p>
+      <div class="card form-card">
+        <div class="row"><label>이름</label><div class="vis"><input class="field" value="김서연"><small>공개</small></div></div>
+        <div class="row"><label>직군</label><div class="vis"><select class="field"><option>외식·조리 &gt; 셰프·조리사</option></select><small>공개</small></div></div>
+        <div class="row"><label>한 줄 소개</label><div class="vis"><input class="field" value="코스 요리 9년, 주방 운영을 숫자로 관리하는 수셰프"><small>공개</small></div></div>
+        <div class="row"><label>연락처</label><div class="vis"><input class="field" value="010-****-1234"><small>연락 수락 후 공개</small></div></div>
+        <div class="row"><label>희망 근무 지역</label><div class="vis"><input class="field" placeholder="예: 서울 강남·성수"><small style="color:#C27A12">비어 있음</small></div></div>
+      </div>
+      <p class="sec-t">경력 <button class="link edit-only">+ 경력 추가</button></p>
+      <ul class="card career">
+        <li><time>2022.03 — 현재</time><div><strong>레스토랑 ○○ · 수셰프</strong><p>코스 8종 메뉴 개발, 주방 인원 6명 운영, 발주·원가 관리</p></div><button class="link edit-only">편집</button></li>
+        <li><time>2019.01 — 2022.02</time><div><strong>호텔 △△ 양식당 · 라인 쿡 → 파트장</strong><p>콜드 파트장, 연회 300석 운영 참여</p></div><button class="link edit-only">편집</button></li>
+        <li><time>2017.03 — 2018.12</time><div><strong>비스트로 □□ · 조리사</strong><p>런치·디너 라인 담당</p></div><button class="link edit-only">편집</button></li>
+      </ul>
+      <p class="sec-t">학력 · 자격</p>
+      <ul class="card career">
+        <li><time>2017</time><div><strong>○○조리고등학교 졸업</strong></div><span></span></li>
+        <li><time>2016</time><div><strong>양식조리기능사</strong><p style="color:#C27A12">증빙 사진이 없어요</p></div><button class="link edit-only">올리기</button></li>
+      </ul>
+    </section>
+
+    <!-- 4. LETTERS -->
+    <section class="view" id="v-letters">
+      <div class="head"><div><p class="eyebrow">자기소개서</p><h1>버전별로 관리해요</h1><p class="lede">기본본 하나가 연락 온 기업에 먼저 보여요. 공고에 지원할 때는 버전을 골라 보낼 수 있어요.</p></div><button class="btn pri edit-only">+ 새 버전</button></div>
+      <div class="letters">
+        <div class="card ver"><button aria-current="true"><strong>기본본 · 수셰프</strong><span>10월 20일 수정 · 1,240자</span></button><button><strong>호텔 연회용</strong><span>9월 2일 수정 · 980자</span></button></div>
+        <div class="card editor"><h3>숫자로 관리하는 주방을 만듭니다</h3>
+          <p>9년 동안 세 곳의 주방에서 일하며 배운 건, 맛만큼 순서가 중요하다는 것이었습니다. 지금 주방에서는 주간 발주표와 폐기 기록을 바꿔 식재료 폐기를 14% 줄였습니다.</p>
+          <p>바쁜 날일수록 라인 전원과 10분 먼저 순서를 맞춥니다. 140석 예약에 결원이 생긴 날에도 이 방식으로 컴플레인 없이 서비스를 마쳤습니다.</p>
+          <div class="ask-row"><small>보드의 조각을 끌어와 문장에 붙일 수 있어요.</small><button class="btn">조각 끌어오기</button></div></div>
+      </div>
+    </section>
+
+    <!-- 5. JOBS -->
+    <section class="view" id="v-jobs">
+      <div class="head"><div><p class="eyebrow">공고</p><h1>둘러본 공고 정리</h1><p class="lede">관심, 지원할 곳, 보류 세 칸으로 나눠 둬요.</p></div><input class="field edit-only" placeholder="회사, 직무, 지역" style="max-width:260px"></div>
+      <div class="lanes">
+        <div class="card lane"><div class="lane-h">관심 <span>2</span></div><div class="ji">호텔 ○○ · 수셰프<small>서울 중구 · ~11.15</small></div><div class="ji">다이닝 ◇◇ · 헤드셰프<small>성수 · 상시</small></div></div>
+        <div class="card lane"><div class="lane-h">지원할 곳 <span>2</span></div><div class="ji">비스트로 △△ · 주방장<small>연남 · ~11.02</small></div><div class="ji">케이터링 ☆☆ · 메뉴 개발<small>판교 · ~11.30</small></div></div>
+        <div class="card lane"><div class="lane-h">보류 <span>1</span></div><div class="ji">프랜차이즈 R&amp;D · 연구원<small>경기 · ~12.01</small></div></div>
+      </div>
+    </section>
+
+    <!-- company view of the board -->
+    <section class="pv" style="margin-top:28px">
+      <p class="sec-t" style="margin-top:0">기업 검색 결과에 뜨는 카드</p>
+      <div class="card scout">
+        <div class="scout-h"><span class="av">서</span><div><strong>김서연 · 수셰프</strong><span>외식·조리 · 9년 · 서울 · 코스 요리, 주방 운영</span></div></div>
+        <div><span class="tag">작업물</span><h4 style="margin:8px 0 4px">제철 도미 카르파초</h4><p class="d" style="font-size:13px;color:var(--ink2)">봄 코스 첫 접시, 원가율 28%</p></div>
+        <div><span class="tag">숫자</span><div class="nums" style="margin-top:8px"><div><b>-14%</b><span>폐기</span></div><div><b>3명</b><span>후배</span></div></div></div>
+        <div><span class="tag">일하는 방식</span><p style="margin-top:8px;font-size:13px;color:var(--ink2)">서비스 전 10분 순서 맞추기 · 레시피 노트 300장 · 실수는 그날 공유</p></div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast">보드에 붙였어요</div>
+
+<script type="module">
+import { animate, stagger, utils } from "https://cdn.jsdelivr.net/npm/animejs@4.0.2/+esm";
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const D = (ms) => (RM ? 0 : ms);
+
+// mobile tabs mirror the side nav
+const mt = $("#mtabs");
+$$("#nav button").forEach((b) => { const c = document.createElement("button"); c.dataset.v = b.dataset.v; c.textContent = b.childNodes[0].textContent.trim(); mt.append(c); });
+
+function go(v) {
+  $$("#nav button, #mtabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.v === v));
+  $$(".view").forEach((s) => s.classList.toggle("on", s.id === "v-" + v));
+  const view = $("#v-" + v);
+  animate(view, { opacity: [0, 1], y: [6, 0], duration: D(220), ease: "outQuad" });
+  if (v === "overview") $$("[data-n]", view).forEach((el) => {
+    const o = { n: 0 }; animate(o, { n: +el.dataset.n, duration: D(600), ease: "outQuad", modifier: utils.round(0), onUpdate: () => (el.textContent = o.n) });
+  });
+  scrollTo({ top: 0, behavior: RM ? "auto" : "smooth" });
+}
+window.go = go;
+$$("#nav button, #mtabs button").forEach((b) => b.addEventListener("click", () => go(b.dataset.v)));
+
+// completeness meter
+const pct = { v: 0 };
+animate(pct, { v: 72, duration: D(800), delay: D(200), ease: "outQuad", modifier: utils.round(0), onUpdate: () => ($("#pct").textContent = pct.v + "%") });
+animate("#pctBar", { width: ["0%", "72%"], duration: D(800), delay: D(200), ease: "outQuad" });
+
+// board entrance
+animate(".board > *", { opacity: [0, 1], y: [8, 0], duration: D(260), delay: stagger(D(40)), ease: "outQuad" });
+
+// question chips
+const Q = { "가장 바빴던 하루": "가장 바빴던 하루, 주방에서 어떻게 버텼나요?", "시그니처 메뉴를 만든 과정": "시그니처 메뉴는 어떻게 태어났나요?", "후배에게 꼭 알려 주는 것": "후배가 들어오면 제일 먼저 뭘 알려 주나요?", "숫자로 남은 성과": "숫자로 남길 수 있는 일이 있었나요?" };
+$$("#qs .chip").forEach((c) => c.addEventListener("click", () => {
+  $$("#qs .chip").forEach((x) => (x.dataset.on = x === c));
+  const q = $("#qText"); q.textContent = Q[c.textContent];
+  animate(q, { opacity: [0, 1], duration: D(180) });
+}));
+$$("#filters .chip").forEach((c) => c.addEventListener("click", () => $$("#filters .chip").forEach((x) => (x.dataset.on = x === c))));
+
+// drafts
+const dr = $("#drafts");
+$("#draftBtn").addEventListener("click", (e) => {
+  const b = e.currentTarget; b.textContent = "초안 만드는 중…"; b.disabled = true;
+  setTimeout(() => {
+    b.textContent = "다시 받아 보기"; b.disabled = false; dr.classList.add("on");
+    animate(".draft", { opacity: [0, 1], y: [8, 0], duration: D(240), delay: stagger(D(70)), ease: "outQuad" });
+    dr.scrollIntoView({ behavior: RM ? "auto" : "smooth", block: "nearest" });
+  }, D(700));
+});
+$("#drop").addEventListener("click", () => dr.classList.remove("on"));
+$$(".draft").forEach((d) => d.addEventListener("click", () => $$(".draft").forEach((x) => (x.dataset.on = x === d))));
+$("#useBtn").addEventListener("click", () => {
+  const pick = $('.draft[data-on="true"]');
+  const art = document.createElement("article"); art.className = "piece";
+  art.innerHTML = `<div class="piece-b"><div class="piece-top">${pick.querySelector(".tag").outerHTML}<span class="tag draft-b">초안</span></div>${pick.innerHTML.replace(/<span class="tag">.*?<\/span>/, "")}<div class="piece-foot"><span>방금 추가</span><button class="star-btn" aria-pressed="false">☆ 대표</button></div></div>`;
+  $("#board").prepend(art); bindStars(art); dr.classList.remove("on");
+  animate(art, { opacity: [0, 1], y: [-6, 0], duration: D(260), ease: "outQuad" });
+  animate(art, { borderColor: ["#1F4FD6", "#E2E8F2"], duration: D(1200), delay: D(200) });
+  toast("보드에 붙였어요 · 공개 전 초안 상태예요");
+});
+
+// featured stars (max 3)
+function bindStars(root = document) {
+  $$(".star-btn", root).forEach((s) => s.addEventListener("click", () => {
+    const on = s.getAttribute("aria-pressed") === "true";
+    if (!on && $$('.star-btn[aria-pressed="true"]').length >= 3) return toast("대표는 3개까지예요. 하나를 먼저 빼 주세요");
+    s.setAttribute("aria-pressed", !on); s.textContent = !on ? "★ 대표" : "☆ 대표";
+    animate(s, { scale: [0.9, 1], duration: D(180), ease: "outBack" });
+  }));
+}
+bindStars();
+
+function toast(t) { const el = $("#toast"); el.textContent = t; animate(el, { opacity: [0, 1, 1, 0], y: [20, 0, 0, 0], duration: D(2200) || 1, ease: "outQuad" }); }
+
+// company preview
+function togglePv() { const on = document.body.classList.toggle("preview"); $("#pvBtn").setAttribute("aria-pressed", on); }
+window.togglePv = togglePv;
+$("#pvBtn").addEventListener("click", togglePv);
+</script>
+</body>
+</html>

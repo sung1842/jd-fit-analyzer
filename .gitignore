@@ -1,0 +1,24 @@
+node_modules/
+dist/
+.next/
+.env
+.env.local
+.env.*.local
+*.log
+*.tsbuildinfo
+*.pem
+.DS_Store
+
+# crawler (Python)
+crawler/.env
+crawler/.venv/
+crawler/out/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# 로컬 전용 (기기마다 달라지거나 세션마다 바뀌는 값)
+.claude/settings.local.json
+scripts/last-ngrok-url.txt

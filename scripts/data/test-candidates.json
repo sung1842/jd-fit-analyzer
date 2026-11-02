@@ -1,0 +1,3119 @@
+{
+ "_meta": {
+  "purpose": "매칭 엔진 테스트용 가상 후보 (실존 인물 아님). 이름 가명, 회사 '(가짜)', long_bio 끝 '[TEST]'.",
+  "generated": "2026-10-30",
+  "count": 80,
+  "generator": "lane C (seed 20261030)"
+ },
+ "candidates": [
+  {
+   "test_id": "tc-001",
+   "name": "장태윤",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 4,
+   "region": "대전",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "Kotlin",
+    "Redis",
+    "PostgreSQL"
+   ],
+   "short_bio": "4년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 주문 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 주문 응답 시간 p95 63ms→12ms 단축을 이뤘습니다. 대전 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 클라우드온",
+     "position": "백엔드 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "Spring Boot 기반 주문 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "주문 응답 시간 p95 63ms→12ms 단축"
+    },
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "백엔드 개발자",
+     "period": "2022.09 ~ 2024.03",
+     "duties": "Spring Boot 기반 광고 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "광고 응답 시간 p95 38ms→8ms 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-002",
+   "name": "한도윤",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 0,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "PostgreSQL",
+    "Jenkins"
+   ],
+   "short_bio": "신입 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 부트캠프와 개인 프로젝트로 준비했습니다. 팀 프로젝트에서 기획부터 배포까지 맡았습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-003",
+   "name": "서서윤",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 12,
+   "region": "광주",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "PostgreSQL",
+    "Docker",
+    "Kotlin",
+    "Kafka"
+   ],
+   "short_bio": "12년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 광고 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 광고 응답 시간 p95 39ms→8ms 단축을 이뤘습니다. 광주 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "백엔드 개발자",
+     "period": "2022.10 ~ 현재",
+     "duties": "Spring Boot 기반 광고 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "광고 응답 시간 p95 39ms→8ms 단축"
+    },
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "백엔드 개발자",
+     "period": "2019.09 ~ 2022.09",
+     "duties": "Spring Boot 기반 주문 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "주문 응답 시간 p95 43ms→11ms 단축"
+    },
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "백엔드 개발자",
+     "period": "2015.08 ~ 2019.08",
+     "duties": "Spring Boot 기반 교육 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "교육 응답 시간 p95 45ms→7ms 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-004",
+   "name": "황시우",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 5,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "Jenkins"
+   ],
+   "short_bio": "5년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 콘텐츠 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 콘텐츠 응답 시간 p95 26ms→7ms 단축을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 헬스노트",
+     "position": "백엔드 개발자",
+     "period": "2023.10 ~ 현재",
+     "duties": "Spring Boot 기반 콘텐츠 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "콘텐츠 응답 시간 p95 26ms→7ms 단축"
+    },
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "백엔드 개발자",
+     "period": "2022.03 ~ 2023.09",
+     "duties": "Spring Boot 기반 주문 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "주문 응답 시간 p95 73ms→14ms 단축"
+    },
+    {
+     "company": "(가짜) 헬스노트",
+     "position": "백엔드 개발자",
+     "period": "2021.08 ~ 2022.02",
+     "duties": "Spring Boot 기반 회원 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "회원 응답 시간 p95 75ms→11ms 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-005",
+   "name": "안현우",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 6,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "QueryDSL"
+   ],
+   "short_bio": "6년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 커머스 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 커머스 응답 시간 p95 88ms→4ms 단축을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "백엔드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "Spring Boot 기반 커머스 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "커머스 응답 시간 p95 88ms→4ms 단축"
+    },
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "백엔드 개발자",
+     "period": "2022.03 ~ 2024.09",
+     "duties": "Spring Boot 기반 광고 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "광고 응답 시간 p95 38ms→5ms 단축"
+    },
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "백엔드 개발자",
+     "period": "2020.08 ~ 2022.02",
+     "duties": "Spring Boot 기반 교육 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "교육 응답 시간 p95 67ms→18ms 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-006",
+   "name": "오승민",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 1,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "Redis"
+   ],
+   "short_bio": "1년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 주문 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 주문 응답 시간 p95 66ms→13ms 단축을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "백엔드 개발자",
+     "period": "2025.10 ~ 현재",
+     "duties": "Spring Boot 기반 주문 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "주문 응답 시간 p95 66ms→13ms 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-007",
+   "name": "신지환",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 5,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "AWS",
+    "PostgreSQL",
+    "Redis",
+    "Kafka"
+   ],
+   "short_bio": "5년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 검색 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 검색 응답 시간 p95 66ms→10ms 단축을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "백엔드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "Spring Boot 기반 검색 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "검색 응답 시간 p95 66ms→10ms 단축"
+    },
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "백엔드 개발자",
+     "period": "2022.03 ~ 2024.09",
+     "duties": "Spring Boot 기반 광고 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "광고 응답 시간 p95 57ms→11ms 단축"
+    },
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "백엔드 개발자",
+     "period": "2021.08 ~ 2022.02",
+     "duties": "Spring Boot 기반 회원 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "회원 응답 시간 p95 63ms→4ms 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-008",
+   "name": "박서연",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 2,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "AWS",
+    "Docker",
+    "Kafka"
+   ],
+   "short_bio": "2년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 결제 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 결제 응답 시간 p95 25ms→14ms 단축을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "백엔드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "Spring Boot 기반 결제 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "결제 응답 시간 p95 25ms→14ms 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-009",
+   "name": "정소율",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 2,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "AWS",
+    "Redis"
+   ],
+   "short_bio": "2년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 회원 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 회원 응답 시간 p95 70ms→17ms 단축을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "백엔드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "Spring Boot 기반 회원 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "회원 응답 시간 p95 70ms→17ms 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-010",
+   "name": "이재원",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 2,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "Docker",
+    "PostgreSQL"
+   ],
+   "short_bio": "2년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 광고 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 광고 응답 시간 p95 26ms→8ms 단축을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 리걸테크",
+     "position": "백엔드 개발자",
+     "period": "2025.04 ~ 현재",
+     "duties": "Spring Boot 기반 광고 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "광고 응답 시간 p95 26ms→8ms 단축"
+    },
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "백엔드 개발자",
+     "period": "2024.09 ~ 2025.03",
+     "duties": "Spring Boot 기반 정산 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "정산 응답 시간 p95 31ms→5ms 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-011",
+   "name": "권서윤",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_node",
+   "total_years": 2,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Node.js",
+    "TypeScript",
+    "NestJS",
+    "PostgreSQL",
+    "Docker",
+    "AWS"
+   ],
+   "short_bio": "2년차 백엔드 개발자, Node.js, TypeScript, NestJS 중심",
+   "long_bio": "Node.js·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. NestJS 헬스케어 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영을 담당했고, 헬스케어 장애 건수 월 66건→10건을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "백엔드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "NestJS 헬스케어 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "헬스케어 장애 건수 월 66건→10건"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-012",
+   "name": "황유나",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_node",
+   "total_years": 7,
+   "region": "대구",
+   "remote_ok": false,
+   "skills": [
+    "Node.js",
+    "TypeScript",
+    "NestJS",
+    "PostgreSQL",
+    "Express",
+    "MongoDB",
+    "BullMQ",
+    "Docker"
+   ],
+   "short_bio": "7년차 백엔드 개발자, Node.js, TypeScript, NestJS 중심",
+   "long_bio": "Node.js·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. NestJS 주문 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영을 담당했고, 주문 장애 건수 월 37건→3건을 이뤘습니다. 대구 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "백엔드 개발자",
+     "period": "2025.04 ~ 현재",
+     "duties": "NestJS 주문 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "주문 장애 건수 월 37건→3건"
+    },
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "백엔드 개발자",
+     "period": "2023.03 ~ 2025.03",
+     "duties": "NestJS 결제 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "결제 장애 건수 월 54건→4건"
+    },
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "백엔드 개발자",
+     "period": "2021.08 ~ 2023.02",
+     "duties": "NestJS 헬스케어 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "헬스케어 장애 건수 월 59건→5건"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-013",
+   "name": "정채원",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_node",
+   "total_years": 5,
+   "region": "대구",
+   "remote_ok": false,
+   "skills": [
+    "Node.js",
+    "TypeScript",
+    "NestJS",
+    "PostgreSQL",
+    "GraphQL",
+    "Express",
+    "Docker"
+   ],
+   "short_bio": "5년차 백엔드 개발자, Node.js, TypeScript, NestJS 중심",
+   "long_bio": "Node.js·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. NestJS 콘텐츠 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영을 담당했고, 콘텐츠 장애 건수 월 83건→18건을 이뤘습니다. 대구 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "백엔드 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "NestJS 콘텐츠 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "콘텐츠 장애 건수 월 83건→18건"
+    },
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "백엔드 개발자",
+     "period": "2022.03 ~ 2024.03",
+     "duties": "NestJS 예약 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "예약 장애 건수 월 81건→12건"
+    },
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "백엔드 개발자",
+     "period": "2021.08 ~ 2022.02",
+     "duties": "NestJS 콘텐츠 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "콘텐츠 장애 건수 월 34건→10건"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-014",
+   "name": "이수아",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_node",
+   "total_years": 4,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Node.js",
+    "TypeScript",
+    "NestJS",
+    "PostgreSQL",
+    "BullMQ"
+   ],
+   "short_bio": "4년차 백엔드 개발자, Node.js, TypeScript, NestJS 중심",
+   "long_bio": "Node.js·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. NestJS 콘텐츠 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영을 담당했고, 콘텐츠 장애 건수 월 20건→4건을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "백엔드 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "NestJS 콘텐츠 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "콘텐츠 장애 건수 월 20건→4건"
+    },
+    {
+     "company": "(가짜) 클라우드온",
+     "position": "백엔드 개발자",
+     "period": "2022.09 ~ 2024.03",
+     "duties": "NestJS 정산 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "정산 장애 건수 월 90건→17건"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-015",
+   "name": "윤수아",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_node",
+   "total_years": 5,
+   "region": "세종",
+   "remote_ok": false,
+   "skills": [
+    "Node.js",
+    "TypeScript",
+    "NestJS",
+    "PostgreSQL",
+    "BullMQ",
+    "MongoDB",
+    "Redis"
+   ],
+   "short_bio": "5년차 백엔드 개발자, Node.js, TypeScript, NestJS 중심",
+   "long_bio": "Node.js·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. NestJS 검색 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영을 담당했고, 검색 장애 건수 월 66건→16건을 이뤘습니다. 세종 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "백엔드 개발자",
+     "period": "2025.04 ~ 현재",
+     "duties": "NestJS 검색 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "검색 장애 건수 월 66건→16건"
+    },
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "백엔드 개발자",
+     "period": "2023.09 ~ 2025.03",
+     "duties": "NestJS 결제 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "결제 장애 건수 월 73건→6건"
+    },
+    {
+     "company": "(가짜) 헬스노트",
+     "position": "백엔드 개발자",
+     "period": "2022.02 ~ 2023.08",
+     "duties": "NestJS 헬스케어 서버 개발, PostgreSQL 스키마 설계와 비동기 작업 큐 운영",
+     "achievements": "헬스케어 장애 건수 월 56건→15건"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-016",
+   "name": "조지환",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_node",
+   "total_years": 0,
+   "region": "대전",
+   "remote_ok": false,
+   "skills": [
+    "Node.js",
+    "TypeScript",
+    "NestJS",
+    "PostgreSQL",
+    "AWS",
+    "MongoDB"
+   ],
+   "short_bio": "신입 백엔드 개발자, Node.js, TypeScript, NestJS 중심",
+   "long_bio": "Node.js·TypeScript를 주력으로 부트캠프와 개인 프로젝트로 준비했습니다. 팀 프로젝트에서 기획부터 배포까지 맡았습니다. 대전 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-017",
+   "name": "권소율",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_python",
+   "total_years": 10,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "Django",
+    "PostgreSQL",
+    "Celery",
+    "AWS"
+   ],
+   "short_bio": "10년차 백엔드 개발자, Python, Django, PostgreSQL 중심",
+   "long_bio": "Python·Django를 주력으로 실무 경험을 쌓아 왔습니다. Django·FastAPI 주문 API 개발과 Celery 비동기 처리을 담당했고, 주문 API 처리량 43% 개선을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 헬스노트",
+     "position": "백엔드 개발자",
+     "period": "2023.10 ~ 현재",
+     "duties": "Django·FastAPI 주문 API 개발과 Celery 비동기 처리",
+     "achievements": "주문 API 처리량 43% 개선"
+    },
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "백엔드 개발자",
+     "period": "2021.09 ~ 2023.09",
+     "duties": "Django·FastAPI 예약 API 개발과 Celery 비동기 처리",
+     "achievements": "예약 API 처리량 31% 개선"
+    },
+    {
+     "company": "(가짜) 로지스타",
+     "position": "백엔드 개발자",
+     "period": "2019.02 ~ 2021.08",
+     "duties": "Django·FastAPI 추천 API 개발과 Celery 비동기 처리",
+     "achievements": "추천 API 처리량 20% 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-018",
+   "name": "홍하은",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_python",
+   "total_years": 3,
+   "region": "경기",
+   "remote_ok": true,
+   "skills": [
+    "Python",
+    "Django",
+    "PostgreSQL",
+    "Docker",
+    "Redis"
+   ],
+   "short_bio": "3년차 백엔드 개발자, Python, Django, PostgreSQL 중심",
+   "long_bio": "Python·Django를 주력으로 실무 경험을 쌓아 왔습니다. Django·FastAPI 콘텐츠 API 개발과 Celery 비동기 처리을 담당했고, 콘텐츠 API 처리량 26% 개선을 이뤘습니다. 경기 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "백엔드 개발자",
+     "period": "2023.10 ~ 현재",
+     "duties": "Django·FastAPI 콘텐츠 API 개발과 Celery 비동기 처리",
+     "achievements": "콘텐츠 API 처리량 26% 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-019",
+   "name": "한준서",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_python",
+   "total_years": 1,
+   "region": "제주",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "Django",
+    "PostgreSQL",
+    "FastAPI",
+    "Docker"
+   ],
+   "short_bio": "1년차 백엔드 개발자, Python, Django, PostgreSQL 중심",
+   "long_bio": "Python·Django를 주력으로 실무 경험을 쌓아 왔습니다. Django·FastAPI 헬스케어 API 개발과 Celery 비동기 처리을 담당했고, 헬스케어 API 처리량 82% 개선을 이뤘습니다. 제주 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "백엔드 개발자",
+     "period": "2025.10 ~ 현재",
+     "duties": "Django·FastAPI 헬스케어 API 개발과 Celery 비동기 처리",
+     "achievements": "헬스케어 API 처리량 82% 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-020",
+   "name": "안지호",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_python",
+   "total_years": 5,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "Django",
+    "PostgreSQL",
+    "AWS"
+   ],
+   "short_bio": "5년차 백엔드 개발자, Python, Django, PostgreSQL 중심",
+   "long_bio": "Python·Django를 주력으로 실무 경험을 쌓아 왔습니다. Django·FastAPI 결제 API 개발과 Celery 비동기 처리을 담당했고, 결제 API 처리량 20% 개선을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 로지스타",
+     "position": "백엔드 개발자",
+     "period": "2025.04 ~ 현재",
+     "duties": "Django·FastAPI 결제 API 개발과 Celery 비동기 처리",
+     "achievements": "결제 API 처리량 20% 개선"
+    },
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "백엔드 개발자",
+     "period": "2023.03 ~ 2025.03",
+     "duties": "Django·FastAPI 예약 API 개발과 Celery 비동기 처리",
+     "achievements": "예약 API 처리량 40% 개선"
+    },
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "백엔드 개발자",
+     "period": "2021.08 ~ 2023.02",
+     "duties": "Django·FastAPI 물류 API 개발과 Celery 비동기 처리",
+     "achievements": "물류 API 처리량 27% 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-021",
+   "name": "안재원",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 4,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Storybook"
+   ],
+   "short_bio": "4년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 커머스 화면 개발과 공통 컴포넌트 관리을 담당했고, 커머스 LCP 3.3s→1.1s 개선을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "프론트엔드 개발자",
+     "period": "2023.10 ~ 현재",
+     "duties": "React·Next.js 커머스 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "커머스 LCP 3.3s→1.1s 개선"
+    },
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "프론트엔드 개발자",
+     "period": "2022.09 ~ 2023.09",
+     "duties": "React·Next.js 정산 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "정산 LCP 6.5s→0.7s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-022",
+   "name": "이하은",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 1,
+   "region": "서울",
+   "remote_ok": true,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Storybook",
+    "Redux",
+    "Jest"
+   ],
+   "short_bio": "1년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 광고 화면 개발과 공통 컴포넌트 관리을 담당했고, 광고 LCP 5.6s→1.0s 개선을 이뤘습니다. 서울 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "프론트엔드 개발자",
+     "period": "2025.10 ~ 현재",
+     "duties": "React·Next.js 광고 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "광고 LCP 5.6s→1.0s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-023",
+   "name": "송승민",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 3,
+   "region": "서울",
+   "remote_ok": true,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Vite"
+   ],
+   "short_bio": "3년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 주문 화면 개발과 공통 컴포넌트 관리을 담당했고, 주문 LCP 6.8s→1.2s 개선을 이뤘습니다. 서울 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "프론트엔드 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "React·Next.js 주문 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "주문 LCP 6.8s→1.2s 개선"
+    },
+    {
+     "company": "(가짜) 로지스타",
+     "position": "프론트엔드 개발자",
+     "period": "2023.09 ~ 2024.03",
+     "duties": "React·Next.js 결제 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "결제 LCP 8.1s→0.4s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-024",
+   "name": "신나연",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 2,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Storybook"
+   ],
+   "short_bio": "2년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 물류 화면 개발과 공통 컴포넌트 관리을 담당했고, 물류 LCP 2.1s→0.6s 개선을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "프론트엔드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "React·Next.js 물류 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "물류 LCP 2.1s→0.6s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-025",
+   "name": "조승민",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 7,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Tailwind CSS"
+   ],
+   "short_bio": "7년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 정산 화면 개발과 공통 컴포넌트 관리을 담당했고, 정산 LCP 4.0s→1.8s 개선을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 리걸테크",
+     "position": "프론트엔드 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "React·Next.js 정산 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "정산 LCP 4.0s→1.8s 개선"
+    },
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "프론트엔드 개발자",
+     "period": "2022.09 ~ 2024.03",
+     "duties": "React·Next.js 주문 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "주문 LCP 3.3s→1.9s 개선"
+    },
+    {
+     "company": "(가짜) 로지스타",
+     "position": "프론트엔드 개발자",
+     "period": "2020.08 ~ 2022.08",
+     "duties": "React·Next.js 교육 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "교육 LCP 5.6s→1.7s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-026",
+   "name": "임채원",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 1,
+   "region": "충남",
+   "remote_ok": true,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Jest",
+    "Vue.js",
+    "React Query"
+   ],
+   "short_bio": "1년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 주문 화면 개발과 공통 컴포넌트 관리을 담당했고, 주문 LCP 3.5s→0.8s 개선을 이뤘습니다. 충남 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "프론트엔드 개발자",
+     "period": "2025.10 ~ 현재",
+     "duties": "React·Next.js 주문 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "주문 LCP 3.5s→0.8s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-027",
+   "name": "서우진",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 6,
+   "region": "서울",
+   "remote_ok": true,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Jest",
+    "Webpack"
+   ],
+   "short_bio": "6년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 예약 화면 개발과 공통 컴포넌트 관리을 담당했고, 예약 LCP 8.4s→1.3s 개선을 이뤘습니다. 서울 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 로지스타",
+     "position": "프론트엔드 개발자",
+     "period": "2023.10 ~ 현재",
+     "duties": "React·Next.js 예약 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "예약 LCP 8.4s→1.3s 개선"
+    },
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "프론트엔드 개발자",
+     "period": "2022.03 ~ 2023.09",
+     "duties": "React·Next.js 커머스 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "커머스 LCP 4.2s→1.2s 개선"
+    },
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "프론트엔드 개발자",
+     "period": "2020.08 ~ 2022.02",
+     "duties": "React·Next.js 광고 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "광고 LCP 4.1s→1.2s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-028",
+   "name": "정도윤",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 5,
+   "region": "대전",
+   "remote_ok": false,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Tailwind CSS",
+    "Vite"
+   ],
+   "short_bio": "5년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 채팅 화면 개발과 공통 컴포넌트 관리을 담당했고, 채팅 LCP 2.3s→1.1s 개선을 이뤘습니다. 대전 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 로지스타",
+     "position": "프론트엔드 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "React·Next.js 채팅 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "채팅 LCP 2.3s→1.1s 개선"
+    },
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "프론트엔드 개발자",
+     "period": "2022.09 ~ 2024.03",
+     "duties": "React·Next.js 주문 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "주문 LCP 8.6s→0.9s 개선"
+    },
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "프론트엔드 개발자",
+     "period": "2021.08 ~ 2022.08",
+     "duties": "React·Next.js 헬스케어 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "헬스케어 LCP 7.0s→0.8s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-029",
+   "name": "최지우",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 6,
+   "region": "서울",
+   "remote_ok": true,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Webpack",
+    "Redux"
+   ],
+   "short_bio": "6년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 예약 화면 개발과 공통 컴포넌트 관리을 담당했고, 예약 LCP 6.2s→1.0s 개선을 이뤘습니다. 서울 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 리걸테크",
+     "position": "프론트엔드 개발자",
+     "period": "2023.10 ~ 현재",
+     "duties": "React·Next.js 예약 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "예약 LCP 6.2s→1.0s 개선"
+    },
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "프론트엔드 개발자",
+     "period": "2020.09 ~ 2023.09",
+     "duties": "React·Next.js 광고 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "광고 LCP 4.0s→1.1s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-030",
+   "name": "임지환",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 10,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Tailwind CSS",
+    "Vue.js"
+   ],
+   "short_bio": "10년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 교육 화면 개발과 공통 컴포넌트 관리을 담당했고, 교육 LCP 3.2s→0.6s 개선을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 그린에너지솔루션",
+     "position": "프론트엔드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "React·Next.js 교육 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "교육 LCP 3.2s→0.6s 개선"
+    },
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "프론트엔드 개발자",
+     "period": "2020.09 ~ 2024.09",
+     "duties": "React·Next.js 커머스 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "커머스 LCP 3.5s→1.5s 개선"
+    },
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "프론트엔드 개발자",
+     "period": "2018.08 ~ 2020.08",
+     "duties": "React·Next.js 커머스 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "커머스 LCP 6.4s→1.8s 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-031",
+   "name": "신유나",
+   "role": "developer",
+   "title": "풀스택 개발자",
+   "archetype": "fullstack",
+   "total_years": 1,
+   "region": "제주",
+   "remote_ok": false,
+   "skills": [
+    "TypeScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "Prisma",
+    "AWS"
+   ],
+   "short_bio": "1년차 풀스택 개발자, TypeScript, React, Node.js 중심",
+   "long_bio": "TypeScript·React를 주력으로 실무 경험을 쌓아 왔습니다. 채팅 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영을 담당했고, 채팅 출시 주기 46주→3주 단축을 이뤘습니다. 제주 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "풀스택 개발자",
+     "period": "2025.10 ~ 현재",
+     "duties": "채팅 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "채팅 출시 주기 46주→3주 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-032",
+   "name": "조소율",
+   "role": "developer",
+   "title": "풀스택 개발자",
+   "archetype": "fullstack",
+   "total_years": 8,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "TypeScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "Prisma",
+    "Supabase",
+    "Next.js"
+   ],
+   "short_bio": "8년차 풀스택 개발자, TypeScript, React, Node.js 중심",
+   "long_bio": "TypeScript·React를 주력으로 실무 경험을 쌓아 왔습니다. 광고 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영을 담당했고, 광고 출시 주기 80주→18주 단축을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "풀스택 개발자",
+     "period": "2025.04 ~ 현재",
+     "duties": "광고 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "광고 출시 주기 80주→18주 단축"
+    },
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "풀스택 개발자",
+     "period": "2021.03 ~ 2025.03",
+     "duties": "헬스케어 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "헬스케어 출시 주기 32주→11주 단축"
+    },
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "풀스택 개발자",
+     "period": "2019.02 ~ 2021.02",
+     "duties": "회원 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "회원 출시 주기 67주→10주 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-033",
+   "name": "조수아",
+   "role": "developer",
+   "title": "풀스택 개발자",
+   "archetype": "fullstack",
+   "total_years": 3,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "TypeScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "Supabase"
+   ],
+   "short_bio": "3년차 풀스택 개발자, TypeScript, React, Node.js 중심",
+   "long_bio": "TypeScript·React를 주력으로 실무 경험을 쌓아 왔습니다. 회원 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영을 담당했고, 회원 출시 주기 90주→19주 단축을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "풀스택 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "회원 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "회원 출시 주기 90주→19주 단축"
+    },
+    {
+     "company": "(가짜) 리걸테크",
+     "position": "풀스택 개발자",
+     "period": "2023.09 ~ 2024.03",
+     "duties": "교육 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "교육 출시 주기 74주→14주 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-034",
+   "name": "윤민준",
+   "role": "developer",
+   "title": "풀스택 개발자",
+   "archetype": "fullstack",
+   "total_years": 3,
+   "region": "인천",
+   "remote_ok": false,
+   "skills": [
+    "TypeScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "NestJS",
+    "AWS"
+   ],
+   "short_bio": "3년차 풀스택 개발자, TypeScript, React, Node.js 중심",
+   "long_bio": "TypeScript·React를 주력으로 실무 경험을 쌓아 왔습니다. 주문 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영을 담당했고, 주문 출시 주기 70주→16주 단축을 이뤘습니다. 인천 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "풀스택 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "주문 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "주문 출시 주기 70주→16주 단축"
+    },
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "풀스택 개발자",
+     "period": "2023.09 ~ 2024.09",
+     "duties": "콘텐츠 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "콘텐츠 출시 주기 89주→15주 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-035",
+   "name": "임시우",
+   "role": "developer",
+   "title": "풀스택 개발자",
+   "archetype": "fullstack",
+   "total_years": 3,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "TypeScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "Prisma",
+    "AWS",
+    "NestJS",
+    "Supabase"
+   ],
+   "short_bio": "3년차 풀스택 개발자, TypeScript, React, Node.js 중심",
+   "long_bio": "TypeScript·React를 주력으로 실무 경험을 쌓아 왔습니다. 콘텐츠 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영을 담당했고, 콘텐츠 출시 주기 54주→14주 단축을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "풀스택 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "콘텐츠 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "콘텐츠 출시 주기 54주→14주 단축"
+    },
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "풀스택 개발자",
+     "period": "2023.09 ~ 2024.09",
+     "duties": "채팅 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "채팅 출시 주기 41주→7주 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-036",
+   "name": "서시우",
+   "role": "developer",
+   "title": "풀스택 개발자",
+   "archetype": "fullstack",
+   "total_years": 4,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "TypeScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "Supabase"
+   ],
+   "short_bio": "4년차 풀스택 개발자, TypeScript, React, Node.js 중심",
+   "long_bio": "TypeScript·React를 주력으로 실무 경험을 쌓아 왔습니다. 예약 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영을 담당했고, 예약 출시 주기 63주→17주 단축을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "풀스택 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "예약 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "예약 출시 주기 63주→17주 단축"
+    },
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "풀스택 개발자",
+     "period": "2022.09 ~ 2024.03",
+     "duties": "정산 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "정산 출시 주기 24주→11주 단축"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-037",
+   "name": "권지우",
+   "role": "developer",
+   "title": "안드로이드 개발자",
+   "archetype": "android",
+   "total_years": 10,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Kotlin",
+    "Android",
+    "Jetpack Compose",
+    "Hilt"
+   ],
+   "short_bio": "10년차 안드로이드 개발자, Kotlin, Android, Jetpack Compose 중심",
+   "long_bio": "Kotlin·Android를 주력으로 실무 경험을 쌓아 왔습니다. 결제 안드로이드 앱 개발, Compose 전환과 모듈 분리을 담당했고, 결제 크래시율 4.4%→1.8%을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "안드로이드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "결제 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "결제 크래시율 4.4%→1.8%"
+    },
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "안드로이드 개발자",
+     "period": "2021.09 ~ 2024.09",
+     "duties": "결제 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "결제 크래시율 6.9%→0.8%"
+    },
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "안드로이드 개발자",
+     "period": "2019.02 ~ 2021.08",
+     "duties": "커머스 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "커머스 크래시율 8.5%→0.6%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-038",
+   "name": "신소율",
+   "role": "developer",
+   "title": "안드로이드 개발자",
+   "archetype": "android",
+   "total_years": 8,
+   "region": "부산",
+   "remote_ok": true,
+   "skills": [
+    "Kotlin",
+    "Android",
+    "Jetpack Compose",
+    "Retrofit",
+    "Firebase",
+    "MVVM"
+   ],
+   "short_bio": "8년차 안드로이드 개발자, Kotlin, Android, Jetpack Compose 중심",
+   "long_bio": "Kotlin·Android를 주력으로 실무 경험을 쌓아 왔습니다. 커머스 안드로이드 앱 개발, Compose 전환과 모듈 분리을 담당했고, 커머스 크래시율 5.0%→0.8%을 이뤘습니다. 부산 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "안드로이드 개발자",
+     "period": "2025.04 ~ 현재",
+     "duties": "커머스 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "커머스 크래시율 5.0%→0.8%"
+    },
+    {
+     "company": "(가짜) 헬스노트",
+     "position": "안드로이드 개발자",
+     "period": "2022.09 ~ 2025.03",
+     "duties": "주문 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "주문 크래시율 8.4%→1.1%"
+    },
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "안드로이드 개발자",
+     "period": "2020.08 ~ 2022.08",
+     "duties": "정산 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "정산 크래시율 5.5%→1.1%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-039",
+   "name": "황우진",
+   "role": "developer",
+   "title": "안드로이드 개발자",
+   "archetype": "android",
+   "total_years": 2,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Kotlin",
+    "Android",
+    "Jetpack Compose",
+    "Coroutines",
+    "Java",
+    "Hilt",
+    "MVVM"
+   ],
+   "short_bio": "2년차 안드로이드 개발자, Kotlin, Android, Jetpack Compose 중심",
+   "long_bio": "Kotlin·Android를 주력으로 실무 경험을 쌓아 왔습니다. 커머스 안드로이드 앱 개발, Compose 전환과 모듈 분리을 담당했고, 커머스 크래시율 4.0%→0.3%을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "안드로이드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "커머스 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "커머스 크래시율 4.0%→0.3%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-040",
+   "name": "송채원",
+   "role": "developer",
+   "title": "안드로이드 개발자",
+   "archetype": "android",
+   "total_years": 1,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "Kotlin",
+    "Android",
+    "Jetpack Compose",
+    "Coroutines",
+    "Firebase",
+    "Retrofit",
+    "Hilt"
+   ],
+   "short_bio": "1년차 안드로이드 개발자, Kotlin, Android, Jetpack Compose 중심",
+   "long_bio": "Kotlin·Android를 주력으로 실무 경험을 쌓아 왔습니다. 교육 안드로이드 앱 개발, Compose 전환과 모듈 분리을 담당했고, 교육 크래시율 7.2%→1.4%을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "안드로이드 개발자",
+     "period": "2025.10 ~ 현재",
+     "duties": "교육 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "교육 크래시율 7.2%→1.4%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-041",
+   "name": "강지우",
+   "role": "developer",
+   "title": "iOS 개발자",
+   "archetype": "ios",
+   "total_years": 3,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "Swift",
+    "iOS",
+    "SwiftUI",
+    "Combine",
+    "Objective-C",
+    "UIKit"
+   ],
+   "short_bio": "3년차 iOS 개발자, Swift, iOS, SwiftUI 중심",
+   "long_bio": "Swift·iOS를 주력으로 실무 경험을 쌓아 왔습니다. 헬스케어 iOS 앱 개발, SwiftUI 화면 전환과 배포 관리을 담당했고, 헬스케어 앱 리뷰 평점 3점대→4점대 개선을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "iOS 개발자",
+     "period": "2023.10 ~ 현재",
+     "duties": "헬스케어 iOS 앱 개발, SwiftUI 화면 전환과 배포 관리",
+     "achievements": "헬스케어 앱 리뷰 평점 3점대→4점대 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-042",
+   "name": "윤우진",
+   "role": "developer",
+   "title": "iOS 개발자",
+   "archetype": "ios",
+   "total_years": 12,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Swift",
+    "iOS",
+    "SwiftUI",
+    "Combine",
+    "Objective-C",
+    "UIKit",
+    "Firebase"
+   ],
+   "short_bio": "12년차 iOS 개발자, Swift, iOS, SwiftUI 중심",
+   "long_bio": "Swift·iOS를 주력으로 실무 경험을 쌓아 왔습니다. 추천 iOS 앱 개발, SwiftUI 화면 전환과 배포 관리을 담당했고, 추천 앱 리뷰 평점 3점대→4점대 개선을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 그린에너지솔루션",
+     "position": "iOS 개발자",
+     "period": "2022.10 ~ 현재",
+     "duties": "추천 iOS 앱 개발, SwiftUI 화면 전환과 배포 관리",
+     "achievements": "추천 앱 리뷰 평점 3점대→4점대 개선"
+    },
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "iOS 개발자",
+     "period": "2021.03 ~ 2022.09",
+     "duties": "추천 iOS 앱 개발, SwiftUI 화면 전환과 배포 관리",
+     "achievements": "추천 앱 리뷰 평점 3점대→4점대 개선"
+    },
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "iOS 개발자",
+     "period": "2017.02 ~ 2021.02",
+     "duties": "광고 iOS 앱 개발, SwiftUI 화면 전환과 배포 관리",
+     "achievements": "광고 앱 리뷰 평점 3점대→4점대 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-043",
+   "name": "강나연",
+   "role": "developer",
+   "title": "iOS 개발자",
+   "archetype": "ios",
+   "total_years": 2,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Swift",
+    "iOS",
+    "SwiftUI",
+    "UIKit"
+   ],
+   "short_bio": "2년차 iOS 개발자, Swift, iOS, SwiftUI 중심",
+   "long_bio": "Swift·iOS를 주력으로 실무 경험을 쌓아 왔습니다. 교육 iOS 앱 개발, SwiftUI 화면 전환과 배포 관리을 담당했고, 교육 앱 리뷰 평점 3점대→4점대 개선을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "iOS 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "교육 iOS 앱 개발, SwiftUI 화면 전환과 배포 관리",
+     "achievements": "교육 앱 리뷰 평점 3점대→4점대 개선"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-044",
+   "name": "송지환",
+   "role": "developer",
+   "title": "모바일 앱 개발자",
+   "archetype": "flutter",
+   "total_years": 1,
+   "region": "충남",
+   "remote_ok": false,
+   "skills": [
+    "Flutter",
+    "Dart",
+    "Firebase",
+    "Swift"
+   ],
+   "short_bio": "1년차 모바일 앱 개발자, Flutter, Dart, Firebase 중심",
+   "long_bio": "Flutter·Dart를 주력으로 실무 경험을 쌓아 왔습니다. Flutter 회원 크로스플랫폼 앱 개발을 담당했고, 회원 개발 공수 59% 절감, 배포 6회을 이뤘습니다. 충남 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "모바일 앱 개발자",
+     "period": "2025.10 ~ 현재",
+     "duties": "Flutter 회원 크로스플랫폼 앱 개발",
+     "achievements": "회원 개발 공수 59% 절감, 배포 6회"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-045",
+   "name": "신현우",
+   "role": "developer",
+   "title": "모바일 앱 개발자",
+   "archetype": "flutter",
+   "total_years": 6,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Flutter",
+    "Dart",
+    "Riverpod",
+    "Firebase"
+   ],
+   "short_bio": "6년차 모바일 앱 개발자, Flutter, Dart, Riverpod 중심",
+   "long_bio": "Flutter·Dart를 주력으로 실무 경험을 쌓아 왔습니다. Flutter 물류 크로스플랫폼 앱 개발을 담당했고, 물류 개발 공수 24% 절감, 배포 5회을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "모바일 앱 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "Flutter 물류 크로스플랫폼 앱 개발",
+     "achievements": "물류 개발 공수 24% 절감, 배포 5회"
+    },
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "모바일 앱 개발자",
+     "period": "2022.09 ~ 2024.03",
+     "duties": "Flutter 결제 크로스플랫폼 앱 개발",
+     "achievements": "결제 개발 공수 89% 절감, 배포 5회"
+    },
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "모바일 앱 개발자",
+     "period": "2020.08 ~ 2022.08",
+     "duties": "Flutter 채팅 크로스플랫폼 앱 개발",
+     "achievements": "채팅 개발 공수 22% 절감, 배포 8회"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-046",
+   "name": "최준서",
+   "role": "developer",
+   "title": "데이터 엔지니어",
+   "archetype": "data_eng",
+   "total_years": 2,
+   "region": "광주",
+   "remote_ok": true,
+   "skills": [
+    "Python",
+    "SQL",
+    "Airflow",
+    "Spark",
+    "AWS",
+    "Snowflake"
+   ],
+   "short_bio": "2년차 데이터 엔지니어, Python, SQL, Airflow 중심",
+   "long_bio": "Python·SQL를 주력으로 실무 경험을 쌓아 왔습니다. 커머스 데이터 파이프라인(Airflow·Spark) 구축과 운영을 담당했고, 커머스 배치 8.9시간→1.3시간을 이뤘습니다. 광주 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 그린에너지솔루션",
+     "position": "데이터 엔지니어",
+     "period": "2024.10 ~ 현재",
+     "duties": "커머스 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "커머스 배치 8.9시간→1.3시간"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-047",
+   "name": "류유나",
+   "role": "developer",
+   "title": "데이터 엔지니어",
+   "archetype": "data_eng",
+   "total_years": 2,
+   "region": "인천",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "SQL",
+    "Airflow",
+    "Spark",
+    "dbt",
+    "Snowflake"
+   ],
+   "short_bio": "2년차 데이터 엔지니어, Python, SQL, Airflow 중심",
+   "long_bio": "Python·SQL를 주력으로 실무 경험을 쌓아 왔습니다. 물류 데이터 파이프라인(Airflow·Spark) 구축과 운영을 담당했고, 물류 배치 5.2시간→1.3시간을 이뤘습니다. 인천 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 그린에너지솔루션",
+     "position": "데이터 엔지니어",
+     "period": "2025.04 ~ 현재",
+     "duties": "물류 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "물류 배치 5.2시간→1.3시간"
+    },
+    {
+     "company": "(가짜) 로지스타",
+     "position": "데이터 엔지니어",
+     "period": "2024.09 ~ 2025.03",
+     "duties": "헬스케어 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "헬스케어 배치 4.4시간→1.3시간"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-048",
+   "name": "정서윤",
+   "role": "developer",
+   "title": "데이터 엔지니어",
+   "archetype": "data_eng",
+   "total_years": 1,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "SQL",
+    "Airflow",
+    "Spark",
+    "AWS"
+   ],
+   "short_bio": "1년차 데이터 엔지니어, Python, SQL, Airflow 중심",
+   "long_bio": "Python·SQL를 주력으로 실무 경험을 쌓아 왔습니다. 주문 데이터 파이프라인(Airflow·Spark) 구축과 운영을 담당했고, 주문 배치 4.1시간→1.3시간을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "데이터 엔지니어",
+     "period": "2025.10 ~ 현재",
+     "duties": "주문 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "주문 배치 4.1시간→1.3시간"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-049",
+   "name": "안예준",
+   "role": "developer",
+   "title": "데이터 엔지니어",
+   "archetype": "data_eng",
+   "total_years": 5,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "SQL",
+    "Airflow",
+    "Spark",
+    "Hadoop",
+    "dbt"
+   ],
+   "short_bio": "5년차 데이터 엔지니어, Python, SQL, Airflow 중심",
+   "long_bio": "Python·SQL를 주력으로 실무 경험을 쌓아 왔습니다. 정산 데이터 파이프라인(Airflow·Spark) 구축과 운영을 담당했고, 정산 배치 3.0시간→1.5시간을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 로지스타",
+     "position": "데이터 엔지니어",
+     "period": "2024.10 ~ 현재",
+     "duties": "정산 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "정산 배치 3.0시간→1.5시간"
+    },
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "데이터 엔지니어",
+     "period": "2021.09 ~ 2024.09",
+     "duties": "예약 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "예약 배치 2.3시간→1.0시간"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-050",
+   "name": "안채원",
+   "role": "developer",
+   "title": "데이터 엔지니어",
+   "archetype": "data_eng",
+   "total_years": 6,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "SQL",
+    "Airflow",
+    "Spark",
+    "dbt",
+    "Snowflake",
+    "AWS"
+   ],
+   "short_bio": "6년차 데이터 엔지니어, Python, SQL, Airflow 중심",
+   "long_bio": "Python·SQL를 주력으로 실무 경험을 쌓아 왔습니다. 회원 데이터 파이프라인(Airflow·Spark) 구축과 운영을 담당했고, 회원 배치 7.9시간→1.3시간을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "데이터 엔지니어",
+     "period": "2025.04 ~ 현재",
+     "duties": "회원 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "회원 배치 7.9시간→1.3시간"
+    },
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "데이터 엔지니어",
+     "period": "2023.09 ~ 2025.03",
+     "duties": "검색 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "검색 배치 7.5시간→1.3시간"
+    },
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "데이터 엔지니어",
+     "period": "2020.08 ~ 2023.08",
+     "duties": "커머스 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "커머스 배치 2.7시간→0.6시간"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-051",
+   "name": "임서연",
+   "role": "developer",
+   "title": "머신러닝 엔지니어",
+   "archetype": "ml",
+   "total_years": 1,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "PyTorch",
+    "Machine Learning",
+    "Docker"
+   ],
+   "short_bio": "1년차 머신러닝 엔지니어, Python, PyTorch, Machine Learning 중심",
+   "long_bio": "Python·PyTorch를 주력으로 실무 경험을 쌓아 왔습니다. 검색 추천·분류 모델 학습과 서빙을 담당했고, 검색 정확도 81%→11%을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "머신러닝 엔지니어",
+     "period": "2025.10 ~ 현재",
+     "duties": "검색 추천·분류 모델 학습과 서빙",
+     "achievements": "검색 정확도 81%→11%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-052",
+   "name": "윤예준",
+   "role": "developer",
+   "title": "머신러닝 엔지니어",
+   "archetype": "ml",
+   "total_years": 0,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "PyTorch",
+    "Machine Learning",
+    "Docker",
+    "LLM",
+    "Hugging Face"
+   ],
+   "short_bio": "신입 머신러닝 엔지니어, Python, PyTorch, Machine Learning 중심",
+   "long_bio": "Python·PyTorch를 주력으로 부트캠프와 개인 프로젝트로 준비했습니다. 팀 프로젝트에서 기획부터 배포까지 맡았습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-053",
+   "name": "김채원",
+   "role": "developer",
+   "title": "머신러닝 엔지니어",
+   "archetype": "ml",
+   "total_years": 5,
+   "region": "부산",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "PyTorch",
+    "Machine Learning",
+    "scikit-learn",
+    "Kubernetes",
+    "LLM",
+    "MLOps"
+   ],
+   "short_bio": "5년차 머신러닝 엔지니어, Python, PyTorch, Machine Learning 중심",
+   "long_bio": "Python·PyTorch를 주력으로 실무 경험을 쌓아 왔습니다. 결제 추천·분류 모델 학습과 서빙을 담당했고, 결제 정확도 70%→10%을 이뤘습니다. 부산 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "머신러닝 엔지니어",
+     "period": "2023.10 ~ 현재",
+     "duties": "결제 추천·분류 모델 학습과 서빙",
+     "achievements": "결제 정확도 70%→10%"
+    },
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "머신러닝 엔지니어",
+     "period": "2021.09 ~ 2023.09",
+     "duties": "채팅 추천·분류 모델 학습과 서빙",
+     "achievements": "채팅 정확도 49%→9%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-054",
+   "name": "송태윤",
+   "role": "developer",
+   "title": "머신러닝 엔지니어",
+   "archetype": "ml",
+   "total_years": 3,
+   "region": "울산",
+   "remote_ok": true,
+   "skills": [
+    "Python",
+    "PyTorch",
+    "Machine Learning",
+    "Kubernetes",
+    "scikit-learn"
+   ],
+   "short_bio": "3년차 머신러닝 엔지니어, Python, PyTorch, Machine Learning 중심",
+   "long_bio": "Python·PyTorch를 주력으로 실무 경험을 쌓아 왔습니다. 물류 추천·분류 모델 학습과 서빙을 담당했고, 물류 정확도 53%→17%을 이뤘습니다. 울산 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "머신러닝 엔지니어",
+     "period": "2023.10 ~ 현재",
+     "duties": "물류 추천·분류 모델 학습과 서빙",
+     "achievements": "물류 정확도 53%→17%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-055",
+   "name": "안서윤",
+   "role": "developer",
+   "title": "머신러닝 엔지니어",
+   "archetype": "ml",
+   "total_years": 6,
+   "region": "충남",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "PyTorch",
+    "Machine Learning",
+    "Hugging Face"
+   ],
+   "short_bio": "6년차 머신러닝 엔지니어, Python, PyTorch, Machine Learning 중심",
+   "long_bio": "Python·PyTorch를 주력으로 실무 경험을 쌓아 왔습니다. 예약 추천·분류 모델 학습과 서빙을 담당했고, 예약 정확도 50%→14%을 이뤘습니다. 충남 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "머신러닝 엔지니어",
+     "period": "2023.10 ~ 현재",
+     "duties": "예약 추천·분류 모델 학습과 서빙",
+     "achievements": "예약 정확도 50%→14%"
+    },
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "머신러닝 엔지니어",
+     "period": "2021.09 ~ 2023.09",
+     "duties": "검색 추천·분류 모델 학습과 서빙",
+     "achievements": "검색 정확도 42%→16%"
+    },
+    {
+     "company": "(가짜) 그린에너지솔루션",
+     "position": "머신러닝 엔지니어",
+     "period": "2020.08 ~ 2021.08",
+     "duties": "헬스케어 추천·분류 모델 학습과 서빙",
+     "achievements": "헬스케어 정확도 45%→19%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-056",
+   "name": "정지우",
+   "role": "developer",
+   "title": "DevOps 엔지니어",
+   "archetype": "devops",
+   "total_years": 0,
+   "region": "서울",
+   "remote_ok": true,
+   "skills": [
+    "AWS",
+    "Kubernetes",
+    "Docker",
+    "Terraform",
+    "Prometheus",
+    "Linux",
+    "Grafana",
+    "ArgoCD"
+   ],
+   "short_bio": "신입 DevOps 엔지니어, AWS, Kubernetes, Docker 중심",
+   "long_bio": "AWS·Kubernetes를 주력으로 부트캠프와 개인 프로젝트로 준비했습니다. 팀 프로젝트에서 기획부터 배포까지 맡았습니다. 서울 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-057",
+   "name": "송도윤",
+   "role": "developer",
+   "title": "DevOps 엔지니어",
+   "archetype": "devops",
+   "total_years": 7,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "AWS",
+    "Kubernetes",
+    "Docker",
+    "Terraform",
+    "ArgoCD",
+    "Jenkins",
+    "Prometheus",
+    "Ansible"
+   ],
+   "short_bio": "7년차 DevOps 엔지니어, AWS, Kubernetes, Docker 중심",
+   "long_bio": "AWS·Kubernetes를 주력으로 실무 경험을 쌓아 왔습니다. 정산 인프라(AWS·EKS) 운영과 CI/CD 구축을 담당했고, 정산 배포 시간 86분→17분을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "DevOps 엔지니어",
+     "period": "2022.10 ~ 현재",
+     "duties": "정산 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "정산 배포 시간 86분→17분"
+    },
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "DevOps 엔지니어",
+     "period": "2021.03 ~ 2022.09",
+     "duties": "추천 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "추천 배포 시간 50분→10분"
+    },
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "DevOps 엔지니어",
+     "period": "2019.08 ~ 2021.02",
+     "duties": "광고 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "광고 배포 시간 38분→10분"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-058",
+   "name": "서유나",
+   "role": "developer",
+   "title": "DevOps 엔지니어",
+   "archetype": "devops",
+   "total_years": 6,
+   "region": "충남",
+   "remote_ok": false,
+   "skills": [
+    "AWS",
+    "Kubernetes",
+    "Docker",
+    "Terraform",
+    "Jenkins",
+    "Prometheus"
+   ],
+   "short_bio": "6년차 DevOps 엔지니어, AWS, Kubernetes, Docker 중심",
+   "long_bio": "AWS·Kubernetes를 주력으로 실무 경험을 쌓아 왔습니다. 예약 인프라(AWS·EKS) 운영과 CI/CD 구축을 담당했고, 예약 배포 시간 76분→3분을 이뤘습니다. 충남 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "DevOps 엔지니어",
+     "period": "2025.04 ~ 현재",
+     "duties": "예약 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "예약 배포 시간 76분→3분"
+    },
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "DevOps 엔지니어",
+     "period": "2022.03 ~ 2025.03",
+     "duties": "주문 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "주문 배포 시간 43분→13분"
+    },
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "DevOps 엔지니어",
+     "period": "2020.08 ~ 2022.02",
+     "duties": "커머스 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "커머스 배포 시간 28분→12분"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-059",
+   "name": "오민준",
+   "role": "developer",
+   "title": "DevOps 엔지니어",
+   "archetype": "devops",
+   "total_years": 2,
+   "region": "서울",
+   "remote_ok": true,
+   "skills": [
+    "AWS",
+    "Kubernetes",
+    "Docker",
+    "Terraform",
+    "Ansible"
+   ],
+   "short_bio": "2년차 DevOps 엔지니어, AWS, Kubernetes, Docker 중심",
+   "long_bio": "AWS·Kubernetes를 주력으로 실무 경험을 쌓아 왔습니다. 헬스케어 인프라(AWS·EKS) 운영과 CI/CD 구축을 담당했고, 헬스케어 배포 시간 48분→16분을 이뤘습니다. 서울 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "DevOps 엔지니어",
+     "period": "2024.10 ~ 현재",
+     "duties": "헬스케어 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "헬스케어 배포 시간 48분→16분"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-060",
+   "name": "장재원",
+   "role": "developer",
+   "title": "DevOps 엔지니어",
+   "archetype": "devops",
+   "total_years": 7,
+   "region": "대전",
+   "remote_ok": false,
+   "skills": [
+    "AWS",
+    "Kubernetes",
+    "Docker",
+    "Terraform",
+    "Grafana",
+    "Ansible"
+   ],
+   "short_bio": "7년차 DevOps 엔지니어, AWS, Kubernetes, Docker 중심",
+   "long_bio": "AWS·Kubernetes를 주력으로 실무 경험을 쌓아 왔습니다. 회원 인프라(AWS·EKS) 운영과 CI/CD 구축을 담당했고, 회원 배포 시간 47분→16분을 이뤘습니다. 대전 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 클라우드온",
+     "position": "DevOps 엔지니어",
+     "period": "2024.10 ~ 현재",
+     "duties": "회원 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "회원 배포 시간 47분→16분"
+    },
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "DevOps 엔지니어",
+     "period": "2020.09 ~ 2024.09",
+     "duties": "예약 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "예약 배포 시간 60분→12분"
+    },
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "DevOps 엔지니어",
+     "period": "2019.08 ~ 2020.08",
+     "duties": "검색 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "검색 배포 시간 39분→6분"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-061",
+   "name": "신지호",
+   "role": "designer",
+   "title": "UI/UX 디자이너",
+   "archetype": "uiux",
+   "total_years": 4,
+   "region": "인천",
+   "remote_ok": true,
+   "skills": [
+    "Figma",
+    "UI Design",
+    "UX Research",
+    "Design System",
+    "Photoshop",
+    "Illustrator"
+   ],
+   "short_bio": "4년차 UI/UX 디자이너, Figma, UI Design, UX Research 중심",
+   "long_bio": "Figma·UI Design를 주력으로 실무 경험을 쌓아 왔습니다. 추천 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작을 담당했고, 추천 전환율 90%→17%을 이뤘습니다. 인천 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 리걸테크",
+     "position": "UI/UX 디자이너",
+     "period": "2024.10 ~ 현재",
+     "duties": "추천 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "추천 전환율 90%→17%"
+    },
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "UI/UX 디자이너",
+     "period": "2022.09 ~ 2024.09",
+     "duties": "교육 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "교육 전환율 78%→7%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-062",
+   "name": "홍우진",
+   "role": "designer",
+   "title": "UI/UX 디자이너",
+   "archetype": "uiux",
+   "total_years": 1,
+   "region": "울산",
+   "remote_ok": false,
+   "skills": [
+    "Figma",
+    "UI Design",
+    "UX Research",
+    "Protopie",
+    "Adobe XD",
+    "Zeplin",
+    "Illustrator"
+   ],
+   "short_bio": "1년차 UI/UX 디자이너, Figma, UI Design, UX Research 중심",
+   "long_bio": "Figma·UI Design를 주력으로 실무 경험을 쌓아 왔습니다. 회원 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작을 담당했고, 회원 전환율 68%→18%을 이뤘습니다. 울산 근무 희망. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 로지스타",
+     "position": "UI/UX 디자이너",
+     "period": "2025.10 ~ 현재",
+     "duties": "회원 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "회원 전환율 68%→18%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-063",
+   "name": "정현우",
+   "role": "designer",
+   "title": "UI/UX 디자이너",
+   "archetype": "uiux",
+   "total_years": 0,
+   "region": "서울",
+   "remote_ok": true,
+   "skills": [
+    "Figma",
+    "UI Design",
+    "UX Research",
+    "Zeplin",
+    "Illustrator"
+   ],
+   "short_bio": "신입 UI/UX 디자이너, Figma, UI Design, UX Research 중심",
+   "long_bio": "Figma·UI Design를 주력으로 부트캠프와 개인 프로젝트로 준비했습니다. 팀 프로젝트에서 기획부터 배포까지 맡았습니다. 서울 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-064",
+   "name": "윤태윤",
+   "role": "designer",
+   "title": "UI/UX 디자이너",
+   "archetype": "uiux",
+   "total_years": 6,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Figma",
+    "UI Design",
+    "UX Research",
+    "Protopie"
+   ],
+   "short_bio": "6년차 UI/UX 디자이너, Figma, UI Design, UX Research 중심",
+   "long_bio": "Figma·UI Design를 주력으로 실무 경험을 쌓아 왔습니다. 결제 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작을 담당했고, 결제 전환율 43%→12%을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 헬스노트",
+     "position": "UI/UX 디자이너",
+     "period": "2024.04 ~ 현재",
+     "duties": "결제 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "결제 전환율 43%→12%"
+    },
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "UI/UX 디자이너",
+     "period": "2022.09 ~ 2024.03",
+     "duties": "콘텐츠 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "콘텐츠 전환율 83%→6%"
+    },
+    {
+     "company": "(가짜) 핀테크랩",
+     "position": "UI/UX 디자이너",
+     "period": "2020.08 ~ 2022.08",
+     "duties": "예약 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "예약 전환율 48%→16%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-065",
+   "name": "오다은",
+   "role": "designer",
+   "title": "UI/UX 디자이너",
+   "archetype": "uiux",
+   "total_years": 6,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Figma",
+    "UI Design",
+    "UX Research",
+    "Illustrator",
+    "Protopie",
+    "Photoshop",
+    "Adobe XD"
+   ],
+   "short_bio": "6년차 UI/UX 디자이너, Figma, UI Design, UX Research 중심",
+   "long_bio": "Figma·UI Design를 주력으로 실무 경험을 쌓아 왔습니다. 예약 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작을 담당했고, 예약 전환율 58%→19%을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "UI/UX 디자이너",
+     "period": "2022.10 ~ 현재",
+     "duties": "예약 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "예약 전환율 58%→19%"
+    },
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "UI/UX 디자이너",
+     "period": "2021.03 ~ 2022.09",
+     "duties": "추천 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "추천 전환율 57%→19%"
+    },
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "UI/UX 디자이너",
+     "period": "2020.08 ~ 2021.02",
+     "duties": "교육 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "교육 전환율 35%→15%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-066",
+   "name": "송지우",
+   "role": "designer",
+   "title": "UI/UX 디자이너",
+   "archetype": "uiux",
+   "total_years": 3,
+   "region": "부산",
+   "remote_ok": false,
+   "skills": [
+    "Figma",
+    "UI Design",
+    "UX Research",
+    "Design System",
+    "Zeplin"
+   ],
+   "short_bio": "3년차 UI/UX 디자이너, Figma, UI Design, UX Research 중심",
+   "long_bio": "Figma·UI Design를 주력으로 실무 경험을 쌓아 왔습니다. 광고 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작을 담당했고, 광고 전환율 81%→15%을 이뤘습니다. 부산 근무 희망. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "UI/UX 디자이너",
+     "period": "2023.10 ~ 현재",
+     "duties": "광고 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "광고 전환율 81%→15%"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-067",
+   "name": "이현우",
+   "role": "designer",
+   "title": "그래픽 디자이너",
+   "archetype": "graphic",
+   "total_years": 10,
+   "region": "대전",
+   "remote_ok": false,
+   "skills": [
+    "Photoshop",
+    "Illustrator",
+    "InDesign",
+    "Premiere Pro",
+    "Cinema 4D",
+    "After Effects",
+    "Blender"
+   ],
+   "short_bio": "10년차 그래픽 디자이너, Photoshop, Illustrator, InDesign 중심",
+   "long_bio": "Photoshop·Illustrator를 주력으로 실무 경험을 쌓아 왔습니다. 정산 브랜드 BX·광고 그래픽과 상세페이지 제작을 담당했고, 정산 캠페인 소재 48종 제작, CTR 1.0% 달성을 이뤘습니다. 대전 근무 희망. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "그래픽 디자이너",
+     "period": "2025.04 ~ 현재",
+     "duties": "정산 브랜드 BX·광고 그래픽과 상세페이지 제작",
+     "achievements": "정산 캠페인 소재 48종 제작, CTR 1.0% 달성"
+    },
+    {
+     "company": "(가짜) 오늘장커머스",
+     "position": "그래픽 디자이너",
+     "period": "2021.03 ~ 2025.03",
+     "duties": "채팅 브랜드 BX·광고 그래픽과 상세페이지 제작",
+     "achievements": "채팅 캠페인 소재 45종 제작, CTR 0.7% 달성"
+    },
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "그래픽 디자이너",
+     "period": "2018.08 ~ 2021.02",
+     "duties": "커머스 브랜드 BX·광고 그래픽과 상세페이지 제작",
+     "achievements": "커머스 캠페인 소재 60종 제작, CTR 1.9% 달성"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-068",
+   "name": "신예린",
+   "role": "designer",
+   "title": "그래픽 디자이너",
+   "archetype": "graphic",
+   "total_years": 2,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Photoshop",
+    "Illustrator",
+    "InDesign",
+    "Cinema 4D",
+    "Blender",
+    "Premiere Pro"
+   ],
+   "short_bio": "2년차 그래픽 디자이너, Photoshop, Illustrator, InDesign 중심",
+   "long_bio": "Photoshop·Illustrator를 주력으로 실무 경험을 쌓아 왔습니다. 정산 브랜드 BX·광고 그래픽과 상세페이지 제작을 담당했고, 정산 캠페인 소재 62종 제작, CTR 0.5% 달성을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "그래픽 디자이너",
+     "period": "2024.10 ~ 현재",
+     "duties": "정산 브랜드 BX·광고 그래픽과 상세페이지 제작",
+     "achievements": "정산 캠페인 소재 62종 제작, CTR 0.5% 달성"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-069",
+   "name": "윤하은",
+   "role": "designer",
+   "title": "그래픽 디자이너",
+   "archetype": "graphic",
+   "total_years": 8,
+   "region": "울산",
+   "remote_ok": false,
+   "skills": [
+    "Photoshop",
+    "Illustrator",
+    "InDesign",
+    "Cinema 4D",
+    "After Effects",
+    "Blender",
+    "Figma"
+   ],
+   "short_bio": "8년차 그래픽 디자이너, Photoshop, Illustrator, InDesign 중심",
+   "long_bio": "Photoshop·Illustrator를 주력으로 실무 경험을 쌓아 왔습니다. 물류 브랜드 BX·광고 그래픽과 상세페이지 제작을 담당했고, 물류 캠페인 소재 34종 제작, CTR 1.9% 달성을 이뤘습니다. 울산 근무 희망. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 로지스타",
+     "position": "그래픽 디자이너",
+     "period": "2022.10 ~ 현재",
+     "duties": "물류 브랜드 BX·광고 그래픽과 상세페이지 제작",
+     "achievements": "물류 캠페인 소재 34종 제작, CTR 1.9% 달성"
+    },
+    {
+     "company": "(가짜) 에듀브릿지",
+     "position": "그래픽 디자이너",
+     "period": "2021.03 ~ 2022.09",
+     "duties": "검색 브랜드 BX·광고 그래픽과 상세페이지 제작",
+     "achievements": "검색 캠페인 소재 32종 제작, CTR 1.9% 달성"
+    },
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "그래픽 디자이너",
+     "period": "2018.08 ~ 2021.02",
+     "duties": "결제 브랜드 BX·광고 그래픽과 상세페이지 제작",
+     "achievements": "결제 캠페인 소재 25종 제작, CTR 0.7% 달성"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "tc-070",
+   "name": "임태윤",
+   "role": "designer",
+   "title": "그래픽 디자이너",
+   "archetype": "graphic",
+   "total_years": 3,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Photoshop",
+    "Illustrator",
+    "InDesign",
+    "Cinema 4D"
+   ],
+   "short_bio": "3년차 그래픽 디자이너, Photoshop, Illustrator, InDesign 중심",
+   "long_bio": "Photoshop·Illustrator를 주력으로 실무 경험을 쌓아 왔습니다. 정산 브랜드 BX·광고 그래픽과 상세페이지 제작을 담당했고, 정산 캠페인 소재 52종 제작, CTR 1.3% 달성을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "그래픽 디자이너",
+     "period": "2023.10 ~ 현재",
+     "duties": "정산 브랜드 BX·광고 그래픽과 상세페이지 제작",
+     "achievements": "정산 캠페인 소재 52종 제작, CTR 1.3% 달성"
+    }
+   ],
+   "scenario_note": null
+  },
+  {
+   "test_id": "edge-fullstack-to-backend",
+   "name": "안예린",
+   "role": "developer",
+   "title": "풀스택 개발자",
+   "archetype": "fullstack",
+   "total_years": 4,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "TypeScript",
+    "React",
+    "Node.js",
+    "NestJS",
+    "PostgreSQL",
+    "AWS"
+   ],
+   "short_bio": "4년차 풀스택 개발자, TypeScript, React, Node.js 중심",
+   "long_bio": "TypeScript·React를 주력으로 실무 경험을 쌓아 왔습니다. 채팅 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영을 담당했고, 채팅 출시 주기 22주→6주 단축을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "풀스택 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "채팅 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "채팅 출시 주기 22주→6주 단축"
+    },
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "풀스택 개발자",
+     "period": "2022.09 ~ 2024.03",
+     "duties": "검색 프론트(React)와 API(Node.js)를 함께 개발하고 배포 파이프라인 운영",
+     "achievements": "검색 출시 주기 23주→11주 단축"
+    }
+   ],
+   "scenario_note": "풀스택→백엔드 공고: Node 백엔드 실무 4년 → Node 백엔드 공고 통과 기대"
+  },
+  {
+   "test_id": "edge-java-only",
+   "name": "오지우",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 3,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL"
+   ],
+   "short_bio": "3년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 헬스케어 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 헬스케어 응답 시간 p95 51ms→11ms 단축을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "백엔드 개발자",
+     "period": "2025.04 ~ 현재",
+     "duties": "Spring Boot 기반 헬스케어 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "헬스케어 응답 시간 p95 51ms→11ms 단축"
+    },
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "백엔드 개발자",
+     "period": "2023.09 ~ 2025.03",
+     "duties": "Spring Boot 기반 정산 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "정산 응답 시간 p95 66ms→8ms 단축"
+    }
+   ],
+   "scenario_note": "Java만: JavaScript/React 프론트 공고는 탈락해야 함(이름 유사 오매칭 방지)"
+  },
+  {
+   "test_id": "edge-javascript-only",
+   "name": "권예린",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 3,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "JavaScript",
+    "React",
+    "HTML",
+    "CSS"
+   ],
+   "short_bio": "3년차 프론트엔드 개발자, JavaScript, React, HTML 중심",
+   "long_bio": "JavaScript·React를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 결제 화면 개발과 공통 컴포넌트 관리을 담당했고, 결제 LCP 4.2s→0.3s 개선을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 디자인스튜디오 모노",
+     "position": "프론트엔드 개발자",
+     "period": "2025.04 ~ 현재",
+     "duties": "React·Next.js 결제 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "결제 LCP 4.2s→0.3s 개선"
+    },
+    {
+     "company": "(가짜) 브랜딩랩",
+     "position": "프론트엔드 개발자",
+     "period": "2023.09 ~ 2025.03",
+     "duties": "React·Next.js 결제 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "결제 LCP 2.5s→1.1s 개선"
+    }
+   ],
+   "scenario_note": "JavaScript만: Java/Spring 백엔드 공고는 탈락해야 함"
+  },
+  {
+   "test_id": "edge-short-1y",
+   "name": "홍예린",
+   "role": "developer",
+   "title": "백엔드 개발자",
+   "archetype": "backend_java",
+   "total_years": 2,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "Java",
+    "Spring Boot",
+    "JPA",
+    "MySQL",
+    "Jenkins"
+   ],
+   "short_bio": "2년차 백엔드 개발자, Java, Spring Boot, JPA 중심",
+   "long_bio": "Java·Spring Boot를 주력으로 실무 경험을 쌓아 왔습니다. Spring Boot 기반 예약 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발을 담당했고, 예약 응답 시간 p95 87ms→19ms 단축을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 헬스노트",
+     "position": "백엔드 개발자",
+     "period": "2024.10 ~ 현재",
+     "duties": "Spring Boot 기반 예약 API 설계·운영, MySQL 쿼리 튜닝과 배치 개발",
+     "achievements": "예약 응답 시간 p95 87ms→19ms 단축"
+    }
+   ],
+   "scenario_note": "경력 1년 부족: 경력 3년 이상 Java 백엔드 공고 → 하드 필터 탈락 또는 감점(경계)"
+  },
+  {
+   "test_id": "edge-remote-busan",
+   "name": "한예준",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 5,
+   "region": "부산",
+   "remote_ok": true,
+   "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Jest",
+    "Tailwind CSS",
+    "Storybook"
+   ],
+   "short_bio": "5년차 프론트엔드 개발자, JavaScript, TypeScript, React 중심",
+   "long_bio": "JavaScript·TypeScript를 주력으로 실무 경험을 쌓아 왔습니다. React·Next.js 콘텐츠 화면 개발과 공통 컴포넌트 관리을 담당했고, 콘텐츠 LCP 4.5s→0.4s 개선을 이뤘습니다. 부산 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 리걸테크",
+     "position": "프론트엔드 개발자",
+     "period": "2024.04 ~ 현재",
+     "duties": "React·Next.js 콘텐츠 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "콘텐츠 LCP 4.5s→0.4s 개선"
+    },
+    {
+     "company": "(가짜) 미디어웨이브",
+     "position": "프론트엔드 개발자",
+     "period": "2021.09 ~ 2024.03",
+     "duties": "React·Next.js 결제 화면 개발과 공통 컴포넌트 관리",
+     "achievements": "결제 LCP 3.4s→1.9s 개선"
+    }
+   ],
+   "scenario_note": "원격 가능 + 지방 거주: 서울 공고라도 원격 허용 공고면 통과, 상주 필수면 지역 감점"
+  },
+  {
+   "test_id": "edge-design-only",
+   "name": "신재원",
+   "role": "designer",
+   "title": "UI/UX 디자이너",
+   "archetype": "uiux",
+   "total_years": 4,
+   "region": "서울",
+   "remote_ok": true,
+   "skills": [
+    "Figma",
+    "UI Design",
+    "UX Research",
+    "Design System"
+   ],
+   "short_bio": "4년차 UI/UX 디자이너, Figma, UI Design, UX Research 중심",
+   "long_bio": "Figma·UI Design를 주력으로 실무 경험을 쌓아 왔습니다. 결제 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작을 담당했고, 결제 전환율 49%→15%을 이뤘습니다. 서울 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "design"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 게임하우스",
+     "position": "UI/UX 디자이너",
+     "period": "2022.10 ~ 현재",
+     "duties": "결제 서비스 UI/UX 설계, 사용자 인터뷰와 프로토타입 제작",
+     "achievements": "결제 전환율 49%→15%"
+    }
+   ],
+   "scenario_note": "디자인 역량만: 프론트엔드 개발 공고 탈락, UI/UX 공고 통과"
+  },
+  {
+   "test_id": "edge-newbie-frontend",
+   "name": "조서연",
+   "role": "developer",
+   "title": "프론트엔드 개발자",
+   "archetype": "frontend",
+   "total_years": 0,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "JavaScript",
+    "React",
+    "TypeScript"
+   ],
+   "short_bio": "신입 프론트엔드 개발자, JavaScript, React, TypeScript 중심",
+   "long_bio": "JavaScript·React를 주력으로 부트캠프와 개인 프로젝트로 준비했습니다. 팀 프로젝트에서 기획부터 배포까지 맡았습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [],
+   "scenario_note": "신입 프론트: 신입 가능 공고 통과, 경력 3년 이상 공고 탈락"
+  },
+  {
+   "test_id": "edge-de-vs-ml",
+   "name": "최소율",
+   "role": "developer",
+   "title": "데이터 엔지니어",
+   "archetype": "data_eng",
+   "total_years": 6,
+   "region": "서울",
+   "remote_ok": false,
+   "skills": [
+    "Python",
+    "SQL",
+    "Spark",
+    "Airflow",
+    "Kafka"
+   ],
+   "short_bio": "6년차 데이터 엔지니어, Python, SQL, Spark 중심",
+   "long_bio": "Python·SQL를 주력으로 실무 경험을 쌓아 왔습니다. 검색 데이터 파이프라인(Airflow·Spark) 구축과 운영을 담당했고, 검색 배치 5.5시간→0.5시간을 이뤘습니다. 서울 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 모빌리티원",
+     "position": "데이터 엔지니어",
+     "period": "2025.04 ~ 현재",
+     "duties": "검색 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "검색 배치 5.5시간→0.5시간"
+    },
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "데이터 엔지니어",
+     "period": "2023.03 ~ 2025.03",
+     "duties": "물류 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "물류 배치 7.4시간→1.0시간"
+    },
+    {
+     "company": "(가짜) 헬스노트",
+     "position": "데이터 엔지니어",
+     "period": "2020.08 ~ 2023.02",
+     "duties": "검색 데이터 파이프라인(Airflow·Spark) 구축과 운영",
+     "achievements": "검색 배치 5.9시간→0.7시간"
+    }
+   ],
+   "scenario_note": "데이터 엔지니어 vs ML 공고: Python 공통이지만 PyTorch 없음 → ML 공고 하위/탈락"
+  },
+  {
+   "test_id": "edge-kotlin-android",
+   "name": "장민준",
+   "role": "developer",
+   "title": "안드로이드 개발자",
+   "archetype": "android",
+   "total_years": 5,
+   "region": "서울",
+   "remote_ok": true,
+   "skills": [
+    "Kotlin",
+    "Android",
+    "Java"
+   ],
+   "short_bio": "5년차 안드로이드 개발자, Kotlin, Android, Java 중심",
+   "long_bio": "Kotlin·Android를 주력으로 실무 경험을 쌓아 왔습니다. 채팅 안드로이드 앱 개발, Compose 전환과 모듈 분리을 담당했고, 채팅 크래시율 3.2%→1.0%을 이뤘습니다. 서울 근무 희망, 원격 근무 가능. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 트래블메이트",
+     "position": "안드로이드 개발자",
+     "period": "2022.10 ~ 현재",
+     "duties": "채팅 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "채팅 크래시율 3.2%→1.0%"
+    },
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "안드로이드 개발자",
+     "period": "2021.09 ~ 2022.09",
+     "duties": "주문 안드로이드 앱 개발, Compose 전환과 모듈 분리",
+     "achievements": "주문 크래시율 3.4%→1.1%"
+    }
+   ],
+   "scenario_note": "Kotlin Android: Kotlin+Spring 서버 공고는 탈락(언어만 같고 직무 다름)"
+  },
+  {
+   "test_id": "edge-senior-devops",
+   "name": "정건우",
+   "role": "developer",
+   "title": "DevOps 엔지니어",
+   "archetype": "devops",
+   "total_years": 8,
+   "region": "경기",
+   "remote_ok": false,
+   "skills": [
+    "AWS",
+    "Kubernetes",
+    "Terraform",
+    "Linux",
+    "Python"
+   ],
+   "short_bio": "8년차 DevOps 엔지니어, AWS, Kubernetes, Terraform 중심",
+   "long_bio": "AWS·Kubernetes를 주력으로 실무 경험을 쌓아 왔습니다. 검색 인프라(AWS·EKS) 운영과 CI/CD 구축을 담당했고, 검색 배포 시간 64분→7분을 이뤘습니다. 경기 근무 희망. [TEST]",
+   "desired_categories": [
+    "it_dev_data"
+   ],
+   "experiences": [
+    {
+     "company": "(가짜) 스마트팩토리랩",
+     "position": "DevOps 엔지니어",
+     "period": "2024.10 ~ 현재",
+     "duties": "검색 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "검색 배포 시간 64분→7분"
+    },
+    {
+     "company": "(가짜) 클라우드온",
+     "position": "DevOps 엔지니어",
+     "period": "2023.03 ~ 2024.09",
+     "duties": "물류 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "물류 배포 시간 76분→16분"
+    },
+    {
+     "company": "(가짜) 로지스타",
+     "position": "DevOps 엔지니어",
+     "period": "2021.08 ~ 2023.02",
+     "duties": "헬스케어 인프라(AWS·EKS) 운영과 CI/CD 구축",
+     "achievements": "헬스케어 배포 시간 55분→11분"
+    }
+   ],
+   "scenario_note": "시니어 DevOps: 주니어(1~3년) 공고에는 과경력 감점 경계"
+  }
+ ]
+}

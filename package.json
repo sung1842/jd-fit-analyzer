@@ -1,0 +1,15 @@
+{
+  "name": "jd-fit-analyzer",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "mcp-server",
+    "orchestrator",
+    "web"
+  ],
+  "scripts": {
+    "dev:mcp": "npm run dev --workspace mcp-server",
+    "dev:orchestrator": "npm run dev --workspace orchestrator",
+    "dev:web": "npm run dev --workspace web"
+  }
+}

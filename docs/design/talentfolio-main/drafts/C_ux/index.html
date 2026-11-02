@@ -1,0 +1,136 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Talentfolio 시안 C</title>
+<style>
+:root{--bg:#F6F7F9;--ink:#17140F;--mute:#5C6370;--line:#E2E5EA;--ac:#E07A5F;--ac-d:#B5523A;--ac-s:#F2B8A6;--card:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:Pretendard,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+#crowd{position:fixed;inset:0;width:100%;height:100%;opacity:.22;z-index:0;pointer-events:none}
+.veil{position:fixed;inset:0;background:linear-gradient(180deg,rgba(246,247,249,.4),#F6F7F9 85%);z-index:0}
+main,header{position:relative;z-index:1}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;max-width:1200px;margin:auto}
+.logo{font-weight:800}.btn{border:0;border-radius:999px;padding:12px 20px;font:inherit;font-weight:700;cursor:pointer;background:var(--ink);color:#fff;text-decoration:none;display:inline-block}
+.btn.ac{background:var(--ac-d)}.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.hero{max-width:1200px;margin:auto;padding:40px 24px 80px;display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
+h1{word-break:keep-all;font-size:clamp(34px,6vw,72px);line-height:1.05;letter-spacing:-.03em;margin:0 0 20px}
+.slot{display:inline-block;min-width:5.6em;color:var(--ac-d)}.nw{white-space:nowrap}h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--ac-s) 62%)}
+body,p,h2,h3{word-break:keep-all}
+.ghost{margin-top:16px;position:relative}.ghost .cand{opacity:.55;pointer-events:none}.ghost .ln{height:8px;border-radius:4px;background:#E6E2DB;margin:4px 0}
+.ghost .peek{position:absolute;right:8px;top:-6px;background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;font-weight:800;transform:rotate(2deg);box-shadow:0 10px 20px -10px rgba(0,0,0,.4)}
+.ghost .peek small{display:block;font-weight:500;font-size:11px;color:#C9C3BA}
+.cand:nth-child(1){transform:rotate(-1deg)}.cand:nth-child(3){transform:rotate(1deg)}
+.demo::before{content:"";position:absolute;top:-10px;left:40px;width:70px;height:20px;background:rgba(242,184,166,.7);transform:rotate(-4deg)}.demo{position:relative}
+.walk b{font-size:clamp(40px,5vw,64px);color:var(--ink);opacity:.15;display:block;line-height:1}
+.seg{position:relative;display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg button{position:relative;z-index:1;border:0;background:none;font:inherit;font-weight:700;padding:10px 22px;cursor:pointer;color:var(--mute)}
+.seg button[aria-checked=true]{color:#fff}.pill{position:absolute;top:4px;bottom:4px;left:4px;border-radius:999px;background:var(--ink)}
+.sub{color:var(--mute);font-size:18px;margin:20px 0}.skip{display:block;margin-top:12px;color:var(--mute);font-size:14px}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;min-height:400px;box-shadow:0 20px 40px -24px rgba(0,0,0,.2)}
+.tag{font-size:12px;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:2px 6px}
+.steps{display:flex;gap:6px;margin:12px 0 16px}.steps i{flex:1;height:4px;border-radius:2px;background:var(--line)}.steps i.on{background:var(--ac)}
+.jd{display:flex;gap:8px}.jd input{flex:1;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit}
+.cards{display:grid;gap:10px;margin-top:16px}
+.cand{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;text-align:left;font:inherit;width:100%}
+.cand[aria-checked=true]{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac) inset}
+.thumb{width:44px;height:44px;border-radius:10px;background:repeating-linear-gradient(45deg,#E9ECF0 0 6px,#DDE1E7 6px 12px)}
+.score{display:flex;gap:20px;align-items:center;margin-top:16px}.ring{width:110px;height:110px}
+.big{font-size:44px;font-weight:800}.why{color:var(--mute);font-size:14px;margin:4px 0}
+.live{font-size:13px;color:var(--mute);min-height:1.2em;margin-top:12px}
+.hidden{display:none!important}
+section{max-width:1200px;margin:auto;padding:80px 24px}
+.walk{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
+.walk div{border-top:2px solid var(--ink);padding-top:16px}.walk b{font-size:13px;color:var(--ac-d)}
+.nums{display:flex;flex-wrap:wrap;gap:48px}.nums strong{font-size:clamp(48px,8vw,96px);letter-spacing:-.04em;display:block}
+.dark{background:var(--ink);color:#fff;max-width:none}.dark>div{max-width:1200px;margin:auto}.dark h2{font-size:clamp(32px,5vw,56px)}
+.final{display:flex;gap:12px;flex-wrap:wrap}
+@media(max-width:820px){.hero{grid-template-columns:1fr;padding-top:16px}.walk{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.seg{display:flex}.seg button{flex:1}.walk{grid-template-columns:1fr}header{padding:16px}.hero,section{padding-left:16px;padding-right:16px}}
+</style></head><body>
+<canvas id="crowd" aria-hidden="true"></canvas><div class="veil"></div>
+<header><span class="logo">Talentfolio</span><a class="btn ac" id="headCta" href="/desk">의뢰 건 시작하기</a></header>
+<main>
+<div class="hero">
+ <div>
+  <h1 aria-label="AI가 인재를 찾고, 사람이 승인합니다">AI가 <span class="slot" id="slot" aria-hidden="true">개발자를</span> 찾고,<br><span class="nw">사람이 <em>승인</em>합니다.</span></h1>
+  <div class="seg" role="radiogroup" aria-label="역할 선택"><span class="pill" id="pill"></span>
+   <button role="radio" aria-checked="false" data-role="seeker" tabindex="-1">지원자</button>
+   <button role="radio" aria-checked="true" data-role="hunter" tabindex="0">헤드헌터</button></div>
+  <p class="sub" id="sub">스카우트 의뢰 한 줄이면 후보 탐색과 핏 분석은 에이전트가, 접촉 결정은 당신이 합니다.</p>
+  <a class="btn ac" id="heroCta" href="/desk">내 의뢰 건 시작하기</a>
+  <a class="skip" href="#walk">데모 건너뛰고 둘러보기</a>
+ </div>
+ <div class="demo" id="demo" aria-labelledby="dt">
+  <div style="display:flex;justify-content:space-between"><strong id="dt">직접 해보기</strong><span class="tag">예시 데모</span></div>
+  <div class="steps" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+  <label for="jd" class="why" id="jdl">스카우트 의뢰 (JD 한 줄)</label>
+  <div class="jd"><input id="jd" value="결제 시스템 경험 5년+ 백엔드, Kotlin"><button class="btn" id="go">분석 시작</button></div>
+  <div class="ghost" id="ghost" aria-hidden="true"><div class="cand"><span class="thumb"></span><span style="flex:1"><div class="ln" style="width:40%"></div><div class="ln" style="width:70%"></div></span></div><div class="cand"><span class="thumb"></span><span style="flex:1"><div class="ln" style="width:35%"></div><div class="ln" style="width:60%"></div></span></div><div class="cand"><span class="thumb"></span><span style="flex:1"><div class="ln" style="width:45%"></div><div class="ln" style="width:55%"></div></span></div><div class="peek">핏 87점<small>이런 결과가 나와요 · 예시</small></div></div>
+  <div class="cards hidden" id="cards" role="radiogroup" aria-label="후보 선택"></div>
+  <div class="score hidden" id="score">
+   <svg class="ring" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#E2E5EA" stroke-width="10"/><circle id="arc" cx="60" cy="60" r="52" fill="none" stroke="#E07A5F" stroke-width="10" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327" transform="rotate(-90 60 60)"/></svg>
+   <div><div class="big"><span id="num">0</span><small style="font-size:16px">점</small></div><p class="why" id="why1"></p><p class="why" id="why2"></p>
+   <button class="btn ac" id="ok">승인하고 제안 보내기</button></div></div>
+  <div class="hidden" id="done" style="margin-top:16px"><p><strong id="doneT">제안 대기열에 추가됐어요 (예시)</strong></p><a class="btn ac" id="doneCta" href="/desk">실제 의뢰 건으로 시작</a> <button class="btn ghost" id="again">다시 해보기</button></div>
+  <p class="live" id="live" aria-live="polite">분석 시작을 눌러보세요.</p>
+ </div>
+</div>
+<section id="walk"><h2>네 단계, 한 번의 승인</h2><div class="walk">
+ <div><b>01</b><h3>의뢰 입력</h3><p>JD 한 줄 또는 기존 공고 선택</p></div>
+ <div><b>02</b><h3>후보 탐색</h3><p>코드 사전필터로 좁힌 뒤 소수만 정밀 분석</p></div>
+ <div><b>03</b><h3>핏 분석</h3><p>기술·경험·컬처 근거가 붙은 리포트</p></div>
+ <div><b>04</b><h3>사람이 승인</h3><p>승인한 후보에게만 제안 발송</p></div></div></section>
+<section><div class="nums">
+ <div><strong data-n="12">0</strong>분 · 의뢰당 평균 탐색 시간 <span class="tag">예시</span></div>
+ <div><strong data-n="5">0</strong>회 · 후보당 최대 AI 호출 <span class="tag">예시</span></div></div></section>
+<section class="dark"><div><h2>AI는 제안하고,<br>결정은 사람이 합니다.</h2><p style="color:#B8BDC6">승인 전에는 어떤 후보에게도 연락이 가지 않습니다.</p></div></section>
+<section><h2>어디서 시작할까요?</h2><div class="final"><a class="btn" id="fA" href="/studio">포트폴리오 만들기</a><a class="btn ac" id="fB" href="/desk">의뢰 건 시작하기</a><a class="btn ghost" href="/start">처음이에요</a></div></section>
+</main>
+<script type="module">
+import {animate,stagger,createTimeline} from 'https://cdn.jsdelivr.net/npm/animejs@4.0.2/+esm';
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches, D=ms=>RM?0:ms, $=s=>document.querySelector(s);
+const COPY={hunter:{sub:'스카우트 의뢰 한 줄이면 후보 탐색과 핏 분석은 에이전트가, 접촉 결정은 당신이 합니다.',cta:'내 의뢰 건 시작하기',href:'/desk',jdl:'스카우트 의뢰 (JD 한 줄)',jd:'결제 시스템 경험 5년+ 백엔드, Kotlin',ok:'승인하고 제안 보내기',done:'제안 대기열에 추가됐어요 (예시)',
+ items:[['김O현','백엔드 7년 · 결제 PG',87,'Kotlin·Spring 실무 프로젝트 3건','결제 장애 대응 트러블슈팅 기록 보유'],['이O준','백엔드 5년 · 커머스',74,'Java 중심, Kotlin 사이드 프로젝트','정산 배치 개선 경험'],['박O서','풀스택 6년 · 핀테크',69,'Node 위주, 결제 도메인 경험','API 설계 문서화 우수']]},
+ seeker:{sub:'포트폴리오를 올리면 맞는 공고를 찾아 핏 점수와 근거를 보여드려요. 지원은 당신이 결정합니다.',cta:'포트폴리오 만들기',href:'/studio',jdl:'내 포트폴리오 한 줄 요약',jd:'React·TypeScript 3년, 디자인 시스템 구축',ok:'이 공고에 지원 승인',done:'지원 목록에 담았어요 (예시)',
+ items:[['A사','프론트엔드 · 디자인시스템팀',91,'디자인 시스템 경험이 핵심 요건과 일치','TypeScript 사용 이력 충족'],['B사','웹 프론트엔드',78,'React 요건 충족','테스트 자동화 경험 보완 필요'],['C사','프로덕트 엔지니어',66,'풀스택 요구, 백엔드 경험 부족','협업 툴 사용 경험 일치']]}};
+let role='hunter';
+const btns=[...document.querySelectorAll('.seg button')],pill=$('#pill');
+function placePill(){const b=btns.find(x=>x.dataset.role===role);animate(pill,{x:b.offsetLeft-4,width:b.offsetWidth,duration:D(320),ease:'outExpo'})}
+function setRole(r,focus){if(r===role)return;role=r;btns.forEach(b=>{const on=b.dataset.role===r;b.setAttribute('aria-checked',on);b.tabIndex=on?0:-1;if(on&&focus)b.focus()});
+ placePill();const c=COPY[r];$('#sub').textContent=c.sub;['#heroCta','#headCta'].forEach(s=>{$(s).textContent=c.cta;$(s).href=c.href});
+ $('#fA').className='btn'+(r==='seeker'?' ac':'');$('#fB').className='btn'+(r==='hunter'?' ac':'');
+ if(!RM)animate('#demo, #sub',{clipPath:['inset(0 100% 0 0)','inset(0 0% 0 0)'],duration:450,ease:'inOutQuart'});reset();
+ history.replaceState(null,'','?role='+r)}
+btns.forEach(b=>{b.onclick=()=>setRole(b.dataset.role);b.onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();setRole(role==='hunter'?'seeker':'hunter',true)}}});
+const live=t=>{$('#live').textContent=t}, steps=n=>document.querySelectorAll('.steps i').forEach((s,i)=>s.classList.toggle('on',i<n));
+function reset(){const c=COPY[role];$('#jdl').textContent=c.jdl;$('#jd').value=c.jd;$('#ok').textContent=c.ok;$('#doneT').textContent=c.done;$('#doneCta').href=c.href;
+ ['#cards','#score','#done'].forEach(s=>$(s).classList.add('hidden'));$('#ghost').classList.remove('hidden');$('#go').disabled=false;steps(1);live('분석 시작을 눌러보세요.')}
+$('#go').onclick=()=>{$('#go').disabled=true;$('#ghost').classList.add('hidden');live('후보를 찾는 중…');const box=$('#cards');box.innerHTML='';
+ COPY[role].items.forEach((it,i)=>{const b=document.createElement('button');b.className='cand';b.setAttribute('role','radio');b.setAttribute('aria-checked','false');
+  b.innerHTML='<span class="thumb"></span><span><strong>'+it[0]+'</strong><br><small class="why">'+it[1]+'</small></span>';b.onclick=()=>choose(i);
+  b.onkeydown=e=>{const k={ArrowDown:1,ArrowUp:-1}[e.key];if(k){e.preventDefault();box.children[(i+k+3)%3].focus()}};box.append(b)});
+ setTimeout(()=>{box.classList.remove('hidden');steps(2);
+  animate('.cand',{y:[24,0],opacity:[0,1],rotate:{from:(el,i)=>(i-1)*4,to:(el,i)=>[-1,0,1][i]},delay:stagger(D(70)),duration:D(500),ease:'outBack(1.4)'});
+  box.children[0].focus();live('후보 3명 (예시). 하나를 골라보세요.')},D(600))};
+function choose(i){const it=COPY[role].items[i];[...$('#cards').children].forEach((b,j)=>b.setAttribute('aria-checked',j===i));
+ $('#score').classList.remove('hidden');steps(3);$('#why1').textContent='· '+it[3];$('#why2').textContent='· '+it[4];
+ const o={v:0};animate(o,{v:it[2],duration:D(900),ease:'outExpo',onUpdate:()=>{$('#num').textContent=Math.round(o.v)},onComplete:()=>{$('#num').textContent=it[2]}});
+ animate('#arc',{strokeDashoffset:327*(1-it[2]/100),duration:D(900),ease:'outExpo'});live('핏 점수 '+it[2]+'점 (예시). 승인할 수 있어요.')}
+$('#ok').onclick=()=>{steps(4);$('#done').classList.remove('hidden');animate('#ok',{scale:[.94,1],duration:D(300)});
+ animate('#done',{opacity:[0,1],y:[8,0],duration:D(350)});$('#doneCta').focus();live('승인 완료 (예시). 사람이 승인한 후보에게만 연락이 갑니다.')};
+$('#again').onclick=()=>{reset();$('#go').focus()};
+const words=['개발자를','디자이너를','PM을','데이터 분석가를'];let w=0;
+if(!RM)setInterval(()=>{w=(w+1)%words.length;const s=$('#slot');animate(s,{opacity:[1,0],y:[0,-8],duration:200,onComplete:()=>{s.textContent=words[w];animate(s,{opacity:[0,1],y:[8,0],duration:260})}})},2600);
+document.querySelectorAll('[data-n]').forEach(el=>{const io=new IntersectionObserver(es=>{if(!es[0].isIntersecting)return;io.disconnect();const n=+el.dataset.n,o={v:0};
+ animate(o,{v:n,duration:D(1200),ease:'outExpo',onUpdate:()=>{el.textContent=Math.round(o.v)},onComplete:()=>{el.textContent=n}})},{threshold:.6});io.observe(el)});
+if(new URLSearchParams(location.search).get('role')==='seeker')setRole('seeker');requestAnimationFrame(placePill);
+// Skiper39 간이 재현: 15x7 스프라이트 군중 걷기. 로드 실패 시 회색 실루엣 플레이스홀더.
+const cv=$('#crowd'),cx=cv.getContext('2d'),img=new Image();let ok=false;img.onload=()=>{ok=true};img.src='http://localhost:3000/images/peeps/all-peeps.png';
+const N=innerWidth<500?8:18,peeps=Array.from({length:N},()=>({x:Math.random()*innerWidth,s:Math.random()*.6+.4,f:Math.floor(Math.random()*105),d:Math.random()<.5?1:-1}));
+function size(){cv.width=innerWidth;cv.height=innerHeight}size();addEventListener('resize',size);
+function draw(){cx.clearRect(0,0,cv.width,cv.height);peeps.forEach(p=>{const h=cv.height*.45*p.s,w=h*.6,y=cv.height-h;
+ if(!RM){p.x+=p.d*p.s*.6;if(p.x>cv.width+w)p.x=-w;if(p.x<-w)p.x=cv.width+w}
+ if(ok){const fw=img.width/15,fh=img.height/7,sx=(p.f%15)*fw,sy=Math.floor(p.f/15)*fh;cx.save();
+  if(p.d<0){cx.translate(p.x+w,0);cx.scale(-1,1);cx.drawImage(img,sx,sy,fw,fh,0,y,w,h)}else cx.drawImage(img,sx,sy,fw,fh,p.x,y,w,h);cx.restore()}
+ else{cx.fillStyle='#9AA1AB';cx.beginPath();cx.arc(p.x+w/2,y+h*.15,h*.1,0,7);cx.fill();cx.fillRect(p.x+w*.3,y+h*.28,w*.4,h*.72)}});
+ if(!RM&&!document.hidden)requestAnimationFrame(draw)}
+draw();document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!RM)draw()});
+</script></body></html>

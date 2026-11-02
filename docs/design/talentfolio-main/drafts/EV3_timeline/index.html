@@ -1,0 +1,297 @@
+<!doctype html>
+<!--
+  이 시안의 정보구조 가설 (EV3 · 커리어 타임라인/일기형)
+  1. 경력은 "카드 묶음"이 아니라 시간순 기록이다 — 기록 시점 배지가 타임라인의 척추가 되어 진위(당시 작성 vs 회고)를 한눈에 보여준다.
+  2. 기록은 기본 비공개(자물쇠 잠김)이고, 공개는 카드마다 사용자가 직접 연다 — 피드 안에서 바로 잠그고 여는 것이 가장 짧은 경로다.
+  3. 공개 상태·동의·추천 내역은 "나에 대한 외부 흐름"이므로 오른쪽 레일 한곳에 모아 피드(쓰기)와 분리한다.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>커리어 타임라인</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&display=swap">
+<style>
+:root{--ink:#0B1C45;--ink2:#44527A;--mute:#5E6A8A;--line:#E2E8F2;--line2:#EEF2F8;--paper:#F7F9FC;--white:#fff;--blue:#1F4FD6;--blue-s:#EAF0FD;--sky:#4AA3F2;--sun:#FFE7A3;--green:#17784F;--green-s:#E6F4EC;--amber:#8A5A00;--amber-s:#FFF4DA;--red:#B42318;--red-s:#FDECEA}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden}
+body{font-family:Pretendard,system-ui,sans-serif;color:var(--ink);background:var(--paper);font-size:15px;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:8px;top:-60px;background:var(--ink);color:#fff;padding:10px 14px;border-radius:8px;z-index:99}
+.skip:focus{top:8px}
+.logo{position:relative;font-family:Lora,serif;font-style:italic;font-weight:500;font-size:22px;letter-spacing:-.03em;line-height:1}
+.logo b{font-weight:700;background:linear-gradient(100deg,#1F4FD6,#4AA3F2);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
+.logo svg{position:absolute;right:-2px;bottom:-.27em;width:58%;height:.35em;overflow:visible}
+header.top{background:var(--white);border-bottom:1px solid var(--line)}
+.top-in{max-width:1200px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.tabs{display:flex;gap:4px;overflow-x:auto;min-width:0;flex:1}
+.tabs button{border:0;background:none;padding:10px 14px;min-height:44px;border-radius:8px;color:var(--ink2);cursor:pointer;white-space:nowrap;font-weight:600}
+.tabs button[aria-selected=true]{background:var(--blue-s);color:var(--blue)}
+.who{font-size:13px;color:var(--mute)}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 16px 60px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px}
+.wrap>*{min-width:0}
+.panel[hidden]{display:none}
+.composer{position:sticky;top:0;z-index:5;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:20px;box-shadow:0 2px 0 var(--line2)}
+.composer h2{font-size:16px;margin:0 0 8px}
+.composer textarea{width:100%;min-height:72px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:end}
+.row label{display:flex;flex-direction:column;font-size:12px;color:var(--ink2);gap:2px;min-width:0;flex:1 1 120px}
+.row input,.row select{border:1px solid var(--line);border-radius:8px;padding:8px;min-height:44px;background:#fff;width:100%}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;min-height:44px;cursor:pointer;font-weight:600}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.sm{min-height:36px;padding:4px 10px;font-size:13px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.hint{font-size:12px;color:var(--mute);margin:6px 0 0}
+.job{margin-top:10px;font-size:13px;display:none}
+.job.on{display:block}
+.bar{height:6px;background:var(--line2);border-radius:4px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
+/* timeline */
+.feed{list-style:none;margin:0;padding:0 0 0 22px;border-left:2px solid var(--line);position:relative}
+.entry{position:relative;margin:0 0 22px}
+.entry::before{content:"";position:absolute;left:-29px;top:10px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--blue)}
+.entry.retro::before{border-style:dashed;border-color:var(--mute)}
+.stamp{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;margin-bottom:6px}
+.stamp.live{background:var(--blue-s);color:var(--blue)}
+.stamp.retro{background:var(--line2);color:var(--ink2)}
+.stamp small{font-weight:500}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+.card-h{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.card-h h3{margin:0;font-size:16px;min-width:0;overflow-wrap:anywhere}
+.meta{font-size:12px;color:var(--mute)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--ink2);background:#fff}
+.chip.ai{border-color:var(--amber);color:var(--amber);background:var(--amber-s);font-weight:700}
+.chip.t0{} .chip.t1{border-color:var(--blue);color:var(--blue)} .chip.t2{border-color:var(--green);color:var(--green);background:var(--green-s)}
+.lock{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;min-height:44px;cursor:pointer;font-size:13px;font-weight:700}
+.lock[aria-pressed=true]{border-color:var(--green);color:var(--green);background:var(--green-s)}
+.cells{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:8px;margin-top:10px}
+.cell{border:1px solid var(--line2);background:var(--paper);border-radius:10px;padding:8px 10px;min-width:0}
+.cell b{font-size:12px;color:var(--ink2);display:block}
+.cell p{margin:2px 0 0;font-size:14px;overflow-wrap:anywhere}
+.q{border:0;background:none;color:var(--blue);font-size:11px;font-weight:700;cursor:pointer;padding:0 2px;vertical-align:super;min-width:24px;min-height:24px}
+.quote{display:block;font-size:12px;color:var(--ink2);border-left:3px solid var(--sky);padding:2px 8px;margin:4px 0;background:#fff}
+.empty-cells{font-size:12px;color:var(--mute);margin-top:6px}
+.foot{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.editor{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;display:none}
+.editor.on{display:block}
+.editor label{font-size:12px;color:var(--ink2);display:block;margin-top:8px}
+.editor textarea,.editor select{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;min-height:44px;background:#fff}
+.diff{font-size:14px;background:var(--paper);border-radius:8px;padding:8px;margin-top:6px;overflow-wrap:anywhere}
+.diff del{color:var(--red);background:var(--red-s)}
+.diff ins{text-decoration:underline;text-decoration-thickness:2px;background:var(--amber-s);color:var(--ink)}
+.rule{font-size:12px;color:var(--mute);background:var(--line2);border-radius:8px;padding:6px 8px;margin-top:8px}
+/* rail */
+aside.rail{display:flex;flex-direction:column;gap:14px}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.box h2{font-size:14px;margin:0 0 8px}
+.stat{display:flex;justify-content:space-between;font-size:13px;padding:4px 0}
+.consent{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line2);font-size:13px}
+.consent:first-of-type{border-top:0}
+.switch{min-width:72px}
+.switch[aria-checked=true]{background:var(--green-s);border-color:var(--green);color:var(--green)}
+.rec{border-top:1px solid var(--line2);padding:8px 0;font-size:13px}
+.rec:first-of-type{border-top:0}
+.rec.out{opacity:.6}
+.rec a{color:var(--blue)}
+/* other tabs */
+.sec{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}
+.col h3{font-size:14px;margin:0 0 8px}
+.job-c{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:13px}
+dialog{border:1px solid var(--line);border-radius:14px;padding:18px;max-width:min(420px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(11,28,69,.35)}
+.top-in>*{min-width:0}
+.tabs{flex:1 1 auto;max-width:100%;overscroll-behavior-x:contain;scrollbar-width:thin}
+.steps{list-style:none;display:flex;flex-wrap:wrap;gap:4px;margin:10px 0 0;padding:0;font-size:12px}
+.steps li{border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--mute)}
+.steps li.done{color:var(--green);border-color:var(--green);background:var(--green-s)}
+.steps li.now{color:var(--blue);border-color:var(--blue);font-weight:700}
+.ecell{border-top:1px solid var(--line2);margin-top:8px}
+.mbar{display:none;position:sticky;top:0;z-index:6;background:var(--white);border-bottom:1px solid var(--line);padding:4px 16px;gap:6px;overflow-x:auto}
+.mbar a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid var(--line)}
+.rail .box{scroll-margin-top:60px}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}.mbar{display:flex}.composer{top:53px}.top-in{flex-wrap:wrap}.tabs{flex-basis:100%;order:3}}
+@media (max-width:480px){.composer{position:static}.feed{padding-left:16px}.entry::before{left:-23px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<a class="skip" href="#r-pub">공개 상태·추천 내역으로 건너뛰기</a>
+<header class="top">
+  <div class="top-in">
+    <span class="logo">talent<b>folio</b><svg viewBox="0 0 80 9" preserveAspectRatio="none"><path d="M2 6 C 22 1, 48 1, 78 5" fill="none" stroke="#4AA3F2" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+    <nav class="tabs" role="tablist" aria-label="스튜디오 메뉴">
+      <button role="tab" id="t-log" aria-controls="p-log" aria-selected="true">커리어 기록</button>
+      <button role="tab" id="t-prof" aria-controls="p-prof" aria-selected="false" tabindex="-1">프로필</button>
+      <button role="tab" id="t-cl" aria-controls="p-cl" aria-selected="false" tabindex="-1">자기소개서</button>
+      <button role="tab" id="t-jobs" aria-controls="p-jobs" aria-selected="false" tabindex="-1">공고</button>
+    </nav>
+    <span class="who">예시 · 김하린 (백엔드 4년차)</span>
+  </div>
+</header>
+<nav class="mbar" aria-label="내 상태 바로가기"><a href="#r-pub">공개 <span data-pubcount>0</span></a><a href="#r-rec">추천 <span id="m-rec">0</span></a><a href="#r-con">동의</a></nav>
+
+<div class="wrap" id="main">
+<main>
+  <section class="panel" id="p-log" role="tabpanel" aria-labelledby="t-log">
+    <form class="composer" id="composer" aria-labelledby="c-h">
+      <h2 id="c-h">오늘 한 일 기록</h2>
+      <label class="sr" for="c-text">회고 내용</label>
+      <textarea id="c-text" required placeholder="회고나 메모를 그대로 붙여 넣으세요. 정리는 원문 문장만 근거로 합니다."></textarea>
+      <div class="row">
+        <label>종류<select id="c-kind"><option>프로젝트</option><option>장애 대응</option><option>학습</option><option>협업</option></select></label>
+        <label>기간<input id="c-period" placeholder="예: 2026.09 – 2026.10"></label>
+        <label>역할<input id="c-role" placeholder="예: API 설계 담당"></label>
+        <button class="btn pri" id="c-go" type="submit">정리 요청</button>
+      </div>
+      <p class="hint">새 기록은 <strong>비공개</strong>로 저장됩니다. AI는 정리만 하고 내용을 지어내지 않습니다.</p>
+      <div class="job" id="job"><span id="job-txt" role="status" aria-live="polite"></span><div class="bar" aria-hidden="true"><i id="job-bar"></i></div></div>
+    </form>
+    <h2 class="sr">기록 타임라인</h2>
+    <ol class="feed" id="feed"></ol>
+  </section>
+
+  <section class="panel" id="p-prof" role="tabpanel" aria-labelledby="t-prof" hidden>
+    <div class="sec"><h2>프로필</h2>
+      <p><strong>김하린</strong> · 백엔드 개발자 · 4년차 (예시)</p>
+      <p class="meta">주요 기술: Node.js, TypeScript, PostgreSQL, Redis</p>
+      <p>공개 포트폴리오에는 <strong>잠금 해제한 기록</strong>만 표시됩니다. 현재 <span data-pubcount>0</span>건.</p>
+    </div>
+  </section>
+  <section class="panel" id="p-cl" role="tabpanel" aria-labelledby="t-cl" hidden>
+    <div class="sec"><h2>자기소개서</h2>
+      <label for="cl" class="sr">자기소개서 본문</label>
+      <textarea id="cl" style="width:100%;min-height:200px;border:1px solid var(--line);border-radius:10px;padding:10px">결제 대기열 장애를 겪으며 "재시도는 설계다"라는 원칙을 갖게 되었습니다. (예시)</textarea>
+      <p class="hint">직접 작성합니다. 필요하면 기록 카드에서 문장을 가져올 수 있습니다.</p>
+    </div>
+  </section>
+  <section class="panel" id="p-jobs" role="tabpanel" aria-labelledby="t-jobs" hidden>
+    <div class="sec"><h2>공고</h2>
+      <div class="cols">
+        <div class="col"><h3>관심 (2)</h3><div class="job-c">A사 · 백엔드 엔지니어</div><div class="job-c">C사 · 플랫폼 개발</div></div>
+        <div class="col"><h3>지원 (1)</h3><div class="job-c">B사 · 결제 서버 개발 <span class="meta">· 서류 검토 중</span></div></div>
+        <div class="col"><h3>보류 (1)</h3><div class="job-c">D사 · 풀스택</div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<aside class="rail" aria-label="공개 상태와 동의, 추천 내역">
+  <section class="box" id="r-pub" tabindex="-1"><h2>공개 상태</h2>
+    <div class="stat"><span>전체 기록</span><strong id="s-all">0</strong></div>
+    <div class="stat"><span>🔓 공개</span><strong id="s-pub">0</strong></div>
+    <div class="stat"><span>🔒 비공개</span><strong id="s-priv">0</strong></div>
+    <p class="hint">기본은 비공개. 공개는 카드의 자물쇠를 직접 열어야만 됩니다.</p>
+  </section>
+  <section class="box" id="r-con" tabindex="-1"><h2>동의</h2>
+    <div class="consent"><span>본인용 AI 정리<br><small class="meta">self_ai · 기록 정리·교정</small></span><button class="btn sm switch" role="switch" aria-checked="true" data-consent="self_ai">켜짐</button></div>
+    <div class="consent"><span>기업 매칭<br><small class="meta">matching · 공개 카드로 추천</small></span><button class="btn sm switch" role="switch" aria-checked="true" data-consent="matching">켜짐</button></div>
+  </section>
+  <section class="box" id="r-rec" tabindex="-1"><h2>추천 내역</h2><div id="recs"></div></section>
+  <p class="sr" role="status" aria-live="polite" id="toast"></p>
+</aside>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlg-h">
+  <h2 id="dlg-h" style="font-size:16px;margin-top:0"></h2>
+  <p id="dlg-p"></p>
+  <div class="foot" style="justify-content:flex-end"><button class="btn" id="dlg-no">취소</button><button class="btn pri" id="dlg-ok">확인</button></div>
+</dialog>
+
+<script type="module">
+let animate=null;try{({animate}=await import('https://cdn.jsdelivr.net/npm/animejs@4.0.2/+esm'))}catch(e){}
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fx=(el,p)=>{if(animate&&!RM)animate(el,{...p,duration:200,ease:'outQuad'})};
+const CELLS=['① 내가 푼 문제','② 실패와 회복','③ 일하는 방식','④ 남들이 나를 찾는 이유','⑤ 증거','⑥ 다음'];
+const TRUST=['본인 주장','근거 첨부','확인됨'];
+const S=[
+ {id:1,title:'결제 대기열 중복 처리 장애 대응',kind:'장애 대응',period:'2026.03',role:'온콜 담당',live:true,date:'2026.03.14',pub:true,trust:1,ai:false,
+  cells:{0:{t:'재시도 키를 도입해 중복 결제를 0건으로 줄였다.',q:'"idempotency key 넣고 나서 중복 0건 확인함"'},1:{t:'첫 대응에서 큐를 비워 일부 주문이 유실됐고, 이후 복구 스크립트를 만들었다.',q:'"큐 flush 한 건 실수였다. 복구 스크립트 짬"'},4:{t:'장애 회고 문서와 모니터링 그래프.',q:'"회고 문서 링크 첨부"'}}},
+ {id:2,title:'주문 API 응답속도 개선',kind:'프로젝트',period:'2025.11 – 2026.01',role:'API 설계',live:false,date:'2026.10.20',pub:false,trust:0,ai:true,
+  cells:{0:{t:'N+1 쿼리를 묶어 p95 응답을 820ms에서 310ms로 줄였다.',q:'"p95 820 → 310 정도로 내려감"',orig:'N+1 쿼리를 고쳐서 p95가 820ms에서 310ms 정도 됐다.'},2:{t:'변경 전 팀에 성능 측정 기준을 먼저 공유한다.',q:'"측정 기준부터 슬랙에 올림"'},5:{t:'캐시 무효화 전략을 더 깊게 다루고 싶다.',q:'"다음엔 캐시 무효화 제대로 해보고 싶음"'}}},
+ {id:3,title:'신입 온보딩 가이드 정비',kind:'협업',period:'2025.06',role:'멘토',live:true,date:'2025.06.30',pub:false,trust:2,ai:false,
+  cells:{3:{t:'로컬 환경 설정 문제가 생기면 동료들이 먼저 나를 찾는다.',q:'"또 도커 세팅 질문 받음 ㅋㅋ"'},2:{t:'질문을 받으면 문서에 바로 반영한다.',q:'"질문 오면 바로 위키 고침"'}}}
+];
+let R=[{co:'B사',job:'결제 서버 개발',ids:[1],why:'장애 대응 경험과 재시도 설계',out:false},{co:'A사',job:'백엔드 엔지니어',ids:[1,3],why:'운영 안정성, 팀 문서화 습관',out:false}];
+const consent={self_ai:true,matching:true};
+const $=s=>document.querySelector(s);
+const say=m=>{$('#toast').textContent='';setTimeout(()=>$('#toast').textContent=m,30)};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function ask(h,p,ok){const d=$('#dlg');$('#dlg-h').textContent=h;$('#dlg-p').textContent=p;d.showModal();
+ $('#dlg-ok').onclick=()=>{d.close();ok()};$('#dlg-no').onclick=()=>d.close();}
+function diff(a,b){const A=a.split(' '),B=b.split(' ');let i=0;while(i<A.length&&A[i]===B[i])i++;let j=0;while(j<A.length-i&&j<B.length-i&&A[A.length-1-j]===B[B.length-1-j])j++;
+ return esc(A.slice(0,i).join(' '))+' <del>'+esc(A.slice(i,A.length-j).join(' '))+'</del> <ins>'+esc(B.slice(i,B.length-j).join(' '))+'</ins> '+esc(A.slice(A.length-j).join(' '));}
+function card(e,open){
+ const filled=Object.keys(e.cells).map(Number).sort();
+ const empty=CELLS.filter((_,i)=>!filled.includes(i));
+ return `<li class="entry ${e.live?'':'retro'}" data-id="${e.id}">
+ <span class="stamp ${e.live?'live':'retro'}">${e.live?'● 활동 당시 작성':'◌ 회고 입력'} <small>${e.live?e.date:'입력일 '+e.date} · 수정 불가</small></span>
+ <article class="card" aria-labelledby="h${e.id}">
+  <div class="card-h"><div style="min-width:0"><h3 id="h${e.id}">${esc(e.title)}</h3>
+   <div class="meta">${esc(e.kind)} · ${esc(e.period||'기간 미입력')} · ${esc(e.role||'역할 미입력')}</div>
+   <div class="chips"><span class="chip t${e.trust}">신뢰: ${TRUST[e.trust]}</span>${e.ai?'<span class="chip ai" title="이 라벨은 숨길 수 없습니다">AI 교정</span>':''}<span class="chip">${filled.length}/6칸</span></div></div>
+   <button class="lock" aria-pressed="${e.pub}" data-act="lock">${e.pub?'🔓 공개 중':'🔒 비공개'}<span class="sr"> — 누르면 ${e.pub?'비공개로 전환':'공개'}</span></button></div>
+  <div class="cells">${filled.map(i=>`<div class="cell"><b>${CELLS[i]}</b><p>${esc(e.cells[i].t)}<button class="q" data-act="q" data-c="${i}" aria-expanded="false" aria-label="${CELLS[i]} 원문 인용 보기">[원문]</button></p><span class="quote" hidden id="q${e.id}-${i}">원문: ${esc(e.cells[i].q)}</span></div>`).join('')}</div>
+  ${empty.length?`<p class="empty-cells">비어 있는 칸: ${empty.join(', ')} — 원문에 근거가 없어 채우지 않았습니다.</p>`:''}
+  ${(()=>{const st=['기록','초안','다듬기','공개'];const done=[true,filled.length>0,!!(e.ai||e.edited),e.pub];const nx=done.indexOf(false);
+   return `<ol class="steps" aria-label="진행 단계">${st.map((s,i)=>`<li class="${done[i]?'done':''}${i===nx?' now':''}">${done[i]?'✓ ':i===nx?'→ ':''}${s}${i===nx?'<span class="sr"> (다음 단계)</span>':''}</li>`).join('')}</ol><p class="meta" style="margin:2px 0 0">${nx<0?'모든 단계를 마쳤습니다.':'다음: '+['기록하기','정리 요청','편집에서 다듬기','자물쇠를 열어 공개 (선택)'][nx]}</p>`})()}
+  <div class="foot"><button class="btn sm" data-act="edit" aria-expanded="${!!open}" aria-controls="ed${e.id}">${open?'편집 닫기':'편집'}</button></div>
+  <div class="editor ${open?'on':''}" id="ed${e.id}">
+   <p class="meta" style="margin:0">6칸을 한 번에 직접 고칠 수 있습니다. 빈 칸은 비워 두어도 됩니다.</p>
+   ${CELLS.map((n,i)=>{const c=e.cells[i];return `<div class="ecell"><label for="ct${e.id}-${i}">${n}${c?'':' (비어 있음)'}</label><textarea id="ct${e.id}-${i}" data-c="${i}">${esc(c?.t||'')}</textarea>
+   <div class="foot"><button class="btn sm" data-act="fix" data-c="${i}">이 칸 AI 교정</button></div>
+   <div id="df${e.id}-${i}" aria-live="polite">${c?.orig?`<div class="diff"><span class="meta">바뀐 구간 (삭제/추가):</span><br>${diff(c.orig,c.t)}</div>`:''}</div></div>`}).join('')}
+   <div class="foot"><button class="btn sm pri" data-act="save">6칸 모두 저장</button></div>
+   <label for="tr${e.id}">신뢰 등급</label><select id="tr${e.id}" data-act="trust"><option value="0" ${e.trust==0?'selected':''}>본인 주장</option><option value="1" ${e.trust==1?'selected':''}>근거 첨부</option><option value="2" disabled ${e.trust==2?'selected':''}>확인됨 (동료·회사 확인 후 자동)</option></select>
+   <p class="rule">AI는 맞춤법·문장 정리만 합니다. 새 내용을 쓰지 않으며, 교정 후 "AI 교정" 라벨은 끌 수 없습니다. 기록 시점 배지는 수정할 수 없습니다.</p>
+  </div>
+ </article></li>`}
+const openSet=new Set();
+function render(){ $('#feed').innerHTML=S.map(e=>card(e,openSet.has(e.id))).join('');
+ const p=S.filter(e=>e.pub).length;$('#s-all').textContent=S.length;$('#s-pub').textContent=p;$('#s-priv').textContent=S.length-p;
+ document.querySelectorAll('[data-pubcount]').forEach(n=>n.textContent=p);$('#m-rec').textContent=R.filter(r=>!r.out).length;
+ $('#recs').innerHTML=R.map((r,k)=>`<div class="rec ${r.out?'out':''}"><strong>${r.co}</strong> · ${r.job}<br><span class="meta">이유: ${r.why} · 근거 카드 ${r.ids.length}장</span><br>${r.ids.map(id=>{const e=S.find(x=>x.id==id);return e.pub?`<a href="#h${id}">${esc(e.title)}</a>`:'<span class="meta">(비공개 전환됨)</span>'}).join(', ')}<div class="foot">${r.out?'<span class="meta">✕ 추천 제외됨</span> <button class="btn sm" data-r="'+k+'">되돌리기</button>':'<button class="btn sm" data-r="'+k+'">이 기업 추천 제외</button>'}</div></div>`).join('')||'<p class="meta">아직 없습니다.</p>';}
+render();
+
+$('#feed').addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(!b||b.tagName==='SELECT')return;const li=b.closest('.entry');const e=S.find(x=>x.id==li.dataset.id);const a=b.dataset.act;
+ if(a==='q'){const q=$(`#q${e.id}-${b.dataset.c}`);q.hidden=!q.hidden;b.setAttribute('aria-expanded',!q.hidden);if(!q.hidden)fx(q,{opacity:[0,1]});}
+ if(a==='edit'){openSet.has(e.id)?openSet.delete(e.id):openSet.add(e.id);render();const n=$(`[data-id="${e.id}"] [data-act=edit]`);n.focus();const ed=$('#ed'+e.id);if(ed.classList.contains('on'))fx(ed,{opacity:[0,1],translateY:[-4,0]});}
+ if(a==='lock'){if(e.pub){const cited=R.filter(r=>r.ids.includes(e.id)).map(r=>r.co);
+   ask('이 기록을 비공개로 전환할까요?',cited.length?`${cited.join(', ')} 리포트에서 이 카드 인용은 "비공개 전환됨"으로 바뀝니다. 이미 열람된 내용은 회수되지 않습니다.`:'공개 포트폴리오에서 바로 내려갑니다.',()=>{e.pub=false;render();say('비공개로 전환했습니다.');$(`[data-id="${e.id}"] .lock`).focus();});}
+  else if(!consent.matching){ask('공개하려면 기업 매칭 동의가 필요합니다','오른쪽 동의 영역에서 "기업 매칭"을 켠 뒤 다시 시도하세요.',()=>{});}
+  else{e.pub=true;render();say(`"${e.title}" 공개를 시작했습니다.`);const l=$(`[data-id="${e.id}"] .lock`);l.focus();fx(l,{scale:[.94,1]});}}
+ const sel=+b.dataset.c, ta=$(`#ct${e.id}-${sel}`);
+ if(a==='save'){for(let i=0;i<6;i++){const v=$(`#ct${e.id}-${i}`).value.trim();if(v){e.cells[i]=e.cells[i]||{q:'(직접 작성 — 원문 없음)'};if(e.cells[i].t!==v){e.cells[i].t=v;e.edited=true;}}else delete e.cells[i];}render();$(`[data-id="${e.id}"] [data-act=save]`).focus();say('6칸을 저장했습니다.');}
+ if(a==='fix'){if(!ta.value.trim()){say('빈 칸은 교정할 수 없습니다.');return;}if(!consent.self_ai){ask('본인용 AI 정리 동의가 꺼져 있습니다','동의를 켜야 AI 교정을 쓸 수 있습니다.',()=>{});return;}
+  b.disabled=true;say('AI 교정 중입니다…');setTimeout(()=>{const before=ta.value;const after=before.replace(/고쳐서/,'묶어').replace(/ 정도 됐다\./,'로 줄였다.').replace(/\s+/g,' ').trim().replace(/([^.])$/,'$1.');
+   e.cells[sel]=e.cells[sel]||{q:'(직접 작성 — 원문 없음)'};e.cells[sel].orig=before;e.cells[sel].t=after;e.ai=true;openSet.add(e.id);render();
+   say('AI 교정을 마쳤습니다. 바뀐 구간을 확인하세요.');$(`[data-id="${e.id}"] [data-act=fix][data-c="${sel}"]`).focus();},900);}
+});
+$('#feed').addEventListener('change',ev=>{const t=ev.target;const li=t.closest('.entry');if(!li)return;const e=S.find(x=>x.id==li.dataset.id);
+ if(t.dataset.act==='trust'){e.trust=+t.value;render();openSet.add(e.id);render();$('#tr'+e.id).focus();say('신뢰 등급: '+TRUST[e.trust]);}
+});
+$('#recs').addEventListener('click',ev=>{const b=ev.target.closest('[data-r]');if(!b)return;const r=R[b.dataset.r];
+ if(r.out){r.out=false;render();say(r.co+' 추천을 되돌렸습니다.');}
+ else ask(`${r.co} 추천에서 제외할까요?`,'이 공고의 후보 목록에서 빠지며 같은 기업의 비슷한 공고에도 추천되지 않습니다.',()=>{r.out=true;render();say(r.co+' 추천을 제외했습니다.');});});
+document.querySelectorAll('[data-consent]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.consent;
+ const set=v=>{consent[k]=v;b.setAttribute('aria-checked',v);b.textContent=v?'켜짐':'꺼짐';};
+ if(consent[k]){ask(k==='matching'?'기업 매칭 동의를 철회할까요?':'본인용 AI 정리 동의를 철회할까요?',k==='matching'?'공개 카드가 모두 비공개로 전환되고, 기업 리포트 인용은 "비공개 전환됨"으로 표시됩니다.':'새 기록 정리와 AI 교정이 멈춥니다. 기존 기록은 그대로 남습니다.',()=>{set(false);if(k==='matching'){S.forEach(e=>e.pub=false);render();}say('동의를 철회했습니다.');});}
+ else{set(true);say('동의했습니다.');}}));
+$('#composer').addEventListener('submit',ev=>{ev.preventDefault();const txt=$('#c-text').value.trim();if(!txt){$('#c-text').focus();say('회고 내용을 입력하세요.');return;}
+ if(!consent.self_ai){ask('본인용 AI 정리 동의가 꺼져 있습니다','동의를 켜야 기록 정리를 요청할 수 있습니다.',()=>{});return;}
+ const go=$('#c-go');go.disabled=true;$('#job').classList.add('on');const steps=['접수됨 (작업 번호 #2071)','원문 문장 나누는 중','6칸에 맞춰 정리하는 중','원문 인용 확인 중','완료 — 타임라인 맨 위에 추가했습니다'];let i=0;
+ const tick=()=>{$('#job-txt').textContent=steps[i];$('#job-bar').style.width=((i+1)/steps.length*100)+'%';
+  if(++i<steps.length)setTimeout(tick,700);else{const s=txt.split(/(?<=[.!?。])\s+/)[0].slice(0,80);
+   S.unshift({id:Date.now(),title:s.slice(0,30)||'새 기록',kind:$('#c-kind').value,period:$('#c-period').value,role:$('#c-role').value,live:false,date:'2026.10.28',pub:false,trust:0,ai:false,cells:{0:{t:s,q:'"'+s+'"'}}});
+   render();fx(document.querySelector('.entry'),{opacity:[0,1],translateY:[-6,0]});go.disabled=false;$('#c-text').value='';setTimeout(()=>$('#job').classList.remove('on'),2500);}};tick();});
+const tabs=[...document.querySelectorAll('[role=tab]')];
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>sel(i));t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const n=(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;sel(n);tabs[n].focus();}})});
+function sel(i){tabs.forEach((t,k)=>{t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=k!==i;});}
+</script>
+</body>
+</html>

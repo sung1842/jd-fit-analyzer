@@ -1,0 +1,48 @@
+{
+  "_comment": "템플릿. 실제 보드의 DOM 을 DevTools 로 보고 셀렉터를 채운 뒤 `python -m jdcrawler site schemas/<name>.json --headful --max 5` 로 먼저 5건만 검증할 것. 클래스명이 바뀌면 깨진다 — 그게 보이게 만드는 게 CSS 방식의 목적이다.",
+  "_comment_enabled": "안전 스위치. true 가 아니면 수집기가 RuntimeError 로 거부한다. 사이트별로 robots.txt·약관을 확인한 뒤에만 true 로 바꿀 것. 템플릿은 항상 false.",
+  "enabled": false,
+  "_comment_legal_basis": "이 사이트를 수집해도 된다고 판단한 근거를 한 줄 이상 기록(예: 'robots.txt 2026-10-20 확인, /jobs 허용; 약관 제N조 …'). 비어 있거나 공백이면 수집기가 거부한다.",
+  "legal_basis": "",
+  "_comment_allowed_hosts": "base_url 호스트 외에 링크를 따라가도 되는 호스트 목록(해당 호스트와 그 하위 도메인 허용). 비어 있으면 base_url 호스트(와 하위 도메인)만 허용. 목록 밖 호스트·비 http(s) URL 은 저장·방문하지 않는다.",
+  "allowed_hosts": [],
+  "_comment_delay": "[최소, 최대] 초. 요청 사이마다 random.uniform(min, max) 만큼 쉰다. 생략하면 환경변수 CRAWL_DELAY_MIN/MAX, 그것도 없으면 [3.0, 7.0]. min>max 이거나 min<1 이면 오류.",
+  "delay": [3.0, 7.0],
+  "_comment_max_runtime_sec": "전체 수집 시간 상한(초). 초과하면 남은 수집을 중단하고 지금까지 모은 결과만 반환한다(경고 로그). 기본 3000.",
+  "max_runtime_sec": 3000,
+  "source": "crawl4ai:example-board",
+  "base_url": "https://example.com",
+  "list": {
+    "url": "https://example.com/jobs?page={page}",
+    "pages": 2,
+    "wait_for": "css:div.job-card",
+    "js_code": null,
+    "schema": {
+      "name": "jobs",
+      "baseSelector": "div.job-card",
+      "fields": [
+        { "name": "title", "selector": "h3.job-title", "type": "text" },
+        { "name": "url", "selector": "a.job-link", "type": "attribute", "attribute": "href" },
+        { "name": "company", "selector": ".company-name", "type": "text" },
+        { "name": "location", "selector": ".job-location", "type": "text" },
+        { "name": "external_id", "selector": "a.job-link", "type": "attribute", "attribute": "data-job-id" }
+      ]
+    }
+  },
+  "detail": {
+    "css_selector": "section.job-description",
+    "wait_for": null,
+    "fields": {
+      "schema": {
+        "name": "detail",
+        "baseSelector": "body",
+        "fields": [
+          { "name": "salary", "selector": ".salary", "type": "text" },
+          { "name": "experience_level", "selector": ".experience", "type": "text" },
+          { "name": "skills", "selector": ".skill-tag", "type": "list", "fields": [{ "name": "v", "type": "text" }] }
+        ]
+      }
+    }
+  },
+  "defaults": { "employment_type": null }
+}
