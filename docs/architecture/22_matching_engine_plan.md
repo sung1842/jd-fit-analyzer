@@ -385,7 +385,7 @@ b ∈ [-0.2, +0.2]                        -- 폭 제한
 
 | E3 | 완료 (2026-10-30). SQL 021 원격 적용, 같은 JD 두 번째 호출은 캐시(LLM 0회)·직무 인접도 조회 확인 | mcp-server `normalize_job`(직무 enum·필수/우대·경력·근무지·원격, `parse_jd` 대체). orchestrator `lib/jobRequirements.ts`(jd 해시 캐시 `fit.job_requirements_norm`), `lib/roleTaxonomy.ts`(직무 인접도 시드 14쌍, DB 우선), `lib/jdPlan.ts` `requiredFilter`(A 단계: 직무 인접도 ≥0.5·경력 1년 여유·시·도 지역, 정보 없으면 통과) + `rankByRequirements`(필수 누락 적은 순 → 필수 1·우대 0.5). `/api/jd/plan` 응답에 `requirements`·`filteredOut`·`normalizedCount`·후보별 `mustCoverage`·`missingMust`·`roleAffinity` 추가(기존 필드 유지). 테스트 `test/requiredFilter.test.ts` (T6 포함 5건). 실데이터: 백엔드 JD → 개발자 9명 중 직무로 2명 제외 |
 
-| 구직자 공고 추천 | 완료 (2026-10-30). SQL 022 적용, SQL 023 원격 적용 · viewed_at 기준 sweep 확인 (2명). 실후보 1명 계산 14건 저장 → 같은 입력 재실행 skipped 확인 | 이 엔진의 재료(정규화·사전)를 반대 방향(후보 → 공고)으로 쓴다. LLM 0회. `lib/jobRecommend.ts`(필수 조건 → 사전 기술 일치 → 가중합, 근거 문장 코드 생성, `inputs_hash` 로 재계산 생략), `queue/recommendQueue.ts`, `lib/recommendRoutes.ts`. talentfolio `/studio` 공고 탭 "추천 공고" 가 이것을 읽는다 (기존 fit_reports 기반 "추천받은 공고" 대체). **갱신 주기**: 조회는 저장본만 읽음(첫 조회만 계산) · 희망 조건 저장/추천 제외/정규화 결과 변경 시 그 사용자만 재계산 · 매일 `RECOMMEND_SWEEP_CRON`(05:00)에 최근 `RECOMMEND_ACTIVE_DAYS`(14)일 안에 본 사용자만 (023 전에는 계산 이력 있는 전원). 후속: 공고가 수만 건이 되면 `job_postings.skills` GIN 인덱스로 후보 생성 후 점수 계산 (지금은 최대 `RECOMMEND_SCAN_MAX` 5000건 스캔) |
+| 구직자 공고 추천 | 완료 (2026-10-30). SQL 022 적용, SQL 023 원격 적용 · viewed_at 기준 sweep 확인 (2명). 실후보 1명 계산 14건 저장 → 같은 입력 재실행 skipped 확인 | 이 엔진의 재료(정규화·사전)를 반대 방향(후보 → 공고)으로 쓴다. LLM 0회. `lib/jobRecommend.ts`(필수 조건 → 사전 기술 일치 → 가중합, 근거 문장 코드 생성, `inputs_hash` 로 재계산 생략), `queue/recommendQueue.ts`, `lib/recommendRoutes.ts`. talentfolio `/studio` 공고 탭 "추천 공고" 가 이것을 읽는다 (기존 fit_reports 기반 "추천받은 공고" 대체). **갱신 주기**: 조회는 저장본만 읽음(첫 조회만 계산) · 희망 조건 저장/추천 제외/정규화 결과 변경 시 그 사용자만 재계산 · 매일 `RECOMMEND_SWEEP_CRON`(05:00)에 최근 `RECOMMEND_ACTIVE_DAYS`(14)일 안에 본 사용자만 (023 전에는 계산 이력 있는 전원). **후보 생성 (2026-11-02, SQL 029)**: 정리한 기술 배열 식 GIN 인덱스(`fit.skill_keys`) + RPC `fit.recommend_candidate_postings` 로 "내 기술 키와 겹치는 공고 + 기술 미기재 공고"만 읽는다. 키는 `SkillDictionary.matchKeys`(내 기술·별칭·상위 기술과 그 별칭). 꺼낸 공고의 상위 N 이 전부 기술 일치 > 0 일 때만 그 결과를 쓰고, 아니면 전체 스캔 → 결과는 항상 전체 스캔과 같다 (실후보 18명 × N=1·2·3·5 비교 차이 0). 해시 확인은 공고 수·최근 수정 시각만 읽어, 건너뛰는 실행은 공고 행을 읽지 않는다. 029 원격 적용(2026-11-02, RPC 응답 확인 — 공고 10건 중 후보 5건). 미적용 환경이면 경고 후 전체 스캔 |
 
 E2 구현 메모:
 - profiles 에 `updated_at` 이 없어 변경 이벤트 대신 **매일 sweep** 을 안전망으로 둔다 (대부분 1단계에서 멈춤). talentfolio 저장 시 즉시 호출하는 훅은 미결 Q2.
@@ -409,3 +409,4 @@ E2 구현 메모:
 | 2026-10-30 | 변경 감지 4단계(의미 지문)·쿨다운, 층별 가중치 보정 추가 |
 | 2026-10-30 | 개발자 문서 양식으로 재작성 (데이터 모델·인터페이스·설정·테스트 기준) |
 | 2026-10-30 | 구직자 공고 추천을 /studio 에 연결, 조회 시 재계산 제거 → 이벤트 + 야간 배치(SQL 023) |
+| 2026-11-02 | 공고 추천 후보 생성: 기술 키 GIN 인덱스(SQL 029), 결과 동일성 보장 조건 |

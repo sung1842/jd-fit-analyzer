@@ -61,6 +61,25 @@ export class SkillDictionary {
     return best;
   }
 
+  /**
+   * 후보 기술이 matchScore > 0 을 줄 수 있는 공고 기술 표기 전부 (정리된 소문자). DB 후보 생성(SQL 029)용.
+   * 내 기술 자신 + 사전 별칭 + 상위 기술(부분 일치)과 그 별칭. 사전에 없는 이름은 정리한 문자열 그대로.
+   */
+  matchKeys(candidateSkills: string[]): string[] {
+    const keys = new Set<string>();
+    for (const s of candidateSkills) {
+      const c = cleanSkill(s);
+      if (c) keys.add(c);
+      const have = this.canonical(s);
+      if (!have) continue;
+      for (const canon of [have, ...this.ancestors(have)]) {
+        const e = this.entries.get(canon);
+        for (const a of [canon, ...(e?.aliases ?? [])]) keys.add(cleanSkill(a));
+      }
+    }
+    return [...keys];
+  }
+
   /** 사전에 없는 이름만 골라낸다 (정리된 소문자, 중복 제거) */
   unmapped(names: string[]): string[] {
     return [...new Set(names.map(cleanSkill).filter((n) => n && !this.byAlias.has(n)))];

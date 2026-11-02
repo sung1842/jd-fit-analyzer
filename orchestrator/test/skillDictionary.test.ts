@@ -22,6 +22,14 @@ describe("표준 기술 사전 (22 문서 E1)", () => {
     assert.equal(dict.matchScore("k8s", ["Kubernetes"]), 1);
   });
 
+  test("matchKeys: 점수가 0 보다 큰 공고 기술 표기는 모두 키에 들어간다 (SQL 029 후보 생성)", () => {
+    const mine = ["Next.js", "자바", "MyOwnTool"];
+    const keys = new Set(dict.matchKeys(mine));
+    for (const jd of ["React", "리액트", "NEXTJS", "Java", "MyOwnTool", "JavaScript", "Vue"]) {
+      assert.equal(keys.has(cleanSkill(jd)), dict.matchScore(jd, mine) > 0, jd);
+    }
+  });
+
   test("하위 기술 보유는 부분 인정, 반대 방향은 인정 안 함", () => {
     assert.equal(dict.matchScore("React", ["Next.js"]), PARENT_CREDIT);
     assert.equal(dict.matchScore("JavaScript", ["Next.js"]), PARENT_CREDIT); // 체인 Next.js → React → JavaScript

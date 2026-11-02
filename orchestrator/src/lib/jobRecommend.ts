@@ -130,22 +130,58 @@ export async function loadSeeker(userId: string): Promise<{ me: SeekerProfile; v
 
 const POSTING_COLS = "id, company, title, skills, category_codes, career_min, career_max, newcomer_ok, employment_types, region_sido, updated_at";
 
-export async function loadOpenPostings(): Promise<(RecPosting & { updated_at: string })[]> {
-  const { data, error } = await db
+export async function loadOpenPostings(ids?: string[]): Promise<(RecPosting & { updated_at: string })[]> {
+  let q = db
     .from("job_postings")
     .select(POSTING_COLS)
-    .or(`expires_at.is.null,expires_at.gte.${new Date().toISOString()}`)
-    .order("first_seen_at", { ascending: false })
-    .limit(POSTING_SCAN_MAX);
+    .or(`expires_at.is.null,expires_at.gte.${new Date().toISOString()}`);
+  if (ids) q = q.in("id", ids);
+  const { data, error } = await q.order("first_seen_at", { ascending: false }).limit(POSTING_SCAN_MAX);
   if (error) throw new Error(`공고 조회 실패: ${error.message}`);
   return (data ?? []) as (RecPosting & { updated_at: string })[];
 }
 
+/** id 로 읽기. .in() 은 URL 에 실리므로 IN_CHUNK 개씩 나눠 읽고 최신순으로 합친다 */
+const IN_CHUNK = 200;
+async function loadPostingsByIds(ids: string[]): Promise<(RecPosting & { updated_at: string })[]> {
+  const chunks: string[][] = [];
+  for (let i = 0; i < ids.length; i += IN_CHUNK) chunks.push(ids.slice(i, i + IN_CHUNK));
+  const parts = await Promise.all(chunks.map((c) => loadOpenPostings(c)));
+  const order = new Map(ids.map((id, i) => [id, i]));
+  return parts.flat().sort((a, b) => order.get(a.id)! - order.get(b.id)!);
+}
+
+/** 해시용 공고 변화 신호: 마감 전 공고 수 + 가장 최근 수정 시각 (행 전체를 읽지 않는다) */
+async function postingsVersion(): Promise<string> {
+  const open = `expires_at.is.null,expires_at.gte.${new Date().toISOString()}`;
+  const [cnt, last] = await Promise.all([
+    db.from("job_postings").select("id", { count: "exact", head: true }).or(open),
+    db.from("job_postings").select("updated_at").or(open).order("updated_at", { ascending: false }).limit(1),
+  ]);
+  if (cnt.error || last.error) throw new Error(`공고 버전 조회 실패: ${(cnt.error ?? last.error)!.message}`);
+  return `${cnt.count ?? 0}|${(last.data?.[0] as { updated_at: string } | undefined)?.updated_at ?? "-"}`;
+}
+
+/**
+ * 후보 생성 (SQL 029): 내 기술과 겹칠 수 있는 공고 + 기술 미기재 공고만 GIN 인덱스로 꺼낸다.
+ * 기술이 하나도 안 맞는 공고는 어차피 맨 뒤로 가므로, 꺼낸 공고의 상위 N 이 전부 기술 일치 > 0 이면 결과는 전체 스캔과 같다.
+ * 함수가 없거나(029 미적용) 키가 없으면 null → 전체 스캔.
+ */
+async function candidatePostingIds(keys: string[]): Promise<string[] | null> {
+  if (!keys.length) return null;
+  const { data, error } = await db.rpc("recommend_candidate_postings", { keys, max_count: POSTING_SCAN_MAX });
+  if (error) {
+    console.warn("[recommend] 후보 생성 함수 없음/실패 → 전체 스캔:", error.message);
+    return null;
+  }
+  return ((data ?? []) as { id: string }[]).map((r) => r.id);
+}
+
 /** 사용자 1명 추천 재계산. inputs_hash 가 같으면 건너뛴다 (force 제외) */
-export async function computeRecommendations(userId: string, force = false): Promise<{ skipped: boolean; saved: number; passed: number }> {
-  const [{ me, versionKey }, postings, excl, prev] = await Promise.all([
+export async function computeRecommendations(userId: string, force = false): Promise<{ skipped: boolean; saved: number; passed: number; scanned: number }> {
+  const [{ me, versionKey }, postingsKey, excl, prev] = await Promise.all([
     loadSeeker(userId),
-    loadOpenPostings(),
+    postingsVersion(),
     db.from("match_exclusions").select("job_posting_id").eq("user_id", userId),
     db.from("job_recommendation_runs").select("inputs_hash").eq("user_id", userId).maybeSingle(),
   ]);
@@ -154,16 +190,27 @@ export async function computeRecommendations(userId: string, force = false): Pro
   const excludedAll = exclusions.some((e) => e.job_posting_id === null);
   const excluded = new Set(exclusions.map((e) => e.job_posting_id).filter(Boolean));
 
-  const latest = postings.reduce((m, p) => (p.updated_at > m ? p.updated_at : m), "");
   const hash = createHash("sha256")
-    .update(JSON.stringify([versionKey, postings.length, latest, [...excluded].sort(), excludedAll, RECOMMEND_TOP_N, WEIGHTS]))
+    .update(JSON.stringify([versionKey, postingsKey, [...excluded].sort(), excludedAll, RECOMMEND_TOP_N, WEIGHTS]))
     .digest("hex")
     .slice(0, 32);
-  if (!force && (prev.data as { inputs_hash: string } | null)?.inputs_hash === hash) return { skipped: true, saved: 0, passed: 0 };
+  if (!force && (prev.data as { inputs_hash: string } | null)?.inputs_hash === hash) return { skipped: true, saved: 0, passed: 0, scanned: 0 };
 
   const dict = await getSkillDictionary();
-  const pool = excludedAll ? [] : postings.filter((p) => !excluded.has(p.id));
-  const { recs, passed } = rankPostings(dict, me, pool);
+  let recs: Recommendation[] = [];
+  let passed = 0;
+  let scanned = 0;
+  if (!excludedAll) {
+    const rank = (ps: RecPosting[]) => {
+      scanned = ps.length;
+      return rankPostings(dict, me, ps.filter((p) => !excluded.has(p.id)));
+    };
+    const ids = await candidatePostingIds(dict.matchKeys(me.skills));
+    let out = ids && ids.length ? rank(await loadPostingsByIds(ids)) : null;
+    // 상위 N 이 전부 기술 일치 > 0 이어야 전체 스캔과 같다 (밖의 공고는 모두 기술 0 → 그 뒤). 아니면 전체 스캔
+    if (!out || out.recs.length < RECOMMEND_TOP_N || out.recs.some((r) => r.breakdown.skills === 0)) out = rank(await loadOpenPostings());
+    ({ recs, passed } = out);
+  }
 
   // 통째로 바꾼다 (사용자당 수십 행)
   const del = await db.from("job_recommendations").delete().eq("user_id", userId);
@@ -176,5 +223,5 @@ export async function computeRecommendations(userId: string, force = false): Pro
   }
   const run = await db.from("job_recommendation_runs").upsert({ user_id: userId, inputs_hash: hash, candidates: passed, computed_at: new Date().toISOString() });
   if (run.error) throw new Error(`추천 상태 저장 실패: ${run.error.message}`);
-  return { skipped: false, saved: recs.length, passed };
+  return { skipped: false, saved: recs.length, passed, scanned };
 }
