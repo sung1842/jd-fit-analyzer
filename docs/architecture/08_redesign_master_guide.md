@@ -52,7 +52,7 @@
 | RLS 정책 (authenticated 는 본인 행 SELECT 만, 쓰기는 service_role) | 🟡 | 010 SQL 에 포함. 적용은 §1 과 함께 |
 | **MCP 서버의 JWT 검증** | ⛔ 의도적 미구현 | MCP 서버는 최종 사용자를 보지 않는다. 호출자는 orchestrator 뿐이므로 내부 키(§4)가 올바른 방어선. 사용자 JWT 를 워커까지 전달하면 1시간 만료 때문에 큐 대기 중 깨진다 |
 | **Service Role 사용 범위 축소** | 🟡 한계 명시 | BullMQ 워커·Slack 웹훅·HIL 타임아웃은 요청 컨텍스트(JWT)가 없어 service_role 이 불가피. 대신 (a) HTTP 라우트는 JWT userId 로 소유권 검사, (b) RLS 로 브라우저 직접 접근 차단. 이게 현실적 상한 |
-| **talentfolio 쪽 수정** (`JdMatchModal`, `briefReport`, `sourcing/*`, `notionApi` 가 Bearer 미전송) | ⬜ 다른 레포 | 전환 전까지 `.env.local` 에 `AUTH_MODE=legacy`. talentfolio 는 `supabase.auth.getSession()` 의 access_token 을 헤더로 보내면 됨 |
+| **talentfolio 쪽 수정** (`JdMatchModal`, `briefReport`, `sourcing/*`, `notionApi` 가 Bearer 미전송) | ✅ 2026-11-03 (23 문서 G2, `AUTH_MODE=required`) | 전환 전까지 `.env.local` 에 `AUTH_MODE=legacy`. talentfolio 는 `supabase.auth.getSession()` 의 access_token 을 헤더로 보내면 됨 |
 | `tier` 를 클라이언트가 보냄 | ⬜ | 유저 등급 테이블이 없음. 등급 컬럼 생기면 서버에서 결정 |
 | orchestrator 바인드 `ORCHESTRATOR_HOST`(기본 127.0.0.1), `GET /api/sourcing/actions` 무필터 차단, 승인 라우트 `decidedBy` 는 토큰 신원 우선 | ✅ 코드 2026-10-20 / 🟡 legacy 한계 | `GET /api/sourcing/actions` 는 토큰·`userId`·`status=pending` 중 하나가 없으면 400. legacy 모드에서 무필터로 전체가 새던 것을 완화했을 뿐, **pending 대기열은 talentfolio 공용 대기열 설계라 legacy 에서 여전히 공개**. 완전 해결은 `AUTH_MODE=required` + talentfolio Bearer 전송. ngrok 으로 orchestrator 를 공개하면 대기열·승인 라우트가 외부에서 접근 가능 → ngrok 은 Slack 테스트 때만 켤 것 |
 

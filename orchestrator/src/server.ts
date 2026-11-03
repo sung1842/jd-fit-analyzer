@@ -31,7 +31,7 @@ import {
   upsertChannelConfig,
 } from "./lib/slackChannelConfigs.js";
 import { JOB_PRIORITY, QUEUE_NAMES, buildJobId, buildPortfolioChatJobId, getQueue, portfolioChatQueue, removeStaleFailedJob } from "./queue/queues.js";
-import { FORBIDDEN, authGate, isOwner, resolveUserId } from "./lib/auth.js";
+import { FORBIDDEN, accountGate, authGate, isOwner, resolveUserId } from "./lib/auth.js";
 import { buildCorsOptions } from "./lib/corsConfig.js";
 import { listJobPostings, listPublicJobPostings } from "./lib/jobPostings.js";
 
@@ -174,11 +174,21 @@ export function createApp() {
   // Supabase JWT 게이트. 서명 검증 라우트(Slack)·OAuth 콜백·공개 brief 는 제외.
   // 크롤 검수(/admin/crawl)는 JWT 대신 비밀번호 게이트(lib/adminAuth.ts)를 탄다.
   // SSE(EventSource)와 OAuth 시작(브라우저 네비게이션)은 헤더를 못 실으므로 ?access_token= 허용.
+  const publicPaths = [/^\/admin\/crawl(\/|$)/, /^\/admin\/candidates\/normalize(\/stats|\/remap)?$/, /^\/admin\/match\/(quality|weights)$/, /^\/public\/job-postings$/, /^\/slack\/interactivity$/, /^\/slack\/events$/, /^\/notion\/oauth\/callback$/, /^\/brief$/];
   app.use(
     "/api",
     authGate({
-      publicPaths: [/^\/admin\/crawl(\/|$)/, /^\/admin\/candidates\/normalize(\/stats|\/remap)?$/, /^\/admin\/match\/(quality|weights)$/, /^\/public\/job-postings$/, /^\/slack\/interactivity$/, /^\/slack\/events$/, /^\/notion\/oauth\/callback$/, /^\/brief$/],
+      publicPaths,
       queryTokenPaths: [/^\/jobs\/[^/]+\/stream$/, /^\/v1\/life\/jobs\/[^/]+\/stream$/, /^\/portfolio-chat\/[^/]+\/stream$/, /^\/notion\/oauth\/start$/],
+    })
+  );
+  // 계정 유형 가드 (23 문서 G1): 기업 기능은 company, 라이프 로그·본인 정규화는 seeker 토큰만.
+  app.use(
+    "/api",
+    accountGate({
+      publicPaths,
+      company: [/^\/analyze$/, /^\/jd-runs(\/|$)/, /^\/candidates$/, /^\/desk(\/|$)/, /^\/fit-reports(\/|$)/, /^\/jd(\/|$)/, /^\/jobs\/[^/]+\/stream$/, /^\/notion(\/|$)/, /^\/scout-cases(\/|$)/, /^\/slack\/channel-configs(\/|$)/, /^\/sourcing(\/|$)/],
+      seeker: [/^\/v1\/life(\/|$)/, /^\/candidates\/me(\/|$)/],
     })
   );
 

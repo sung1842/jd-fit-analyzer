@@ -115,6 +115,8 @@
 | 기업(헤드헌터) 쪽 기능·화면 구조 C1~C5 | [docs/architecture/20_company_side_plan.md](docs/architecture/20_company_side_plan.md) |
 | 기업 데스크(/desk) 홈 대시보드 지표·화면 D1~D4 | [docs/architecture/21_desk_dashboard_plan.md](docs/architecture/21_desk_dashboard_plan.md) |
 | 매칭 엔진 고도화(정규화·사전·벡터·순위식·품질지표·상시 수색) E1~E7 | [docs/architecture/22_matching_engine_plan.md](docs/architecture/22_matching_engine_plan.md) |
+| 계정 아키텍처(구직자/기업 인증·권한 경계, 확인된 빈틈 G1~G11) | [docs/architecture/23_account_architecture.md](docs/architecture/23_account_architecture.md) |
+| 기능 간 호환·연결 끊김 분석, 기능별 취지 적합성 | [docs/architecture/24_feature_fit_analysis.md](docs/architecture/24_feature_fit_analysis.md) |
 | 재설계 항목별 상태표 | [docs/architecture/11_redesign_checklist.md](docs/architecture/11_redesign_checklist.md) |
 | 핏 분석 실행 워크플로우 | [.claude/skills/fit-analysis/SKILL.md](.claude/skills/fit-analysis/SKILL.md) |
 | 새 분석 에이전트(tool) 추가 | [.claude/skills/add-analysis-agent/SKILL.md](.claude/skills/add-analysis-agent/SKILL.md) |
@@ -131,8 +133,8 @@ jd-fit-analyzer/
 ├── .claude/skills/                — 워크플로우 가이드
 ├── shared/types.ts                — FitReport, AgentResult, Candidate 등 공통 타입
 ├── mcp-server/src/                — MCP 서버 (tools, lib)
-├── orchestrator/src/              — CEO 에이전트, 큐 워커
-└── web/                            — Next.js 리크루터 UI (Phase 3)
+└── orchestrator/src/              — CEO 에이전트, 큐 워커
+(리크루터 UI 는 talentfolio. 구 web/ 는 2026-11-03 삭제)
 ```
 
 ---
@@ -148,7 +150,7 @@ jd-fit-analyzer/
 
 - 상태표: [docs/architecture/11_redesign_checklist.md](docs/architecture/11_redesign_checklist.md), 원문·근거: [08](docs/architecture/08_redesign_master_guide.md).
 - **한 번에 한 항목만** 진행하고, 끝나면 11 과 08 을 같이 갱신한다. **같은 지침을 두 세션에 동시에 넣지 말 것** (파일 충돌 발생 이력).
-- 미결: 사람인 웹 어댑터→`job_postings` 병합 · 더미 물량 · 본문 저장 범위 · `CRAWLER_CONTACT` · talentfolio Bearer(`AUTH_MODE=legacy`) · 크롤 HIL 2차. 사람인 Open API 는 키·코드 모두 폐기(2026-10-24 결정, 2026-10-25 코드 삭제).
+- 미결: 사람인 웹 어댑터→`job_postings` 병합 · 더미 물량 · 본문 저장 범위 · `CRAWLER_CONTACT` · 크롤 HIL 2차. 사람인 Open API 는 키·코드 모두 폐기(2026-10-24 결정, 2026-10-25 코드 삭제).
 
 ## 진행 단계 (Phase)
 
@@ -178,8 +180,6 @@ cd mcp-server && npm run dev
 # 오케스트레이터 (:3001, BullMQ 워커 포함)
 cd orchestrator && npm run dev
 
-# jd-fit 웹은 보류 UI. talentfolio(:3000)와 겹치지 않게 :3010
-cd web && npm run dev
 
 # 크롤러 HTTP (:8010). 프론트 없음
 cd crawler && .venv\Scripts\python -m jdcrawler.server
@@ -188,4 +188,4 @@ cd crawler && .venv\Scripts\python -m jdcrawler.server
 cd C:\ClaudeWorkspace\test1-main\talentfolio && npm run dev
 ```
 
-포트: talentfolio `3000`, orchestrator `3001`, mcp-server `3002`, jd-fit web `3010`, crawler `8010`, Redis `6379`.
+포트: talentfolio `3000`, orchestrator `3001`, mcp-server `3002`, crawler `8010`, Redis `6379`.

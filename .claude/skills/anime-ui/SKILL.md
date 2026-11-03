@@ -1,6 +1,6 @@
 ---
 name: anime-ui
-description: UI 작업 중 애니메이션(진입·전환·스태거·진행률·카운트업·호버/클릭 피드백·스크롤 연출)을 구현할 때 anime.js v4 로 작업하는 규칙. "애니메이션", "모션", "트랜지션", "움직이게", "페이드", "스태거" 요청 시 사용. web/ 및 talentfolio UI 공통.
+description: UI 작업 중 애니메이션(진입·전환·스태거·진행률·카운트업·호버/클릭 피드백·스크롤 연출)을 구현할 때 anime.js v4 로 작업하는 규칙. "애니메이션", "모션", "트랜지션", "움직이게", "페이드", "스태거" 요청 시 사용. talentfolio UI.
 ---
 
 # anime.js 애니메이션 작업 규칙
@@ -11,7 +11,7 @@ description: UI 작업 중 애니메이션(진입·전환·스태거·진행률�
 
 ## 1. 설치
 
-대상 앱(`web/` 또는 `../test1-main/talentfolio`)에 아직 없으면:
+대상 앱(`../test1-main/talentfolio`)에 아직 없으면:
 
 ```bash
 npm install animejs@^4
@@ -64,7 +64,7 @@ export function CandidateList({ items }: { items: Candidate[] }) {
 }
 ```
 
-- 재사용 패턴은 `web/lib/motion.ts`(또는 talentfolio 동일 위치)에 훅/프리셋으로 모은다
+- 재사용 패턴은 talentfolio `lib/motion.ts`에 훅/프리셋으로 모은다
   (예: `useFadeInStagger`, `animateScore`). 컴포넌트마다 duration/ease 를 새로 정하지 말 것.
 
 ## 4. 이 프로젝트의 대표 적용처

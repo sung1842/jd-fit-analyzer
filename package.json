@@ -4,12 +4,10 @@
   "private": true,
   "workspaces": [
     "mcp-server",
-    "orchestrator",
-    "web"
+    "orchestrator"
   ],
   "scripts": {
     "dev:mcp": "npm run dev --workspace mcp-server",
-    "dev:orchestrator": "npm run dev --workspace orchestrator",
-    "dev:web": "npm run dev --workspace web"
+    "dev:orchestrator": "npm run dev --workspace orchestrator"
   }
 }

@@ -10,7 +10,7 @@
 | # | 항목 | 상태 |
 |---|---|---|
 | 1 | Single DB — `fit` 스키마 SQL(010) + 백엔드 클라이언트 전환(legacy 폴백) + `verify-setup.ts` single 기준 | ✅ 코드 · ✅ **`fit` 스키마 원격 적용·조회 확인(2026-10-20)** / ⬜ 구 DB 데이터 이전, 모든 테이블 0행 / ✅ Exposed schemas 에 `fit` 추가(`public` 유지, anon 은 42501 로 차단 확인) |
-| 2 | Supabase JWT — orchestrator 미들웨어(jose/JWKS), 라우트 userId→토큰 sub, 소유권 검사, web 로그인 게이트+Bearer | ✅ 코드 / ⬜ **talentfolio가 Bearer 미전송 → 그때까지 `AUTH_MODE=legacy`** / ⛔ MCP 서버 JWT는 내부 키로 대체(의도) |
+| 2 | Supabase JWT — orchestrator 미들웨어(jose/JWKS), 라우트 userId→토큰 sub, 소유권 검사, web 로그인 게이트+Bearer | ✅ 코드 / ✅ talentfolio Bearer 전송·`AUTH_MODE=required` (2026-11-03, 23 문서 G2) + 계정 유형 가드 / ⛔ MCP 서버 JWT는 내부 키로 대체(의도) |
 | 3 | BullMQ concurrency 3 + Gemini 호출단 RPM 리미터(`GEMINI_RPM`) | ✅ (지침의 `Queue({limiter})` 예시는 BullMQ v5에 없음 — Worker 옵션) |
 | 4 | MCP Streamable HTTP(기존) + 내부 키 `MCP_INTERNAL_KEY` | ✅ 코드 / ⬜ 키 값 설정 |
 | 5 | `NEXT_PUBLIC_API_URL`(우선) / `NEXT_PUBLIC_ORCHESTRATOR_URL` 폴백 + CORS 화이트리스트 | ✅ / ⬜ 배포 시 `CORS_ALLOWED_ORIGINS` |
