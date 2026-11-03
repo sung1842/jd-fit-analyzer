@@ -79,7 +79,32 @@ index.ts·server.ts 에 등록이 필요하면 노트에 "등록 요청: 함수�
   - 결과: `tsc --noEmit` 통과. 전체 113 중 112 통과(실패 = crawlReview.test.ts 기존 문제). rankingWeights 테스트 7→11, matchQuality 5. 실데이터 학습 샘플은 여전히 0 (match_scores 미적용/빈 테이블).
 - 남은 문제: ① 데이터가 적어 모든 지표 smallSample(<30) — 더미 결정 데이터(레인 C) 필요 ② jd_runs 가 비어 기업별 보정 불가 (fit_reports→jd_runs 연결이 실제로 기록되는지 확인 필요) ③ status_events 에 fit_report 거절이 기록되지 않음 — HIL 거절 경로에서 recordStatusEvent 호출 여부 확인 ④ 024(match_scores) 적용 후 학습 재확인.
 ### C
-(미시작)
+**완료 (2026-11-02, D1·D2 데이터 + F1·F2 코드)**
+- **D1 크롤 (승인 대기, 사용자 /crawling 승인 필요)**: 배치 `lanec-test-20261030-k11`~`k19` 9개 × 10건 = **90건** (prepare 까지만, 행 승인 안 함). robots 2026-10-30 재확인(`/zf_user/search`·relay 상세 Disallow 아님), 기존 지연·UA 그대로.
+  | 배치 | 키워드 | ok | needs_review |
+  |---|---|---|---|
+  | k11 | 백엔드 개발자 | 6 | 4 |
+  | k12 | 프론트엔드 개발자 | 8 | 2 |
+  | k13 | 풀스택 개발자 | 8 | 2 |
+  | k14 | 안드로이드 iOS 개발자 | 9 | 1 |
+  | k15 | 데이터 엔지니어 | 8 | 2 |
+  | k16 | 머신러닝 엔지니어 | 7 | 3 |
+  | k17 | DevOps 엔지니어 | 8 | 2 |
+  | k18 | UI UX 디자이너 | 4 | 6 |
+  | k19 | 그래픽 디자이너 | 5 | 5 |
+  - 사고: 첫 시도(k1~k9)는 Git Bash curl 이 한글 검색어를 깨뜨려(U+FFFD) 무관 공고 수집 → 대기 잡 제거, k2 배치(10건) DELETE API 로 삭제(k1·k3 는 0건). 재실행은 Python 으로 UTF-8 전송. CRAWLER_API_KEY 2중 정의는 실행에 영향 없었음(뒤 값 = orchestrator 값), 정리 권장.
+- **D2 후보 — 원격 삽입 멈춤**: `public.profiles.id` → `auth.users(id)` FK (`profiles_id_fkey`, ON DELETE CASCADE) 확인. 후보 1명 = 인증 계정 1개가 필요(talentfolio `scripts/seed-profiles.mjs` 도 signUp 방식) → 금지 조건이라 계정 생성·삽입 스크립트 안 만듦. 사용자 결정 필요: (a) 테스트 계정 80개 생성(auth admin API, 이메일 `@talentfolio.test`) 허용 여부, 또는 (b) 매칭 테스트를 profiles 없이 `candidate_profiles_norm`/별도 fit 테스트 테이블로 직접 넣는 방식.
+  - 생성 데이터만 저장: `scripts/data/test-candidates.json` **80명**(가명, 회사 "(가짜)", long_bio 끝 `[TEST]`, 연락처 없음). 분포: Java/Spring 백엔드 16(경계 2 포함, 리드 요청 반영) · Node 백엔드 6 · Python 백엔드 4 · 프론트 11 · 풀스택 7 · 안드로이드 5 · iOS 3 · Flutter 1 · 데이터 6 · ML 5 · DevOps 6 · UI/UX 7 · 그래픽 3. 연차 신입~12년, 지역 서울 중심 11개 시도, 원격 가능 약 20%.
+  - 경계 사례 10명(test_id `edge-*`): 풀스택→백엔드, Java만, JavaScript만, 경력 1년 부족, 원격+부산, 디자인만, 신입 프론트, DE vs ML, Kotlin 안드로이드, 시니어 DevOps.
+  - `scripts/data/match-scenarios.json` 8개 시나리오 (crawled_postings id 기준 — 승인·병합 후 job_postings id 로 치환 필요).
+- **F1**: `candidateNorm.ts` — mapSkills 가 사전 밖 기술의 연수·실무(unmappedDetails) 반환, 저장 시 `unmapped_skill_details` (027 미적용이면 컬럼 없음 오류 감지 후 기존대로 저장, 프로세스 내 캐시 → 027 적용 후 orchestrator 재시작 필요). `remapStored`(순수)·`remapAllCandidates`(LLM 0회, 바뀐 행만 changed_at 갱신). `normalizeQueue.ts` 에 `remap` 잡 + `enqueueRemap`, 바뀐 후보는 추천 재계산.
+- **F2**: orchestrator `selfNormalizeHandler`·`registerCandidateSelfNormalizeRoutes` (`POST /api/candidates/me/normalize`, 사용자 JWT sub 만 사용·body 무시, 토큰 없으면 401, 큐 실패 503). talentfolio `src/lib/profileNormalizeHook.ts`(2초 묶음, 5초 타임아웃, 절대 throw 안 함) → `ProfileEditModal` 저장·`studioData` saveBasics/saveItem/deleteItem 성공 뒤 호출.
+- 바뀐 파일: orchestrator/src/lib/candidateNorm.ts, lib/candidateNormRoutes.ts, queue/normalizeQueue.ts, test/candidateRemap.test.ts(신규), docs/architecture/sql/027_candidate_unmapped_skill_details.sql(신규), scripts/data/test-candidates.json·match-scenarios.json(신규), talentfolio src/lib/profileNormalizeHook.ts(신규)·src/components/ProfileEditModal.tsx·src/components/studio/studioData.ts.
+- **적용 필요 SQL**: 027 (리드 요청).
+- **등록 요청**: ① server.ts 에서 `registerCandidateSelfNormalizeRoutes(app)` (authGate 뒤, publicPaths 에 넣지 말 것) ② publicPaths 정규식 `/^\/admin\/candidates\/normalize(\/stats|\/remap)?$/` 로 확장 (관리자 remap 라우트는 registerCandidateNormRoutes 안에 이미 있음).
+- 테스트: candidateRemap 7건 + candidateNorm 기존 = 15/15 통과. tsc 통과(orchestrator·mcp-server·talentfolio).
+- **D2 투입 (2026-11-02, 사용자 승인 "테스트 계정 생성")**: `scripts/seed-test-candidates.ts` 로 80계정(`<test_id>@talentfolio.test`, metadata test=true, 비번 랜덤·미저장) + profiles(본인 세션 update — service_role 은 public.profiles 권한 없음, 행은 가입 트리거가 생성) + resume_basics·resume_experiences(154행)·consents(matching). 매핑 `scripts/data/test-candidates.ids.json`. 정규화 80건 큐 투입(진행 중 확인 필요). 시나리오 7/8 은 job_postings.raw.crawled_posting_id 로 매핑, 1건(Node 신입 백엔드) 미병합 → 1b81f947(주니어 풀스택 Node) 대체. 삭제 `scripts/delete-test-candidates.ts --yes`.
+- 남은 문제: 시나리오 대체 1건 검토, skillDictionary 10분 캐시라 사전 수정 직후 remap 은 최대 10분 지연, crawler/.env CRAWLER_API_KEY 중복 정리.
 ### D
 **완료 (2026-10-30, E7 코드 — 026 미적용 경로로 실데이터 확인)**
 - 바뀐 파일: 신규 `orchestrator/src/lib/watchCore.ts`(순수 로직), `lib/watch.ts`(DB·Redis·큐 연결), `lib/watchRank.ts`(buildJdPlan 래퍼, 레인 A 파일 수정 없음), `lib/watchRoutes.ts`, `queue/watchQueue.ts`, `docs/architecture/sql/026_watch.sql`, `test/watch.test.ts`, `scripts/verify-watch.ts`. 수정: `shared/types.ts` SlackNotifyPayload.autoSource 에 `"watch"` 추가(1줄).

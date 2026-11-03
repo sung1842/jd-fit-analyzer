@@ -17,7 +17,7 @@ import { registerNotionRoutes } from "./lib/notionRoutes.js";
 import { registerCrawlReviewRoutes } from "./lib/crawlReviewRoutes.js";
 import { registerLifeRoutes } from "./lib/lifeRoutes.js";
 import { registerRecommendRoutes } from "./lib/recommendRoutes.js";
-import { registerCandidateNormRoutes } from "./lib/candidateNormRoutes.js";
+import { registerCandidateNormRoutes, registerCandidateSelfNormalizeRoutes } from "./lib/candidateNormRoutes.js";
 import { registerMatchQualityRoutes } from "./lib/matchQualityRoutes.js";
 import { registerWatchRoutes } from "./lib/watchRoutes.js";
 import { isWatchNoSend } from "./lib/watchCore.js";
@@ -177,7 +177,7 @@ export function createApp() {
   app.use(
     "/api",
     authGate({
-      publicPaths: [/^\/admin\/crawl(\/|$)/, /^\/admin\/candidates\/normalize(\/stats)?$/, /^\/admin\/match\/(quality|weights)$/,/^\/public\/job-postings$/, /^\/slack\/interactivity$/, /^\/slack\/events$/, /^\/notion\/oauth\/callback$/, /^\/brief$/],
+      publicPaths: [/^\/admin\/crawl(\/|$)/, /^\/admin\/candidates\/normalize(\/stats|\/remap)?$/, /^\/admin\/match\/(quality|weights)$/, /^\/public\/job-postings$/, /^\/slack\/interactivity$/, /^\/slack\/events$/, /^\/notion\/oauth\/callback$/, /^\/brief$/],
       queryTokenPaths: [/^\/jobs\/[^/]+\/stream$/, /^\/v1\/life\/jobs\/[^/]+\/stream$/, /^\/portfolio-chat\/[^/]+\/stream$/, /^\/notion\/oauth\/start$/],
     })
   );
@@ -185,6 +185,7 @@ export function createApp() {
   registerNotionRoutes(app);
   registerCrawlReviewRoutes(app);
   registerCandidateNormRoutes(app);
+  registerCandidateSelfNormalizeRoutes(app);
   registerMatchQualityRoutes(app);
   registerWatchRoutes(app);
   registerLifeRoutes(app);

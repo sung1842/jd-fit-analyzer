@@ -193,4 +193,15 @@ export const SKILL_SEED: SkillEntry[] = [
   e("Typography", "design", ["타이포그래피", "타이포"]),
   e("Packaging Design", "design", ["packaging", "패키지 디자인", "패키지"]),
   e("Motion Design", "design", ["모션 디자인", "motion graphics", "모션 그래픽"]),
+  // 2026-11 테스트 후보 정규화에서 나온 사전 밖 기술
+  e("QueryDSL", "backend", ["querydsl"], "JPA"),
+  e("Celery", "backend", [], "Python"),
+  e("UIKit", "mobile", [], "iOS"),
+  e("MVVM", "mobile", ["mvvm 패턴"]),
+  e("RxSwift", "mobile", [], "Swift"),
+  e("Combine", "mobile", ["combine framework"], "Swift"),
+  e("Riverpod", "mobile", [], "Flutter"),
+  e("dbt", "data", ["data build tool"]),
+  e("Snowflake", "data", ["스노우플레이크"]),
+  e("Ansible", "devops", ["앤서블"]),
 ];
