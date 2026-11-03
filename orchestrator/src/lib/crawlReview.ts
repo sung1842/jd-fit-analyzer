@@ -1,3 +1,4 @@
+import { composePostingText } from "../../../shared/lib/postingFormat.js";
 import { createHash } from "node:crypto";
 import { db } from "./db.js";
 import { computeFacets } from "./postingFacets.js";
@@ -151,24 +152,11 @@ export function sanitizeEdits(input: unknown): Edits {
  * 근무조건은 크롤 원본 필드를 그대로 쓴다. 배열이 비면 본문 앞부분으로 대체.
  */
 export function buildDescription(r: CrawledRow): string {
-  const parts: string[] = [];
-  if (r.role_summary) parts.push(r.role_summary);
-  const section = (name: string, items: string[]) => {
-    if (items.length) parts.push(`[${name}]\n${items.map((i) => `- ${i}`).join("\n")}`);
-  };
-  section("주요업무", r.key_duties);
-  section("자격요건", r.must_have);
-  section("우대사항", r.nice_to_have);
-  if (parts.length === 0 && r.body_text) parts.push(r.body_text.slice(0, 4000));
-  const cond = [
-    ["경력", r.career_text],
-    ["근무형태", r.employment_type_text],
-    ["급여", r.salary_text],
-    ["근무지", r.location_text],
-    ["근무시간", r.work_hours_text],
-  ].filter(([, v]) => v) as [string, string][];
-  if (cond.length) parts.push(`[근무조건]\n${cond.map(([k, v]) => `- ${k}: ${v}`).join("\n")}`);
-  return parts.join("\n\n");
+  // 표준 양식 (shared/lib/postingFormat). 섹션이 비면 본문 앞부분만
+  const sections = { summary: r.role_summary, key_duties: r.key_duties, must_have: r.must_have, nice_to_have: r.nice_to_have };
+  const empty = !r.role_summary && r.key_duties.length + r.must_have.length + r.nice_to_have.length === 0;
+  if (empty && r.body_text) sections.summary = r.body_text.slice(0, 4000);
+  return composePostingText(sections, r);
 }
 
 export function toJobPosting(raw: CrawledRow) {

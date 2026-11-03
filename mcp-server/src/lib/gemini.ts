@@ -1,4 +1,5 @@
 import "./env.js";
+import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenAI } from "@google/genai";
 import { startObservation } from "@langfuse/tracing";
 import { geminiLimiter } from "./rateLimiter.js";
@@ -69,11 +70,52 @@ async function generateStructuredOnce<T>(
   }
 }
 
+// ── 임시 대체: ANALYSIS_LLM_PROVIDER=claude 면 분석 호출을 Claude 로 보낸다 (2026-11-03, Gemini 한도 소진 · 사용자 승인).
+// 같은 JSON 스키마를 tool input_schema 로 강제해 구조화 출력을 유지한다 (헌법 1조의 "프롬프트로 JSON 요청 금지" 취지).
+// 임베딩은 Claude 에 없어 계속 Gemini — 실패하면 호출 쪽이 벡터 단계를 건너뛴다. 한도가 풀리면 변수를 지워 원복.
+const CLAUDE_ANALYSIS_MODEL = process.env.CLAUDE_ANALYSIS_MODEL || "claude-haiku-5-5";
+let anthropic: Anthropic | null = null;
+
+export function analysisProvider(): "gemini" | "claude" {
+  return process.env.ANALYSIS_LLM_PROVIDER === "claude" ? "claude" : "gemini";
+}
+
+async function generateStructuredClaude<T>(prompt: string, responseJsonSchema: Record<string, unknown>, traceName: string): Promise<T> {
+  anthropic ??= new Anthropic(); // ANTHROPIC_API_KEY 자동 탐색
+  const generation = startObservation(traceName, { model: CLAUDE_ANALYSIS_MODEL, input: prompt }, { asType: "generation" });
+  try {
+    const response = await anthropic.messages.create({
+      model: CLAUDE_ANALYSIS_MODEL,
+      max_tokens: 4096,
+      messages: [{ role: "user", content: prompt }],
+      tools: [{ name: "submit_result", description: "분석 결과를 스키마대로 제출한다.", input_schema: responseJsonSchema as Anthropic.Tool.InputSchema }],
+      tool_choice: { type: "tool", name: "submit_result" },
+    });
+    const block = response.content.find((b) => b.type === "tool_use");
+    if (!block || block.type !== "tool_use") throw new Error(`Claude 구조화 출력 없음 (stop_reason=${response.stop_reason})`);
+    generation
+      .update({
+        output: block.input,
+        usageDetails: {
+          input: response.usage.input_tokens,
+          output: response.usage.output_tokens,
+          total: response.usage.input_tokens + response.usage.output_tokens,
+        },
+      })
+      .end();
+    return block.input as T;
+  } catch (err) {
+    generation.update({ level: "ERROR", statusMessage: geminiErrorMessage(err) }).end();
+    throw err;
+  }
+}
+
 export async function generateStructured<T>(
   prompt: string,
   responseJsonSchema: Record<string, unknown>,
   traceName = "gemini-generate-structured"
 ): Promise<T> {
+  if (analysisProvider() === "claude") return generateStructuredClaude<T>(prompt, responseJsonSchema, traceName);
   let lastErr: unknown;
 
   for (let modelIndex = 0; modelIndex < ANALYSIS_MODELS.length; modelIndex++) {

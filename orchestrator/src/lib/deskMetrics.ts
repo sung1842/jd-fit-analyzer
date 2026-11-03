@@ -2,6 +2,7 @@
  * 데스크 홈 지표 집계 (21 문서 §4). 순수 함수 — DB·LLM 없음 (헌법 3조: 코드 집계).
  * 입력에 없는 데이터(017 미적용 컬럼·테이블)는 null 로 돌려주고, 화면은 이를 "준비 중"으로 그린다.
  */
+import { postingHeadline } from "../../../shared/lib/postingFormat.js";
 import type { FitReportRecord } from "../../../shared/types.js";
 
 export const REJECT_REASON_CODES: Record<string, string> = {
@@ -81,10 +82,8 @@ function median(xs: number[]): number | null {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 }
 
-export function jdHeadline(jd: string): string {
-  const line = jd.split("\n").map((l) => l.trim()).find(Boolean) ?? "제목 없는 공고";
-  return line.length > 48 ? `${line.slice(0, 48)}…` : line;
-}
+// 표준 양식은 첫 줄이 섹션 제목일 수 있다 — 섹션 제목·불릿을 건너뛴다
+export const jdHeadline = (jd: string): string => postingHeadline(jd);
 
 /** 분모가 작으면 %가 아닌 n/N 으로만 보여주도록 화면에 알린다 */
 export const SMALL_SAMPLE = 30;
@@ -131,7 +130,10 @@ export function computeDeskSummary(input: DeskInput) {
   const analyzed = matched.filter((r) => r.report);
   const cohortIds = new Set(matched.map((r) => r.id));
   const cohortDecided = matched.filter((r) => r.report?.review);
-  const offersInRange = input.offers?.filter((o) => o.sent_at && cohortIds.has(o.payload?.fitReportId ?? "")) ?? null;
+  // 후보(리포트)당 한 번만 센다 — 같은 후보에게 제안이 여러 건이어도 퍼널이 100% 를 넘지 않게
+  const offersInRange = input.offers
+    ? [...new Map(input.offers.filter((o) => o.sent_at && cohortIds.has(o.payload?.fitReportId ?? "")).sort((x, y) => ms(x.sent_at!) - ms(y.sent_at!)).map((o) => [o.payload!.fitReportId!, o])).values()]
+    : null;
   const funnel = {
     matched: matched.length,
     analyzed: analyzed.length,
@@ -144,7 +146,7 @@ export function computeDeskSummary(input: DeskInput) {
 
   // ── 스카우트 건 (jd_hash 묶음. 017 이후 jd_runs 확장 필드로 고객사·담당·마감)
   const runByHash = new Map(input.jdRuns.map((r) => [r.jd_hash, r]));
-  const caseMap = new Map<string, { jdHash: string; title: string; client: string | null; owner: string | null; deadline: string | null; matched: number; analyzed: number; approved: number; pending: number; replied: number | null; lastAt: number }>();
+  const caseMap = new Map<string, { jdHash: string; title: string; client: string | null; owner: string | null; deadline: string | null; matched: number; analyzed: number; failed: number; approved: number; pending: number; replied: number | null; lastAt: number }>();
   for (const r of input.reports) {
     const run = runByHash.get(r.jdHash);
     if (run?.closed_at) continue;
@@ -154,12 +156,13 @@ export function computeDeskSummary(input: DeskInput) {
       client: run?.client_name ?? null,
       owner: run?.owner_name ?? null,
       deadline: run?.deadline ?? null,
-      matched: 0, analyzed: 0, approved: 0, pending: 0,
+      matched: 0, analyzed: 0, failed: 0, approved: 0, pending: 0,
       replied: input.offers ? 0 : null,
       lastAt: 0,
     };
     c.matched += 1;
     if (r.report) c.analyzed += 1;
+    if (r.status === "failed") c.failed += 1;
     if (r.status === "approved") c.approved += 1;
     if (PENDING.has(r.status) && r.report) c.pending += 1;
     c.lastAt = Math.max(c.lastAt, ms(r.updatedAt));
@@ -266,7 +269,9 @@ export function buildDeskFeed(input: Pick<DeskInput, "now" | "reports" | "jdRuns
   const byHash = new Map<string, FitReportRecord[]>();
   for (const r of input.reports) byHash.set(r.jdHash, [...(byHash.get(r.jdHash) ?? []), r]);
   for (const [hash, rows] of byHash) {
-    const title = jdHeadline(rows[0].jd);
+    const run = input.jdRuns.find((j) => j.jd_hash === hash);
+    if (run?.closed_at) continue; // 종료한 건은 소식에서 뺀다 (경보 포함)
+    const title = run?.title || jdHeadline(rows[0].jd);
     const done = rows.filter((r) => r.report);
     if (done.length) {
       const strong = done.filter((r) => r.report!.verdict === "strong_fit").length;
@@ -283,6 +288,15 @@ export function buildDeskFeed(input: Pick<DeskInput, "now" | "reports" | "jdRuns
         kind: "agent",
         at: new Date(Math.max(...queued.map((r) => ms(r.createdAt)))).toISOString(),
         text: `${title} 건 후보 ${queued.length}명 분석 대기열`,
+        href: review(hash),
+      });
+    }
+    const failed = rows.filter((r) => r.status === "failed");
+    if (failed.length) {
+      items.push({
+        kind: "alert",
+        at: new Date(Math.max(...failed.map((r) => ms(r.updatedAt)))).toISOString(),
+        text: `${title} 건 후보 ${failed.length}명 분석 실패 · 같은 JD 로 다시 분석하면 이어서 처리합니다.`,
         href: review(hash),
       });
     }
@@ -328,7 +342,9 @@ export function buildDeskFeed(input: Pick<DeskInput, "now" | "reports" | "jdRuns
     items.push({
       kind: "response",
       at: o.responded_at,
-      text: `${o.payload?.candidateName ?? "후보"}님이 제안에 ${o.response === "interested" ? "관심 있음" : "거절"}으로 답했습니다.`,
+      text: o.response === "interested" && o.interview_at
+        ? `${o.payload?.candidateName ?? "후보"}님과 면접을 잡았습니다.`
+        : `${o.payload?.candidateName ?? "후보"}님이 제안에 ${o.response === "interested" ? "관심 있음" : "거절"}으로 답했습니다.`,
       href: `/desk?offer=${encodeURIComponent(o.id)}`,
     });
   }

@@ -56,7 +56,7 @@ function mockCeoDecision(params: {
     final_report: {
       overallScore,
       verdict,
-      ceoSummary: "[CEO_MOCK] Anthropic API 미호출 — tech 0.5 / exp 0.3 / culture 0.2 가중 평균으로 산정한 임시 결과입니다.",
+      ceoSummary: "종합 의견 없이 기술·경험·컬처핏 점수를 가중 평균한 참고 점수입니다. 근거와 면접 확인 질문을 보고 판단하세요.",
     },
   };
 }

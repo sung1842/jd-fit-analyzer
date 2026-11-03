@@ -157,8 +157,9 @@ async function loadWithdrawn(approved: FitReportRecord[]): Promise<DeskInput["wi
 }
 
 async function buildInput(userId: string, rangeDays: number): Promise<DeskInput> {
-  const reports = await listFitReports({ userId });
   const since = Date.now() - 2 * rangeDays * 86_400_000;
+  // 기간(+직전 기간) 안에 바뀐 행과 진행 중인 행만 — 오래된 거절·만료 행은 지표에 안 쓰인다 (21 문서 성능 과제)
+  const reports = await listFitReports({ userId, openOrSince: new Date(since).toISOString() });
   const approved = reports.filter((r) => r.status === "approved");
   // 열람 로그는 기간(+직전 기간) 안에 결정된 리포트만
   const decidedIds = reports.filter((r) => r.report?.review && Date.parse(r.report.review.decidedAt) >= since).map((r) => r.id);
@@ -275,6 +276,21 @@ export function registerDeskRoutes(app: Express): void {
     }
     if (report.status !== "approved") {
       res.status(400).json({ error: "승인한 후보에게만 제안할 수 있습니다." });
+      return;
+    }
+    // 같은 리포트(후보 × 건)에 대기·발송된 제안이 있으면 새로 만들지 않는다 (중복 제안 → 퍼널 100% 초과)
+    const dup = await db
+      .from("sourcing_actions")
+      .select("id, status")
+      .eq("type", "candidate_offer")
+      .eq("user_id", userId)
+      .eq("candidate_id", report.candidateId)
+      .in("status", ["pending", "executed"])
+      .eq("payload->>fitReportId", report.id)
+      .limit(1)
+      .maybeSingle();
+    if (dup.data) {
+      res.status(409).json({ error: dup.data.status === "pending" ? "이 후보에게 발송 승인을 기다리는 제안이 이미 있습니다." : "이 후보에게 이미 제안을 보냈습니다.", offerId: dup.data.id });
       return;
     }
     const run = await db.from("jd_runs").select("id").eq("user_id", userId).eq("jd_hash", report.jdHash).order("created_at", { ascending: false }).limit(1).maybeSingle();

@@ -31,7 +31,7 @@
 | 보안 어드바이저 — 유출 비밀번호 보호 | ⏭ 스킵 (유료 플랜 전용) | 사용자 결정 2026-10-20 |
 | 보안 어드바이저 — 함수 search_path 고정 | ✅ 2026-10-20 | 마이그레이션 `pin_search_path_handle_new_user_and_set_updated_at`: `public.handle_new_user`, `fit.set_updated_at` 을 `search_path = ''` 로 고정. `profiles` 에는 사용자 트리거가 없고 기본값·CHECK 가 전부 내장 기능이라 안전. 롤백 검증: `auth.users` INSERT → `profiles` 행 생성(role=developer), `updated_at` 갱신, 잔여 행 0. 010 SQL 동기화 |
 | 보안 어드바이저 — 남은 보안 항목 | ✅ 의도된 것만 | `rls_enabled_no_policy` INFO 4건(fit 백엔드 전용 테이블, service_role 만 접근). 유출 비밀번호 보호만 WARN 으로 남음(스킵) |
-| 성능 어드바이저 (fit 소유분) | ⬜ 미착수 | `auth_rls_initplan` WARN 5건(fit 정책의 `auth.uid()` → `(select auth.uid())`), 외래키 인덱스 없음 2건(`candidate_assessments.fit_report_id`, `notion_sync_records.jd_run_id`). public 소유분(conversations·messages·profiles 정책 10건, FK 3건)은 talentfolio 소유라 건드리지 않음 |
+| 성능 어드바이저 (fit 소유분) | 🟡 SQL 033 작성, 실행 대기 | `auth_rls_initplan` WARN 5건(fit 정책의 `auth.uid()` → `(select auth.uid())`), 외래키 인덱스 없음 2건(`candidate_assessments.fit_report_id`, `notion_sync_records.jd_run_id`). public 소유분(conversations·messages·profiles 정책 10건, FK 3건)은 talentfolio 소유라 건드리지 않음 |
 | `.cursorignore` | ✅ 2026-10-20 | 사용자가 직접 생성 (Write 도구는 권한 설정에 막힘). 내용: `crawler/.venv/`, `**/.next/`, `**/__pycache__/` |
 | Supabase MCP 토큰 | ✅ | 2026-10-20: `--project-ref` 로 이 프로젝트에 한정되어 정상 동작. `list_projects` 는 이 모드에서 노출되지 않음 |
 | 구 DB 데이터 이전 (pg_dump → sed → psql) | ⬜ | 절차는 010 SQL 하단 주석 |

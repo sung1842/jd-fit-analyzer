@@ -1,4 +1,5 @@
 import type { CandidateBriefCard, FitReport } from "../types.js";
+import { postingHeadline } from "./postingFormat.js";
 
 /** JD 분석 완료 후 자동 쇼트리스트 규칙 (고정 N명 ❌ — 임계값 + 상한) */
 export const SHORTLIST_DEFAULTS = {
@@ -23,11 +24,8 @@ export function pickShortlist(
 
 /** JD 첫 줄 요약 (Slack Card 헤더·Brief OG용) */
 export function extractJdHeadline(jd: string): string | undefined {
-  const line = jd
-    .split("\n")
-    .map((l) => l.trim())
-    .find((l) => l.length > 0 && !l.startsWith("["));
-  return line?.slice(0, 80);
+  const line = postingHeadline(jd, 80);
+  return line === "제목 없는 공고" ? undefined : line;
 }
 
 /** FitReport → Slack/Brief용 가벼운 카드 (절대 규칙 3: prune) */

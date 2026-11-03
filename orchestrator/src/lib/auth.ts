@@ -168,7 +168,8 @@ export function resolveUserId(req: Request, fallback?: string | null): string | 
  */
 export function isOwner(req: Request, ownerUserId: string | null | undefined): boolean {
   if (!req.auth) return true;
-  if (!ownerUserId) return true;
+  // 소유자 없는 행(legacy 시절 생성)은 토큰 사용자 누구의 것도 아니다 — 통과시키지 않는다
+  if (!ownerUserId) return false;
   return ownerUserId === req.auth.userId;
 }
 
