@@ -103,10 +103,13 @@ export async function getFitReportByCandidateAndJdHash(
 export async function listFitReports(filter: {
   status?: FitReportStatus;
   userId?: string;
+  /** 이 시각 이후 바뀐 행 + 아직 끝나지 않은 행(거절·만료 아님)만. 오래된 종결 행을 매번 읽지 않는다 */
+  openOrSince?: string;
 }): Promise<FitReportRecord[]> {
   let query = db.from("fit_reports").select().order("created_at", { ascending: false });
   if (filter.status) query = query.eq("status", filter.status);
   if (filter.userId) query = query.eq("user_id", filter.userId);
+  if (filter.openOrSince) query = query.or(`updated_at.gte.${filter.openOrSince},status.not.in.(rejected,expired)`);
 
   const { data, error } = await query;
   if (error) throw new Error(`fit_reports 목록 조회 실패: ${error.message}`);

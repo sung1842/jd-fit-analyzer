@@ -1,12 +1,14 @@
 /**
  * 스카우트 건 (20 문서 C2) = jd_runs 확장(017). 별도 신규 시스템이 아니다 (CLAUDE.md 구현 순서).
- *  POST  /api/scout-cases/draft       JD → "확인할 역량" 초안 (정규화 1회, jd 해시 캐시)
- *  POST  /api/scout-cases             건 만들기 (제목·고객사·담당·마감·필수/우대 요건)
+ *  POST  /api/scout-cases/draft       본문 + 공고 조건(사람인 표기) → "확인할 역량" 초안 + 필터 값 (정규화 1회, jd 해시 캐시)
+ *  POST  /api/scout-cases             건 만들기 (제목·고객사·담당·마감·공고 조건·필수/우대 요건)
  *  GET   /api/scout-cases             내 건 목록 + 단계별 인원
  *  GET   /api/scout-cases/:id         건 상세
  *  PATCH /api/scout-cases/:id         정보·요건 수정
  *  POST  /api/scout-cases/:id/start   후보 탐색(코드 사전필터) → 상위 N명 분석을 큐에 넣는다 (응답은 즉시)
  *  POST  /api/scout-cases/:id/close   건 종료
+ *  POST  /api/scout-cases/:id/candidates  인재풀에서 고른 후보를 이 건 분석 큐에 넣는다 (담기)
+ *  GET   /api/scout-cases/:id/scores      순위 점수 근거 (match_scores.score_breakdown, 항목별 0~1)
  * 학력·나이는 요건으로 받지 않는다 (20 문서 §1 스킬 중심).
  */
 import type { Express, Request, Response } from "express";
@@ -19,6 +21,9 @@ import { getJobRequirements, type JobRequirements } from "./jobRequirements.js";
 import { recordStatusEvent } from "./deskRoutes.js";
 import { JOB_PRIORITY, buildJobId, getQueue, removeStaleFailedJob } from "../queue/queues.js";
 import { extractJdHeadline } from "../../../shared/lib/shortlist.js";
+import { computeFacets, type PostingFacets } from "./postingFacets.js";
+import { callMcpTool } from "../mcp/client.js";
+import { composePostingText, splitPostingText } from "../../../shared/lib/postingFormat.js";
 
 export interface CaseRequirement {
   label: string;
@@ -115,6 +120,52 @@ export function sanitizeRequirements(input: unknown, fallback: CaseRequirements 
 const text = (v: unknown, max: number) => (typeof v === "string" && v.trim() ? v.trim().slice(0, max) : null);
 const date = (v: unknown) => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(v)) ? v : null);
 
+/**
+ * 공고 조건 (사람인 상세 표기와 같은 문자열). 크롤 공고와 같은 규칙(postingFacets)으로 필터 값을 만든다.
+ * 학력은 공고 조건으로만 보관한다 — 후보 탐색 요건(items)에는 넣지 않는다 (20 문서 §1).
+ */
+export interface CasePosting {
+  location_text: string | null;
+  career_text: string | null;
+  education_text: string | null;
+  employment_type_text: string | null;
+  salary_text: string | null;
+  deadline_text: string | null;
+  work_hours_text: string | null;
+}
+
+export function sanitizePosting(input: unknown): CasePosting {
+  const o = (input && typeof input === "object" ? input : {}) as Record<string, unknown>;
+  return {
+    location_text: text(o.location_text, 120),
+    career_text: text(o.career_text, 60),
+    education_text: text(o.education_text, 60),
+    employment_type_text: text(o.employment_type_text, 80),
+    salary_text: text(o.salary_text, 80),
+    deadline_text: text(o.deadline_text, 40),
+    work_hours_text: text(o.work_hours_text, 80),
+  };
+}
+
+/** 표준 양식(shared/lib/postingFormat)으로 본문 + [근무조건]. 크롤 공고 description 과 같은 모양이라 정규화 결과를 나란히 비교할 수 있다 */
+export function composeCaseJd(body: string, p: CasePosting): string {
+  return composePostingText(splitPostingText(body), p);
+}
+
+/** 경력·지역은 입력 조건이 AI 추정보다 우선 */
+export function applyPostingFacets(req: CaseRequirements, f: PostingFacets): CaseRequirements {
+  return {
+    ...req,
+    years_min: f.career_min ?? req.years_min,
+    years_max: f.career_max ?? req.years_max,
+    locations: f.region_sigungu.length ? f.region_sigungu : f.region_sido ? [f.region_sido] : req.locations,
+  };
+}
+
+function caseFacets(title: string, req: CaseRequirements, p: CasePosting, deadline: string | null): PostingFacets {
+  return computeFacets({ title, skills: req.items.map((i) => i.label), ...p, deadline_date: deadline });
+}
+
 const CASE_COLUMNS = "id, user_id, jd_hash, jd_text, status, title, client_name, owner_name, deadline, requirements, closed_at, plan_snapshot, created_at, updated_at";
 
 interface CaseRow {
@@ -190,6 +241,22 @@ async function countsByHash(userId: string, hashes: string[]) {
   return out;
 }
 
+/**
+ * 구직자 공고 목록 행(SQL 031 트리거가 만든 source='scout_case')에 조건·필터 값을 채운다.
+ * 트리거는 기술·경력·마감만 옮기므로 나머지는 여기서. 실패해도 건 생성은 유지 (경고만).
+ */
+async function syncPostingConditions(caseId: string, p: CasePosting, snapshot: Record<string, unknown> | null): Promise<void> {
+  const facets = (snapshot?.posting as { facets?: PostingFacets } | undefined)?.facets;
+  if (!facets) return;
+  const { deadline_type: _keep, ...rest } = facets; // 마감 유형은 트리거가 deadline 으로 정한다
+  const { error } = await db
+    .from("job_postings")
+    .update({ ...rest, location: p.location_text, employment_type: p.employment_type_text, experience_level: p.career_text, salary: p.salary_text })
+    .eq("source", "scout_case")
+    .eq("external_id", caseId);
+  if (error) console.warn("[scout] 공고 조건 동기화 실패", error.message);
+}
+
 export const START_DEFAULT = 10;
 export const START_MAX = 20;
 
@@ -197,14 +264,25 @@ export function registerScoutCaseRoutes(app: Express): void {
   app.post("/api/scout-cases/draft", async (req, res) => {
     const userId = requireUser(req, res);
     if (!userId) return;
-    const jdText = text((req.body as { jdText?: unknown }).jdText, 20000);
-    if (!jdText || jdText.length < 20) {
+    const b = req.body as { jdText?: unknown; posting?: unknown; title?: unknown; deadline?: unknown };
+    const body = text(b.jdText, 20000);
+    if (!body || body.length < 20) {
       res.status(400).json({ error: "공고 내용을 20자 이상 붙여넣어 주세요." });
       return;
     }
+    // 조건이 오면 크롤 공고와 같은 형식(본문 + [근무조건])으로 합쳐 같은 정규화(getJobRequirements)를 태운다
+    const posting = b.posting ? sanitizePosting(b.posting) : null;
+    const jdText = posting ? composeCaseJd(body, posting) : body;
     try {
       const { cached, ...norm } = await getJobRequirements(jdText);
-      res.json({ title: extractJdHeadline(jdText) ?? null, requirements: toCaseRequirements(norm), cached });
+      const title = text(b.title, 120) ?? extractJdHeadline(body) ?? null;
+      let requirements = toCaseRequirements(norm);
+      let facets: PostingFacets | null = null;
+      if (posting) {
+        facets = caseFacets(title ?? "", requirements, posting, date(b.deadline));
+        requirements = applyPostingFacets(requirements, facets);
+      }
+      res.json({ title, requirements, facets, jdText, cached });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       const quota = message.includes("RESOURCE_EXHAUSTED") || message.includes("429");
@@ -216,7 +294,9 @@ export function registerScoutCaseRoutes(app: Express): void {
     const userId = requireUser(req, res);
     if (!userId) return;
     const b = req.body as Record<string, unknown>;
-    const jdText = text(b.jdText, 20000);
+    const posting = b.posting ? sanitizePosting(b.posting) : null;
+    const body = text(b.jdText, 20000);
+    const jdText = body && posting ? composeCaseJd(body, posting) : body;
     const { value: requirements, rejected } = sanitizeRequirements(b.requirements, null);
     if (!jdText || !requirements || requirements.items.length === 0) {
       res.status(400).json({ error: "공고 내용과 확인할 역량을 1개 이상 입력하세요." });
@@ -237,6 +317,7 @@ export function registerScoutCaseRoutes(app: Express): void {
           deadline: date(b.deadline),
           requirements,
           closed_at: null,
+          ...(posting && { plan_snapshot: { posting: { ...posting, facets: caseFacets(text(b.title, 120) ?? "", requirements, posting, date(b.deadline)) } } }),
         },
         { onConflict: "user_id,jd_hash" },
       )
@@ -248,6 +329,7 @@ export function registerScoutCaseRoutes(app: Express): void {
       return;
     }
     await recordStatusEvent({ entity: "jd_run", entityId: data.id, from: null, to: "draft", actor: userId });
+    if (posting) await syncPostingConditions(data.id, posting, (data as CaseRow).plan_snapshot);
     res.status(201).json({ case: toCase(data as CaseRow), rejected });
   });
 
@@ -357,6 +439,71 @@ export function registerScoutCaseRoutes(app: Express): void {
       console.error("[scout] 탐색 시작 실패", err);
       res.status(500).json({ error: "후보 탐색을 시작하지 못했습니다." });
     }
+  });
+
+  // 인재풀에서 직접 고른 후보를 건에 담는다 = 이 건 JD 로 분석 큐에 넣기. 분석이 끝나면 승인함 → 제안으로 이어진다
+  app.post("/api/scout-cases/:id/candidates", async (req, res) => {
+    const userId = requireUser(req, res);
+    if (!userId) return;
+    const row = await loadOwnCase(req, res, userId);
+    if (!row) return;
+    if (row.closed_at) {
+      res.status(400).json({ error: "종료된 건입니다." });
+      return;
+    }
+    const raw = (req.body as { candidateIds?: unknown }).candidateIds;
+    const ids = [...new Set(Array.isArray(raw) ? raw.filter((v): v is string => typeof v === "string" && /^[0-9a-f-]{36}$/i.test(v)) : [])];
+    if (ids.length === 0 || ids.length > START_MAX) {
+      res.status(400).json({ error: `후보를 1~${START_MAX}명 고르세요.` });
+      return;
+    }
+    try {
+      // 후보 풀(공개·구직자·제외 안 됨)에 있는 사람만
+      const pool = new Set((await callMcpTool<{ id: string }[]>("search_candidates", {})).map((c) => c.id));
+      const { data: existing } = await db.from("fit_reports").select("candidate_id").eq("user_id", userId).eq("jd_hash", row.jd_hash).in("candidate_id", ids);
+      const done = new Set(((existing ?? []) as { candidate_id: string }[]).map((r) => r.candidate_id));
+      const queue = getQueue("paid");
+      let queued = 0;
+      for (const candidateId of ids) {
+        if (!pool.has(candidateId) || done.has(candidateId)) continue;
+        const jobId = buildJobId(row.jd_text, candidateId);
+        await removeStaleFailedJob(queue, jobId);
+        await createFitReport({ jobId, jd: row.jd_text, jdHash: row.jd_hash, candidateId, userId });
+        await queue.add("analyze-fit", { jd: row.jd_text, candidateId, userId, tier: "paid" }, { jobId, priority: JOB_PRIORITY.paid });
+        queued += 1;
+      }
+      if (queued > 0 && row.status === "draft") {
+        await db.from("jd_runs").update({ status: "analyzed" }).eq("id", row.id);
+        await recordStatusEvent({ entity: "jd_run", entityId: row.id, from: row.status, to: "analyzed", actor: userId });
+      }
+      res.status(202).json({ queued, alreadyInCase: done.size, notInPool: ids.filter((id) => !pool.has(id)).length });
+    } catch (err) {
+      console.error("[scout] 후보 담기 실패", err);
+      res.status(500).json({ error: "후보를 건에 담지 못했습니다." });
+    }
+  });
+
+  // 순위 점수가 왜 나왔는지 (코드 사전필터 단계 결과, LLM 없음). 직접 담은 후보는 순위 계산 전이라 없을 수 있다
+  app.get("/api/scout-cases/:id/scores", async (req, res) => {
+    const userId = requireUser(req, res);
+    if (!userId) return;
+    const row = await loadOwnCase(req, res, userId);
+    if (!row) return;
+    const { data, error } = await db.from("match_scores").select("candidate_id, rank_score, score_breakdown, stage").eq("jd_hash", row.jd_hash).limit(500);
+    if (error) {
+      res.status(500).json({ error: "점수 근거를 불러오지 못했습니다." });
+      return;
+    }
+    type Row = { candidate_id: string; rank_score: number; stage: string; score_breakdown: { items?: Record<string, number>; excluded?: string[]; mustUnmet?: boolean } | null };
+    const scores = ((data ?? []) as Row[]).map((r) => ({
+      candidateId: r.candidate_id,
+      rankScore: Number(r.rank_score),
+      stage: r.stage,
+      items: r.score_breakdown?.items ?? {},
+      excluded: r.score_breakdown?.excluded ?? [],
+      mustUnmet: r.score_breakdown?.mustUnmet ?? false,
+    }));
+    res.json({ scores });
   });
 
   app.post("/api/scout-cases/:id/close", async (req, res) => {

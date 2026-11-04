@@ -170,7 +170,8 @@ export type FitReportStatus =
   | "pending_review"
   | "approved"
   | "rejected"
-  | "expired";
+  | "expired"
+  | "failed"; // 재시도 소진 후 영구 실패 (SQL 032)
 
 // fit_reports 테이블 row
 export interface FitReportRecord {

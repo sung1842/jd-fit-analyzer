@@ -1,5 +1,6 @@
 import "./env.js";
 import { createClient } from "@supabase/supabase-js";
+import { companyUserIds } from "../../../shared/lib/companyAccounts.js";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -20,7 +21,11 @@ export interface CandidateSummary {
 
 // 후보자 멀티선택 목록용 — 가벼운 요약 정보만 조회 (절대 규칙 3: prune & 정규화)
 export async function listCandidates(): Promise<CandidateSummary[]> {
-  const { data, error } = await talentfolio.from("profiles").select("id, name, role, title");
+  // 공개 프로필만, 기업 계정 제외 (23 문서 G3)
+  const [{ data, error }, companies] = await Promise.all([
+    talentfolio.from("profiles").select("id, name, role, title").eq("is_public", true),
+    companyUserIds(),
+  ]);
   if (error) throw new Error(`후보자 목록 조회 실패: ${error.message}`);
-  return (data ?? []) as CandidateSummary[];
+  return ((data ?? []) as CandidateSummary[]).filter((c) => !companies.has(c.id));
 }

@@ -8,7 +8,6 @@ tools: Read, Grep, Glob, Bash
 
 ## 대상 파일
 - orchestrator/src/lib/crawlReview.ts, crawlReviewRoutes.ts, adminAuth.ts, server.ts(라우트 등록·publicPaths), corsConfig.ts
-- web/src/app/crawling/page.tsx
 - docs/architecture/sql/013_crawl_review.sql
 - crawler/jdcrawler/platforms/store.py, crawler/jdcrawler/__main__.py(platform-load)
 

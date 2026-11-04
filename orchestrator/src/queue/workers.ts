@@ -66,6 +66,10 @@ export function startWorkers() {
       const attemptsMade = job?.attemptsMade ?? 0;
       const maxAttempts = job?.opts.attempts ?? 1;
       if (job && attemptsMade >= maxAttempts) {
+        // 데스크가 "분석 진행 중"으로 남지 않게 실패를 기록 (SQL 032 전이면 enum 오류 → 경고만)
+        void updateFitReportByJobId(job.id!, { status: "failed" }).catch((e) =>
+          console.warn(`[${worker.name}] fit_reports failed 기록 실패 (SQL 032 적용 필요?): ${e instanceof Error ? e.message : e}`),
+        );
         Sentry.captureException(err, { tags: { worker: worker.name, jobId: job.id, candidateId: job.data.candidateId } });
         void notifyN8nError({
           worker: worker.name,

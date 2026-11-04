@@ -60,7 +60,7 @@ services:
       # crawler 는 crawler 네트워크에만 있다 → 호스트에 publish 된 포트로 부른다 (크롤러→backend 는 여전히 불가)
       CRAWLER_URL: ${CRAWLER_URL:-http://host.docker.internal:8010}
       # 이미지가 NODE_ENV=production 이라 dev 기본 CORS 가 꺼짐 → talentfolio(:3000) 명시 허용
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000,http://localhost:3010,http://127.0.0.1:3010}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
       # TALENTFOLIO_URL 은 브라우저/Slack 링크용이라 .env.local 의 localhost 값을 그대로 둔다
     ports:
       - "127.0.0.1:${ORCHESTRATOR_HOST_PORT:-3001}:3001"

@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>talentfolio 메인 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap">
+<style>
+/* 시안: taste-skill "The sentence is the layout" (seed 1320931767), 브랜드 토큰 유지 */
+:root{
+  --bg:#F5F9FF; --surface:#FFFFFF; --field:#DCEBFF; --field-2:#BFDDFF;
+  --ink:#0B1C45; --muted:#44527A; --accent:#1F4FD6; --sun:#FFE7A3; --ok:#0B6B45;
+  --f-body:"Pretendard Variable",Pretendard,system-ui,sans-serif;
+  --f-display:"Wanted Sans Variable","Pretendard Variable",sans-serif;
+  --m:clamp(16px,2.6vw,40px); --r:6px;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);word-break:keep-all;color:var(--ink);font:400 17px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+h1,h2,h3{font-family:var(--f-display);letter-spacing:-.045em;line-height:1}
+.btn{display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:var(--r);background:var(--accent);color:#fff;font-weight:600;text-decoration:none;border:0;font-size:16px;cursor:pointer;transition:transform .15s,background .15s}
+.btn:hover{background:#163fb3}.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--surface);color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ── 헤더 시안 ── */
+.hd{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:32px;padding:14px var(--m);background:var(--bg)}
+.hd .mark{font:800 22px/1 var(--f-display);letter-spacing:-.05em;text-decoration:none;display:flex;align-items:center;gap:8px}
+.hd .mark i{width:14px;height:14px;border-radius:3px;background:var(--accent);display:block}
+.hd nav{display:flex;gap:28px;margin-left:auto;font-size:15px}
+.hd nav a{text-decoration:none;color:var(--muted)}.hd nav a:hover{color:var(--ink)}
+.hd .who{display:flex;background:var(--field);border-radius:var(--r);padding:3px;font-size:14px}
+.hd .who button{white-space:nowrap;border:0;background:none;padding:7px 12px;border-radius:4px;font:600 14px var(--f-body);color:var(--muted);cursor:pointer}
+.hd .who button[aria-pressed=true]{background:var(--surface);color:var(--ink)}
+.hd .btn{white-space:nowrap;min-height:40px;font-size:15px}
+
+/* ── 히어로: 문장 사이 프레임 ── */
+.hero{min-height:calc(100svh - 68px);display:grid;grid-template-rows:1fr auto;padding:0 var(--m) 32px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.hero .line{align-self:center;display:grid;grid-template-columns:1fr minmax(0,35vw) 1fr;align-items:center;gap:24px;font-size:clamp(40px,4.6vw,72px);font-weight:700}
+.hero .line .a{justify-self:start}.hero .line .b{justify-self:end;text-align:right}
+.reel{height:240px;overflow:hidden;position:relative}
+.reel-track{position:relative;height:100%}.reel-track .card{position:absolute;inset:0;opacity:0;visibility:hidden;transform:translateY(24px);transition:opacity .5s,transform .5s,visibility .5s}.reel-track .card.on{opacity:1;visibility:visible;transform:none}
+.card{background:var(--surface);border-radius:var(--r);min-height:220px;padding:22px;font:400 15px/1.45 var(--f-body);letter-spacing:0;display:flex;flex-direction:column;gap:12px}
+.card .ct{display:block;font-family:var(--f-display);font-size:20px;letter-spacing:-.03em;line-height:1.2}
+.card .row{display:flex;justify-content:space-between;gap:12px}
+.card .tag{background:var(--field);border-radius:4px;padding:2px 8px;font-size:14px}
+.bar{height:10px;background:var(--field);border-radius:5px;overflow:hidden}.bar b{display:block;height:100%;background:var(--accent)}
+.card .big{font:700 44px/1 var(--f-display);letter-spacing:-.04em}
+.card .muted{color:var(--muted)}
+.stamp{align-self:flex-start;background:var(--sun);border-radius:4px;padding:6px 10px;font-weight:700}
+.hero-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+.hero-foot p{max-width:420px;font-size:18px;color:var(--muted)}
+
+/* ── 현재 메인(SkyLanding)에서 가져온 것: 아침 해, 마루부리 강조, 손글씨 메모, 먼저 연락 알림, 두 갈래 패널 ── */
+.hero{position:relative;overflow:hidden;background:#EAF3FF}
+.hero > *{position:relative;z-index:1}
+.hero .sun{position:absolute;z-index:0;right:-12vmin;top:-22vmin;width:62vmin;height:62vmin;border-radius:50%;background:var(--sun)}
+em{font-family:"MaruBuriSemiBold","MaruBuri",serif;font-style:normal;font-weight:400;color:var(--accent);letter-spacing:-.02em}
+.hand{font-family:"Nanum Pen Script",cursive;font-size:28px;color:var(--accent);transform:rotate(-3deg);display:block;line-height:1;margin-bottom:10px;letter-spacing:0}
+.toast{display:flex;gap:10px;align-items:center;background:var(--surface);border-radius:var(--r);padding:12px 14px;font-size:15px;box-shadow:0 20px 40px -24px rgba(11,28,69,.45)}
+.toast i{width:10px;height:10px;border-radius:50%;background:var(--ok);flex:none}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(980px,100%);text-align:left}
+.role{border-radius:var(--r);padding:36px;display:flex;flex-direction:column;gap:14px;min-height:300px}
+.role.a{background:var(--bg);color:var(--ink)}.role.b{background:var(--accent);color:#fff}
+.role .big{font-family:var(--f-display);font-weight:800;font-size:66px;line-height:1;letter-spacing:-.04em}
+.cta .mid .role p{color:inherit;opacity:.9;font-size:17px}
+.role .btn{margin-top:auto;align-self:flex-start}.role.a .btn{background:var(--ink)}.role.b .btn{background:var(--surface);color:var(--ink)}
+.reel .card{height:240px;min-height:0}
+.cta em{color:var(--sun)}
+
+/* ── 쇼케이스: 타이핑하는 헤드라인 ── */
+.sec{padding:160px var(--m) 0}
+.show h2{font-size:clamp(28px,3vw,44px);margin-bottom:24px}
+.show input{width:100%;border:0;background:none;font:700 clamp(44px,7.4vw,124px)/1.05 var(--f-display);letter-spacing:-.05em;color:var(--ink);caret-color:var(--accent);padding:0}
+.show input:focus{outline:none}
+.answer{margin-top:48px;max-width:620px;display:grid;gap:8px}
+.cand{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;background:var(--surface);border-radius:var(--r);padding:14px 16px;transition:background .2s}
+.cand:hover{background:var(--field)}
+.av{width:44px;height:44px;border-radius:50%;background:var(--field-2);display:grid;place-items:center;font-weight:700}
+.cand small{display:block;color:var(--muted);font-size:14px}
+.score{font:700 26px var(--f-display);color:var(--accent)}
+.ex{margin-top:28px;display:flex;flex-wrap:wrap;gap:10px}
+.ex button{border:0;background:var(--field);border-radius:var(--r);min-height:44px;padding:0 16px;font:500 16px var(--f-body);color:var(--ink);cursor:pointer}
+.ex button:hover{background:var(--field-2)}
+
+/* ── 작동 방식: 슬라이더 ── */
+.how{display:grid;grid-template-columns:1fr 1fr;min-height:88svh;margin-top:160px}
+.how .l{justify-content:center;background:var(--ink);color:#fff;padding:56px var(--m);display:flex;flex-direction:column}
+.how .l h2{font-size:clamp(36px,4.4vw,72px);max-width:12ch;transition:opacity .2s}
+.how .l p{margin-top:24px;max-width:36ch;color:#C9D6F2;transition:opacity .2s}
+.how .r{background:var(--field);display:grid;place-items:center;padding:40px var(--m)}
+.how .r .card{width:min(440px,100%);aspect-ratio:auto}
+.ctl{grid-column:1/-1;background:var(--ink);padding:28px var(--m) 40px;color:#fff}
+.ctl input{width:100%;accent-color:var(--accent);height:32px}
+.ctl ol{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,1fr);margin-top:10px;font-size:16px;color:#8FA2CF}
+.ctl ol li.on{color:#fff;font-weight:600}
+
+/* ── 기능 행 ── */
+.feat .lead{min-height:50svh;display:grid;align-items:center;padding-left:35%}
+.feat h2{font-size:clamp(36px,4.6vw,76px);max-width:14ch}
+.frow{display:grid;grid-template-columns:35% 1fr auto;gap:32px;margin-top:112px;align-items:start}
+.frow h3{grid-column:2;font-size:clamp(26px,2.6vw,42px);line-height:1.15}
+.frow p{grid-column:2;max-width:38ch;margin-top:12px}
+.frow .pic{grid-column:3;grid-row:1/3;background:var(--surface);border-radius:var(--r);padding:16px;font-size:14px}
+.pic.w1{width:260px}.pic.w2{width:340px}.pic.w3{width:200px}
+
+/* ── CTA: 양끝 질문 ── */
+.cta{margin-top:200px;background:var(--ink);color:#fff;min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;text-align:center;padding:32px var(--m) 24px}
+.cta h2{font-size:clamp(64px,10vw,168px)}
+.cta .mid{display:grid;place-content:center;gap:16px}
+.cta .pick{display:flex;align-items:center;gap:40px;justify-content:center}
+.cta .pick span{color:#8FA2CF}
+.cta .mid p{color:#C9D6F2;font-size:16px}
+
+/* ── 푸터 시안: 연락처가 헤드라인 ── */
+.ft{background:var(--accent);color:#fff;min-height:90svh;display:grid;grid-template-rows:auto 1fr auto auto;padding:40px var(--m) 24px}
+.ft .top{display:flex;gap:48px;font-size:15px;flex-wrap:wrap}
+.ft .top div{max-width:240px;color:#DCE6FF}
+.ft .top a{margin-left:auto}
+.ft .mail{align-self:end;font:700 clamp(40px,8.4vw,150px)/1 var(--f-display);letter-spacing:-.05em;text-decoration:none;word-break:keep-all}
+.ft .mail:hover{color:var(--sun)}
+.ft .cols{display:flex;gap:40px;margin:48px 0 32px;font-size:16px;flex-wrap:wrap}
+.ft .cols a{text-decoration:none;color:#DCE6FF}.ft .cols a:hover{color:#fff}
+.ft .meta{display:flex;justify-content:space-between;font-size:14px;color:#DCE6FF;gap:16px;flex-wrap:wrap}
+
+.rise{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s}
+.rise.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reel-track .card:not(.on){display:none}.rise{opacity:1;transform:none;transition:none}.reel-track{transition:none}}
+.no-js .rise{opacity:1;transform:none}
+
+@media (max-width:1000px){.frow{grid-template-columns:1fr auto}.frow h3,.frow p{grid-column:1}.frow .pic{grid-column:2}}
+@media (max-width:760px){
+  .roles{grid-template-columns:1fr;gap:40px}.role{min-height:0;padding:24px}.role .big{font-size:44px}.hero .sun{width:70vw;height:70vw;top:-30vw;right:-20vw}
+  .hd{gap:10px}.hd .mark{font-size:19px}.hd .btn{padding:0 12px;font-size:14px}.hd .who button{padding:7px 9px}.cta{min-height:80svh}
+  .frow p,.how .l p,.answer{max-width:none}
+  .hd nav{display:none}.hd .who{margin-left:auto}
+  .hero .line{grid-template-columns:1fr;font-size:9.4vw;gap:16px}
+  .hero .line .b{justify-self:end}
+  .reel{height:300px}
+  .hero-foot{flex-direction:column;align-items:flex-start}
+  .show input{font-size:11vw}
+  .how{grid-template-columns:1fr}.how .r{order:-1;min-height:46svh}
+  .ctl ol{grid-template-columns:1fr 1fr;gap:6px}
+  .feat .lead{padding-left:0}
+  .frow{grid-template-columns:1fr;gap:16px;margin-top:64px}
+  .frow h3,.frow p,.frow .pic{grid-column:1;grid-row:auto}
+  .pic.w1,.pic.w2,.pic.w3{width:100%}
+  .cta h2{font-size:17vw}.cta .pick{flex-direction:column;gap:12px}
+  .ft .mail{font-size:11vw}.ft .meta{flex-direction:column}
+}
+</style>
+</head>
+<body class="no-js">
+<script>document.body.classList.remove('no-js')</script>
+
+<!-- 헤더 시안: 워드마크 · 3링크 · 구직자/기업 전환 · 단일 액션 -->
+<header class="hd">
+  <a class="mark" href="#"><i></i>talentfolio</a>
+  <nav aria-label="주요 메뉴"><a href="#show">스카우트 건</a><a href="#how">작동 방식</a><a href="#feat">포트폴리오</a></nav>
+  <div class="who" role="group" aria-label="이용자 유형">
+    <button aria-pressed="true" data-who="talent">구직자</button><button aria-pressed="false" data-who="company">기업</button>
+  </div>
+  <a class="btn" id="hdCta" href="#">작업물 올리기</a>
+</header>
+
+<main>
+<section class="hero">
+  <div class="sun" aria-hidden="true"></div>
+  <h1 class="line">
+    <span class="a rise"><span class="hand">좋은 아침이에요</span>작업물이 먼저</span>
+    <div class="reel" aria-label="플랫폼 화면 예시"><div class="reel-track" id="reel">
+      <article class="card" data-ui><div class="row"><strong class="ct">김하늘 · 프론트엔드</strong><span class="tag">경력 4년</span></div>
+        <div class="muted">디자인 시스템 12건 · 성능 개선 사례 7건</div>
+        <div><div class="row"><span>React · TypeScript</span><b>92</b></div><div class="bar"><b style="width:92%"></b></div></div>
+        <div><div class="row"><span>트러블슈팅 경험</span><b>81</b></div><div class="bar"><b style="width:81%"></b></div></div></article>
+      <article class="card" data-ui><div class="row"><strong class="ct">스카우트 건 #48</strong><span class="tag">결제 도메인</span></div>
+        <div class="big">23명</div><div class="muted">사전 필터 통과 1,204 → 정밀 분석 23 → 강한 적합 5</div></article>
+      <article class="card" data-ui><div class="row"><strong class="ct">핏 리포트</strong><span class="score">87</span></div>
+        <div class="muted">"대규모 트래픽 결제 장애를 직접 추적·해결한 사례 2건. JD의 핵심 요구와 일치."</div>
+        <span class="stamp">헤드헌터 승인 대기</span></article>
+      <article class="card" data-ui><div class="row"><strong class="ct">제안 발송</strong><span class="tag">승인됨</span></div>
+        <div class="muted">박지원 헤드헌터가 승인 · 11월 3일 14:20</div><div class="big">제안 5건</div></article>
+    </div></div>
+    <span class="b rise"><em>말합니다</em></span>
+  </h1>
+  <div class="hero-foot">
+    <p class="rise">포트폴리오를 올려 두면, 에이전트가 기업의 스카우트 건과 맞춰 보고 헤드헌터가 확인한 제안만 보내 드립니다.</p>
+    <a class="btn rise" href="#">무료로 작업물 올리기</a>
+  </div>
+</section>
+
+<section class="sec show" id="show">
+  <h2 class="rise">찾는 사람을 적어 보세요</h2>
+  <label for="q" style="position:absolute;left:-9999px">스카우트 건 검색어</label>
+  <input id="q" data-ui value="결제 시스템 백엔드 5년차" autocomplete="off">
+  <div class="answer" id="ans" aria-live="polite"></div>
+  <div class="ex" id="ex">
+    <button>디자인 시스템 리드</button><button>데이터 엔지니어 Kafka</button><button>모바일 iOS 3년 이상</button>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="l"><h2 id="hT">먼저, 스카우트 건을 넣습니다</h2><p id="hP">기업이 원하는 역할과 조건을 한 번 적으면, 공고 형식으로 정리됩니다.</p></div>
+  <div class="r"><article class="card" id="hC" data-ui></article></div>
+  <div class="ctl">
+    <label for="stage" style="position:absolute;left:-9999px">단계</label>
+    <input type="range" id="stage" min="0" max="3" value="0" step="1">
+    <ol id="stNames"><li class="on">스카우트 건</li><li>후보 탐색</li><li>핏 분석</li><li>승인 후 제안</li></ol>
+  </div>
+</section>
+
+<section class="sec feat" id="feat">
+  <div class="lead"><h2 class="rise">이력서보다 <em>작업물</em>이 정확합니다</h2></div>
+  <div class="frow rise"><h3>경험을 장면으로 보여 줍니다</h3><p>무엇을 만들었고 어디서 막혔고 어떻게 풀었는지. 트러블슈팅 기록이 기술 키워드보다 먼저 읽힙니다.</p>
+    <div class="pic w1" data-ui><b>장애 회고 · 결제 타임아웃</b><p class="muted" style="margin-top:8px">원인: 커넥션 풀 고갈 → 대기열 분리로 p99 2.1s → 310ms</p></div></div>
+  <div class="frow rise"><h3>점수에는 이유가 붙습니다</h3><p>기술 적합도와 경험 적합도를 따로 매기고, 근거 문장을 함께 남깁니다. 숫자만 남는 매칭은 하지 않습니다.</p>
+    <div class="pic w2" data-ui><div class="row" style="display:flex;justify-content:space-between"><b>기술 스택</b><b>92</b></div><div class="bar" style="margin:6px 0 12px"><b style="width:92%"></b></div><div style="display:flex;justify-content:space-between"><b>경험</b><b>81</b></div><div class="bar" style="margin-top:6px"><b style="width:81%"></b></div></div></div>
+  <div class="frow rise"><h3>연락은 사람이 정합니다</h3><p>에이전트는 찾고 분석할 뿐입니다. 제안은 헤드헌터가 승인한 건만 나갑니다.</p>
+    <div class="pic w2" data-ui style="display:grid;gap:10px;background:var(--field)"><span class="stamp">승인 대기 3건</span><div class="toast"><i></i><span><b>A사 채용팀</b>이 JD와 함께 먼저 연락했어요</span></div></div></div>
+</section>
+
+<section class="cta">
+  <h2>어느 쪽에서 <em>시작할까요</em></h2>
+  <div class="mid"><div class="roles"><div class="role a"><span class="big">구직자</span><p>작업물을 올려 두면, 맞는 스카우트 건이 생길 때 먼저 연락이 옵니다.</p><a class="btn" href="#">구직자로 시작</a></div><div class="role b"><span class="big">기업</span><p>스카우트 건을 넣으면 에이전트가 후보를 추리고, 승인한 사람에게만 제안합니다.</p><a class="btn" href="#">스카우트 건 넣기</a></div></div></div>
+</section>
+</main>
+
+<!-- 푸터 시안: 연락처가 헤드라인 -->
+<footer class="ft">
+  <div class="top"><div><b>talentfolio</b><br>작업물로 연결되는 채용</div><div>평일 10:00–18:00<br>기업 문의는 하루 안에 답합니다</div><a href="#">맨 위로</a></div>
+  <a class="mail" href="mailto:hello@talentfolio.kr">hello@<br>talentfolio.kr</a>
+  <div class="cols"><a href="#">구직자 시작하기</a><a href="#">기업 데스크</a><a href="#">이용약관</a><a href="#">개인정보처리방침</a></div>
+  <div class="meta"><span>© 2026 talentfolio</span><span>헤드헌터 승인 기반 제안</span><span>서울</span></div>
+</footer>
+
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+// 히어로 릴: 4단계 순환
+let i=0;const reel=document.getElementById('reel');reel.children[0].classList.add("on");
+setInterval(()=>{if(reduce)return;i=(i+1)%4;[...reel.children].forEach((c,j)=>c.classList.toggle("on",j===i))},2800);
+// 쇼케이스: 입력에 따라 결과 갱신
+const pool=[["김하늘","프론트엔드 · 4년","React","디자인"],["이도윤","백엔드 · 6년","결제","Kafka","백엔드"],["최서연","데이터 엔지니어 · 5년","Kafka","데이터"],["정민재","iOS · 3년","모바일","iOS"],["한유진","백엔드 · 5년","결제","Spring","백엔드"],["오세린","디자인 시스템 · 7년","디자인","리드"]];
+const q=document.getElementById('q'),ans=document.getElementById('ans');
+function render(){const w=q.value.split(/\s+/).filter(Boolean);
+  const r=pool.map(p=>({p,s:58+w.reduce((a,x)=>a+(p.slice(1).some(t=>t.includes(x)||x.includes(t.split(' ')[0]))?13:0),0)})).sort((a,b)=>b.s-a.s).slice(0,3);
+  ans.innerHTML=r.map(({p,s})=>`<div class="cand"><span class="av">${p[0][0]}</span><div><b>${p[0]}</b><small>${p[1]}</small></div><span class="score">${Math.min(s,96)}</span></div>`).join('')}
+q.addEventListener('input',render);document.querySelectorAll('#ex button').forEach(b=>b.onclick=()=>{q.value=b.textContent;render()});render();
+// 작동 방식 슬라이더
+const S=[["먼저, 스카우트 건을 넣습니다","기업이 원하는 역할과 조건을 한 번 적으면, 공고 형식으로 정리됩니다.",'<strong class="ct">스카우트 건 #48</strong><div class="muted">결제 플랫폼 백엔드 · 5년 이상 · Kafka 우대</div><span class="tag">접수됨</span>'],
+["에이전트가 후보를 추립니다","플랫폼 안의 포트폴리오를 코드로 먼저 거르고, 남은 후보만 정밀하게 봅니다.",'<strong class="ct">후보 탐색</strong><div class="big">1,204 → 23</div><div class="muted">기술 키 사전 필터 통과</div>'],
+["작업물로 핏을 잽니다","기술·경험을 따로 평가하고, 근거 문장을 붙여 리포트로 만듭니다.",'<strong class="ct">핏 리포트 · 이도윤</strong><div class="row"><span>종합</span><span class="score">87</span></div><div class="bar"><b style="width:87%"></b></div>'],
+["사람이 승인하면 제안합니다","헤드헌터가 확인한 후보에게만 제안이 나갑니다. 대기 중인 건은 데스크에 남습니다.",'<strong class="ct">승인 대기 5명</strong><span class="stamp">승인하고 제안 보내기</span>']];
+const st=document.getElementById('stage'),hT=hT_=document.getElementById('hT'),hP=document.getElementById('hP'),hC=document.getElementById('hC'),li=document.querySelectorAll('#stNames li');
+function stage(){const k=+st.value;[hT,hP].forEach(e=>e.style.opacity=0);setTimeout(()=>{hT.textContent=S[k][0];hP.textContent=S[k][1];[hT,hP].forEach(e=>e.style.opacity=1)},reduce?0:200);hC.innerHTML=S[k][2];li.forEach((l,j)=>l.classList.toggle('on',j===k))}
+st.addEventListener('input',stage);stage();
+// 헤더: 이용자 유형 전환 → 액션 문구
+document.querySelectorAll('.who button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.who button').forEach(x=>x.setAttribute('aria-pressed',x===b));document.getElementById('hdCta').textContent=b.dataset.who==='company'?'스카우트 건 넣기':'작업물 올리기'});
+// 진입 스태거
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rise').forEach((el,n)=>{el.style.transitionDelay=(n%4)*70+'ms';io.observe(el)});
+</script>
+</body>
+</html>

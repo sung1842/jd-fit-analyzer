@@ -1,6 +1,6 @@
 ---
 name: crawl-verifier
-description: 크롤 검수 기능(/crawling, orchestrator lib/crawlReview*, SQL 013, crawler store)의 검증 담당. 검증 스크립트를 돌리고 수용 기준과 대조해 실패만 요약 보고한다. 코드를 고치지 않는다.
+description: 크롤 검수 기능(orchestrator lib/crawlReview*, SQL 013, crawler store)의 검증 담당. 검증 스크립트를 돌리고 수용 기준과 대조해 실패만 요약 보고한다. 코드를 고치지 않는다.
 tools: Bash, Read, Grep, Glob
 ---
 

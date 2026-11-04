@@ -185,8 +185,14 @@ export function decideBeforeLlm(prev: Pick<StoredNorm, "source_hash" | "fields_h
 
 async function embed(text: string): Promise<number[] | null> {
   if (!text) return null;
-  const [v] = await callMcpTool<number[][]>("embed_texts", { texts: [text] });
-  return v ?? null;
+  try {
+    const [v] = await callMcpTool<number[][]>("embed_texts", { texts: [text] });
+    return v ?? null;
+  } catch (err) {
+    // 임베딩 한도·장애로 정규화 전체를 실패시키지 않는다 — 의미 지문 없이 저장, 벡터 단계만 빠진다
+    console.warn("[candidateNorm] 임베딩 실패 — 의미 지문 없이 계속:", err instanceof Error ? err.message.slice(0, 120) : err);
+    return null;
+  }
 }
 
 export interface NormResult {
@@ -201,7 +207,8 @@ export interface NormResult {
  */
 export async function normalizeCandidateProfile(
   candidateId: string,
-  opts: { force?: boolean; allowLlm?: () => Promise<boolean> } = {}
+  // raw: LLM 대신 사람이(또는 수동 배치가) 만든 정규화 결과. 주면 normalize_candidate 호출을 건너뛴다 (API 한도 소진 시 테스트 데이터 보충용)
+  opts: { force?: boolean; allowLlm?: () => Promise<boolean>; raw?: RawNormalized } = {}
 ): Promise<NormResult> {
   let portfolio: CandidatePortfolio;
   try {
@@ -244,7 +251,7 @@ export async function normalizeCandidateProfile(
     await touch(candidateId, { checked_at: now });
     return { candidateId, outcome: "deferred" };
   }
-  const raw = await callMcpTool<RawNormalized>("normalize_candidate", { portfolio });
+  const raw = opts.raw ?? (await callMcpTool<RawNormalized>("normalize_candidate", { portfolio }));
   const dict = await getSkillDictionary();
   const mapped = mapSkills(dict, raw.skills);
   recordUnmapped(mapped.unmapped);

@@ -1,6 +1,6 @@
 ---
 name: crawl-review-loop
-description: 크롤 검수 기능(/crawling)을 Verifier·Reviewer 에이전트 루프로 검증하고 자동 수정해 고도화한다. "검수 루프 돌려", "크롤 검수 고도화", "루프 엔지니어링" 요청 시 사용.
+description: 크롤 검수 기능(orchestrator API)을 Verifier·Reviewer 에이전트 루프로 검증하고 자동 수정해 고도화한다. "검수 루프 돌려", "크롤 검수 고도화", "루프 엔지니어링" 요청 시 사용.
 ---
 
 # 크롤 검수 개선 루프

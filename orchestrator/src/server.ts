@@ -1,11 +1,12 @@
 import cors from "cors";
 import express from "express";
 import { Sentry } from "./lib/sentry.js";
-import type { FitAnalysisJobData, FitReport, FitReportStatus, PortfolioChatJobData, SlackNotifyPayload, SourcingActionStatus } from "../../shared/types.js";
+import type { CandidateBriefCard, FitAnalysisJobData, FitReport, FitReportStatus, PortfolioChatJobData, SlackNotifyPayload, SourcingActionStatus } from "../../shared/types.js";
 import { autoSourcingFromJd } from "./lib/autoSourcing.js";
 import { getCachedReport, jdHash, setCachedReport } from "./lib/cache.js";
 import { createSourcingWithApproval } from "./lib/createSourcingWithApproval.js";
-import { extractJdHeadline } from "../../shared/lib/shortlist.js";
+import { extractJdHeadline, fitReportToBriefCard } from "../../shared/lib/shortlist.js";
+import { db } from "./lib/db.js";
 import { createFitReport, getFitReportByCandidateAndJdHash, getFitReportById, listFitReports, updateFitReportByJobId } from "./lib/fitReports.js";
 import { getCachedAnswer } from "./lib/portfolioChatCache.js";
 import { callMcpTool } from "./mcp/client.js";
@@ -31,7 +32,7 @@ import {
   upsertChannelConfig,
 } from "./lib/slackChannelConfigs.js";
 import { JOB_PRIORITY, QUEUE_NAMES, buildJobId, buildPortfolioChatJobId, getQueue, portfolioChatQueue, removeStaleFailedJob } from "./queue/queues.js";
-import { FORBIDDEN, authGate, isOwner, resolveUserId } from "./lib/auth.js";
+import { FORBIDDEN, accountGate, authGate, isOwner, resolveUserId } from "./lib/auth.js";
 import { buildCorsOptions } from "./lib/corsConfig.js";
 import { listJobPostings, listPublicJobPostings } from "./lib/jobPostings.js";
 
@@ -174,11 +175,21 @@ export function createApp() {
   // Supabase JWT 게이트. 서명 검증 라우트(Slack)·OAuth 콜백·공개 brief 는 제외.
   // 크롤 검수(/admin/crawl)는 JWT 대신 비밀번호 게이트(lib/adminAuth.ts)를 탄다.
   // SSE(EventSource)와 OAuth 시작(브라우저 네비게이션)은 헤더를 못 실으므로 ?access_token= 허용.
+  const publicPaths = [/^\/admin\/crawl(\/|$)/, /^\/admin\/candidates\/normalize(\/stats|\/remap)?$/, /^\/admin\/match\/(quality|weights)$/, /^\/public\/job-postings$/, /^\/slack\/interactivity$/, /^\/slack\/events$/, /^\/notion\/oauth\/callback$/, /^\/brief$/];
   app.use(
     "/api",
     authGate({
-      publicPaths: [/^\/admin\/crawl(\/|$)/, /^\/admin\/candidates\/normalize(\/stats|\/remap)?$/, /^\/admin\/match\/(quality|weights)$/, /^\/public\/job-postings$/, /^\/slack\/interactivity$/, /^\/slack\/events$/, /^\/notion\/oauth\/callback$/, /^\/brief$/],
+      publicPaths,
       queryTokenPaths: [/^\/jobs\/[^/]+\/stream$/, /^\/v1\/life\/jobs\/[^/]+\/stream$/, /^\/portfolio-chat\/[^/]+\/stream$/, /^\/notion\/oauth\/start$/],
+    })
+  );
+  // 계정 유형 가드 (23 문서 G1): 기업 기능은 company, 라이프 로그·본인 정규화는 seeker 토큰만.
+  app.use(
+    "/api",
+    accountGate({
+      publicPaths,
+      company: [/^\/analyze$/, /^\/jd-runs(\/|$)/, /^\/candidates$/, /^\/desk(\/|$)/, /^\/fit-reports(\/|$)/, /^\/jd(\/|$)/, /^\/jobs\/[^/]+\/stream$/, /^\/notion(\/|$)/, /^\/portfolio-chat(\/|$)/, /^\/scout-cases(\/|$)/, /^\/slack\/channel-configs(\/|$)/, /^\/sourcing(\/|$)/],
+      seeker: [/^\/v1\/life(\/|$)/, /^\/candidates\/me(\/|$)/],
     })
   );
 
@@ -297,13 +308,17 @@ export function createApp() {
 
     try {
       let report: FitReport | null = null;
+      let card: CandidateBriefCard | null = null;
       let jdHeadline: string | null = null;
 
       if (jdHashParam) {
         const record = await getFitReportByCandidateAndJdHash(candidateId, jdHashParam);
         if (record) {
           jdHeadline = extractJdHeadline(record.jd) ?? null;
-          report = record.report ?? (await getCachedReport(record.jd, candidateId));
+          const full = record.report ?? (await getCachedReport(record.jd, candidateId));
+          // 공개 경로(Slack unfurl): 요약 카드만. 전체 리포트(근거·면접 질문)는 분석을 돌린 기업 본인만
+          card = full ? fitReportToBriefCard(full) : null;
+          if (full && req.auth && resolveUserId(req) === record.userId) report = full;
         }
       }
 
@@ -312,6 +327,7 @@ export function createApp() {
         jdHash: jdHashParam ?? null,
         jdHeadline,
         report,
+        card,
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -325,7 +341,16 @@ export function createApp() {
     // 토큰 사용자는 자기 리포트만. legacy 모드(토큰 없음)에서만 query userId 폴백.
     const userId = resolveUserId(req, req.query.userId as string | undefined);
     const reports = await listFitReports({ status, userId });
-    res.json({ reports });
+    // 승인함 건 묶음 제목: 스카우트 건(jd_runs)의 제목·고객사 (없으면 화면이 본문에서 추정)
+    const cases: Record<string, { title: string | null; clientName: string | null; closed: boolean }> = {};
+    const hashes = [...new Set(reports.map((r) => r.jdHash))];
+    if (userId && hashes.length) {
+      const { data } = await db.from("jd_runs").select("jd_hash, title, client_name, closed_at").eq("user_id", userId).in("jd_hash", hashes);
+      for (const j of (data ?? []) as { jd_hash: string; title: string | null; client_name: string | null; closed_at: string | null }[]) {
+        cases[j.jd_hash] = { title: j.title, clientName: j.client_name, closed: !!j.closed_at };
+      }
+    }
+    res.json({ reports, cases });
   });
 
   // HIL 검토 — 리크루터의 승인/반려 액션 (추가 LLM 호출 없음, 단순 상태 변경)

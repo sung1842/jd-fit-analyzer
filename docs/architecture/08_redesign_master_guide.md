@@ -31,7 +31,7 @@
 | 보안 어드바이저 — 유출 비밀번호 보호 | ⏭ 스킵 (유료 플랜 전용) | 사용자 결정 2026-10-20 |
 | 보안 어드바이저 — 함수 search_path 고정 | ✅ 2026-10-20 | 마이그레이션 `pin_search_path_handle_new_user_and_set_updated_at`: `public.handle_new_user`, `fit.set_updated_at` 을 `search_path = ''` 로 고정. `profiles` 에는 사용자 트리거가 없고 기본값·CHECK 가 전부 내장 기능이라 안전. 롤백 검증: `auth.users` INSERT → `profiles` 행 생성(role=developer), `updated_at` 갱신, 잔여 행 0. 010 SQL 동기화 |
 | 보안 어드바이저 — 남은 보안 항목 | ✅ 의도된 것만 | `rls_enabled_no_policy` INFO 4건(fit 백엔드 전용 테이블, service_role 만 접근). 유출 비밀번호 보호만 WARN 으로 남음(스킵) |
-| 성능 어드바이저 (fit 소유분) | ⬜ 미착수 | `auth_rls_initplan` WARN 5건(fit 정책의 `auth.uid()` → `(select auth.uid())`), 외래키 인덱스 없음 2건(`candidate_assessments.fit_report_id`, `notion_sync_records.jd_run_id`). public 소유분(conversations·messages·profiles 정책 10건, FK 3건)은 talentfolio 소유라 건드리지 않음 |
+| 성능 어드바이저 (fit 소유분) | 🟡 SQL 033 작성, 실행 대기 | `auth_rls_initplan` WARN 5건(fit 정책의 `auth.uid()` → `(select auth.uid())`), 외래키 인덱스 없음 2건(`candidate_assessments.fit_report_id`, `notion_sync_records.jd_run_id`). public 소유분(conversations·messages·profiles 정책 10건, FK 3건)은 talentfolio 소유라 건드리지 않음 |
 | `.cursorignore` | ✅ 2026-10-20 | 사용자가 직접 생성 (Write 도구는 권한 설정에 막힘). 내용: `crawler/.venv/`, `**/.next/`, `**/__pycache__/` |
 | Supabase MCP 토큰 | ✅ | 2026-10-20: `--project-ref` 로 이 프로젝트에 한정되어 정상 동작. `list_projects` 는 이 모드에서 노출되지 않음 |
 | 구 DB 데이터 이전 (pg_dump → sed → psql) | ⬜ | 절차는 010 SQL 하단 주석 |
@@ -52,7 +52,7 @@
 | RLS 정책 (authenticated 는 본인 행 SELECT 만, 쓰기는 service_role) | 🟡 | 010 SQL 에 포함. 적용은 §1 과 함께 |
 | **MCP 서버의 JWT 검증** | ⛔ 의도적 미구현 | MCP 서버는 최종 사용자를 보지 않는다. 호출자는 orchestrator 뿐이므로 내부 키(§4)가 올바른 방어선. 사용자 JWT 를 워커까지 전달하면 1시간 만료 때문에 큐 대기 중 깨진다 |
 | **Service Role 사용 범위 축소** | 🟡 한계 명시 | BullMQ 워커·Slack 웹훅·HIL 타임아웃은 요청 컨텍스트(JWT)가 없어 service_role 이 불가피. 대신 (a) HTTP 라우트는 JWT userId 로 소유권 검사, (b) RLS 로 브라우저 직접 접근 차단. 이게 현실적 상한 |
-| **talentfolio 쪽 수정** (`JdMatchModal`, `briefReport`, `sourcing/*`, `notionApi` 가 Bearer 미전송) | ⬜ 다른 레포 | 전환 전까지 `.env.local` 에 `AUTH_MODE=legacy`. talentfolio 는 `supabase.auth.getSession()` 의 access_token 을 헤더로 보내면 됨 |
+| **talentfolio 쪽 수정** (`JdMatchModal`, `briefReport`, `sourcing/*`, `notionApi` 가 Bearer 미전송) | ✅ 2026-11-03 (23 문서 G2, `AUTH_MODE=required`) | 전환 전까지 `.env.local` 에 `AUTH_MODE=legacy`. talentfolio 는 `supabase.auth.getSession()` 의 access_token 을 헤더로 보내면 됨 |
 | `tier` 를 클라이언트가 보냄 | ⬜ | 유저 등급 테이블이 없음. 등급 컬럼 생기면 서버에서 결정 |
 | orchestrator 바인드 `ORCHESTRATOR_HOST`(기본 127.0.0.1), `GET /api/sourcing/actions` 무필터 차단, 승인 라우트 `decidedBy` 는 토큰 신원 우선 | ✅ 코드 2026-10-20 / 🟡 legacy 한계 | `GET /api/sourcing/actions` 는 토큰·`userId`·`status=pending` 중 하나가 없으면 400. legacy 모드에서 무필터로 전체가 새던 것을 완화했을 뿐, **pending 대기열은 talentfolio 공용 대기열 설계라 legacy 에서 여전히 공개**. 완전 해결은 `AUTH_MODE=required` + talentfolio Bearer 전송. ngrok 으로 orchestrator 를 공개하면 대기열·승인 라우트가 외부에서 접근 가능 → ngrok 은 Slack 테스트 때만 켤 것 |
 

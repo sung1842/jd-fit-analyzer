@@ -111,7 +111,8 @@ describe("computeDeskSummary", () => {
     });
     const views = new Map([["3", [{ at: h(3), cardOpened: true }]]]);
     const t = computeDeskSummary(input(reports, { jdRuns: [run], jdRunsExtended: true, offers: [offer("o1", 24, "interested", true), offer("o2", 48, null)], views, explanationDue: [h(-24 * 5)] }));
-    assert.deepEqual([t.funnel.offered, t.funnel.replied, t.funnel.interviewed], [2, 1, 1]);
+    // 같은 후보(리포트 3)에게 간 제안 2건은 퍼널에서 1명으로 센다 (가장 최근 발송 기준)
+    assert.deepEqual([t.funnel.offered, t.funnel.replied, t.funnel.interviewed], [1, 1, 1]);
     assert.equal(t.firstOfferDays, 1); // 72h 전 생성 → 48h 전 첫 발송
     assert.equal(t.deadlineSoon, 1);
     assert.equal(t.cases[0].title, "백엔드 시니어");

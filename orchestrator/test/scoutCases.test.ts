@@ -4,7 +4,8 @@
  */
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import { sanitizeRequirements, toCaseRequirements, toJobRequirements } from "../src/lib/scoutCases.js";
+import { applyPostingFacets, composeCaseJd, sanitizePosting, sanitizeRequirements, toCaseRequirements, toJobRequirements } from "../src/lib/scoutCases.js";
+import { computeFacets } from "../src/lib/postingFacets.js";
 
 const norm = {
   role: "backend",
@@ -51,5 +52,26 @@ describe("sanitizeRequirements", () => {
   test("입력이 없으면 기존 값 유지", () => {
     const prev = toCaseRequirements(norm);
     assert.equal(sanitizeRequirements(undefined, prev).value, prev);
+  });
+});
+
+describe("공고 조건 (사람인 표기)", () => {
+  const posting = sanitizePosting({ location_text: "서울 강남구", career_text: "경력 5~10년", education_text: "대졸(4년제) 이상", employment_type_text: "정규직", salary_text: "회사내규에 따름", junk: 1 });
+
+  test("본문 뒤에 크롤 공고와 같은 [근무조건] 블록을 붙인다", () => {
+    const jd = composeCaseJd("백엔드 개발자\n주문 API 개발", posting);
+    assert.ok(jd.endsWith("[근무조건]\n- 경력: 경력 5~10년\n- 학력: 대졸(4년제) 이상\n- 근무형태: 정규직\n- 급여: 회사내규에 따름\n- 근무지: 서울 강남구"));
+    assert.equal(composeCaseJd("본문만", sanitizePosting(null)), "본문만");
+  });
+
+  test("경력·지역은 입력 조건이 AI 추정보다 우선, 학력은 요건 항목에 들어가지 않는다", () => {
+    const req = toCaseRequirements(norm);
+    const f = computeFacets({ title: "백엔드", skills: [], ...posting, deadline_date: null });
+    const out = applyPostingFacets(req, f);
+    assert.equal(out.years_min, 5);
+    assert.equal(out.years_max, 10);
+    assert.deepEqual(out.locations, ["서울 강남구"]);
+    assert.equal(f.education_level, "bachelor");
+    assert.ok(!out.items.some((i) => /대졸/.test(i.label)));
   });
 });

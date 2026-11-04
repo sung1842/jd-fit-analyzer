@@ -16,10 +16,14 @@ import { createRemoteJWKSet, decodeProtectedHeader, jwtVerify, type JWTPayload }
  *   required (기본) : Bearer 토큰 없으면 401. 프로덕션 기준.
  *   legacy          : 토큰이 있으면 검증하고, 없으면 body/query userId 로 폴백 (talentfolio 가 토큰을 아직 안 보내는 전환기용).
  */
+export type AccountType = "seeker" | "company";
+
 export interface AuthUser {
   userId: string;
   email?: string;
   role?: string;
+  /** app_metadata.account_type (talentfolio 가입 API 가 서비스 롤로 기록, 23 문서). 미분류면 undefined */
+  accountType?: AccountType;
 }
 
 declare global {
@@ -62,7 +66,13 @@ function toAuthUser(payload: JWTPayload): AuthUser {
     userId: payload.sub,
     email: typeof payload.email === "string" ? payload.email : undefined,
     role: typeof payload.role === "string" ? payload.role : undefined,
+    accountType: accountTypeOf(payload),
   };
+}
+
+function accountTypeOf(payload: JWTPayload): AccountType | undefined {
+  const v = (payload.app_metadata as { account_type?: unknown } | undefined)?.account_type;
+  return v === "seeker" || v === "company" ? v : undefined;
 }
 
 export async function verifySupabaseJwt(token: string): Promise<AuthUser> {
@@ -158,7 +168,8 @@ export function resolveUserId(req: Request, fallback?: string | null): string | 
  */
 export function isOwner(req: Request, ownerUserId: string | null | undefined): boolean {
   if (!req.auth) return true;
-  if (!ownerUserId) return true;
+  // 소유자 없는 행(legacy 시절 생성)은 토큰 사용자 누구의 것도 아니다 — 통과시키지 않는다
+  if (!ownerUserId) return false;
   return ownerUserId === req.auth.userId;
 }
 
@@ -187,4 +198,27 @@ export function requireUserToken(req: Request, res: Response): { userId: string;
     return null;
   }
   return { userId: req.auth.userId, token: req.authToken };
+}
+
+/**
+ * 계정 유형 가드 (23 문서 G1). authGate 뒤에 둔다.
+ * 경로가 한쪽 유형 전용이면 토큰의 account_type 이 맞아야 통과. 공개 경로(토큰 없음)는 authGate 가 이미 걸렀다.
+ */
+export function accountGate(rules: { company: RegExp[]; seeker: RegExp[]; publicPaths: RegExp[] }): RequestHandler {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (req.method === "OPTIONS" || rules.publicPaths.some((re) => re.test(req.path))) return next();
+    const need: AccountType | null = rules.company.some((re) => re.test(req.path))
+      ? "company"
+      : rules.seeker.some((re) => re.test(req.path)) ? "seeker" : null;
+    if (!need) return next();
+    if (!req.auth) {
+      res.status(401).json({ error: "인증이 필요합니다." });
+      return;
+    }
+    if (req.auth.accountType !== need) {
+      res.status(403).json({ error: need === "company" ? "기업 계정만 쓸 수 있습니다." : "구직자 계정만 쓸 수 있습니다." });
+      return;
+    }
+    next();
+  };
 }
