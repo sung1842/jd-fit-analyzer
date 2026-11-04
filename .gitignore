@@ -22,3 +22,6 @@ __pycache__/
 # 로컬 전용 (기기마다 달라지거나 세션마다 바뀌는 값)
 .claude/settings.local.json
 scripts/last-ngrok-url.txt
+
+# 디자인 검사 산출물
+.taste-skill/

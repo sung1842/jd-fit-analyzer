@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="작업물로 연결되는 채용 플랫폼 talentfolio 메인 다듬기 시안">
+<title>talentfolio 메인 다듬기 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<style>@font-face{font-family:'OksuniSNostalgicHandwriting';src:url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607161334@griun-oksooni-rg/griun-oksooni-rg/Griun_Oksooni-Rg.woff2') format('woff2');font-weight:400;font-display:swap}</style>
+<style>
+/* 현재 메인(SkyLanding)을 taste-skill·hallmark·impeccable 지적대로 다듬은 시안.
+   유지: 맑은 아침 하늘 팔레트, 해, 군중 일러스트 자리, 두 갈래, JD→리포트 보드, 네 걸음, 문장, 작업물, 반전 푸터.
+   제거: 영문 아이브로 라벨, SCROLL/SKIP 대문자, 그라데이션·글래스, 이모지, 01~04·i.~iv. 번호, 실선 구분, 바운스 이징, 지어낸 수치. */
+:root{
+  --bg:#F5F9FF; --surface:#FFFFFF; --mist:#DCEBFF; --sky:#BFDDFF; --sun:#FFE7A3;
+  --white:#FBFDFF; --dim:#7C8FB8; --soft:#3A5BC7; --cobalt-2:#163fb3; --ink:#0B1C45; --ink-2:#44527A; --cobalt:#1F4FD6; --ok:#0B6B45;
+  --f-body:"Pretendard Variable",Pretendard,system-ui,sans-serif;
+  --f-disp:"Wanted Sans Variable","Pretendard Variable",sans-serif;
+  --f-accent:"OksuniSNostalgicHandwriting",sans-serif;
+  --m:clamp(16px,4vw,56px); --r:20px; --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0}
+html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--f-body);word-break:keep-all;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+h1,h2,h3{font-family:var(--f-disp);letter-spacing:-.045em;line-height:1.08;text-wrap:balance}
+em{font-family:var(--f-accent);font-style:normal;font-weight:400;color:var(--cobalt);letter-spacing:-.03em}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border-radius:999px;background:var(--cobalt);color:var(--white);font-weight:600;font-size:14px;text-decoration:none;border:0;cursor:pointer;transition:background .2s,transform .15s}
+.btn:hover{background:var(--ink)}.btn:active{transform:scale(.97)}
+.btn.alt{background:var(--surface);color:var(--ink)}.btn.alt:hover{background:var(--mist)}
+:focus-visible{outline:3px solid var(--cobalt);outline-offset:3px}
+.wrap{padding:0 var(--m);max-width:1320px;margin:0 auto}
+.sec{padding-top:clamp(96px,14vw,176px)}
+.sec h2{font-size:clamp(30px,4.4vw,58px);max-width:18ch}
+
+/* 헤더 */
+.hd{position:sticky;top:0;z-index:30;background:var(--bg);display:flex;align-items:center;gap:28px;padding:14px var(--m)}
+.logo{font:800 19px/1 var(--f-disp);letter-spacing:-.05em;text-decoration:none}.logo b{color:var(--cobalt);font-weight:800}
+.hd nav{margin-left:auto;display:flex;gap:24px;font-size:14px}.hd nav a{text-decoration:none;color:var(--ink-2)}.hd nav a:hover{color:var(--ink)}
+.hd .login{font-size:14px;text-decoration:none}
+.menu{display:none;border:0;background:var(--mist);border-radius:999px;min-height:40px;padding:0 16px;font:600 14px var(--f-body);color:var(--ink)}
+
+/* 히어로: 평면 하늘 + 평면 해 + 군중 자리 */
+.hero{position:relative;overflow:hidden;background:var(--mist);min-height:calc(100svh - 68px);display:grid;align-content:center;padding:48px var(--m) 0}
+.hero .sun{position:absolute;right:-8vmin;top:-14vmin;width:56vmin;height:56vmin;border-radius:50%;background:var(--sun)}
+.hero-in{position:relative;z-index:2;max-width:1320px;width:100%;margin:0 auto;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;padding-bottom:clamp(160px,22vw,300px)}
+.hero h1{font-size:clamp(38px,6.4vw,92px);font-weight:800}
+.hero p{font-size:17px;max-width:34ch;color:var(--ink)}
+.hero .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.crowd{position:absolute;z-index:1;left:0;right:0;bottom:0;height:clamp(140px,22vw,300px);display:flex;align-items:flex-end;justify-content:center;gap:clamp(6px,1.2vw,14px);padding:0 var(--m)}
+.crowd span{flex:1;max-width:84px;border-radius:999px 999px 0 0;background:var(--sky)}
+.crowd span:nth-child(3n){background:var(--cobalt)}.crowd span:nth-child(4n){background:var(--ink)}
+.crowd-note{position:absolute;z-index:3;right:var(--m);bottom:12px;font-size:13px;color:var(--white)}
+
+/* 두 갈래 */
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
+.role{border-radius:var(--r);padding:clamp(24px,3vw,40px);min-height:340px;display:flex;flex-direction:column;gap:12px;transition:transform .3s var(--ease)}
+.role:hover{transform:translateY(-4px)}
+.role.a{background:var(--surface)}.role.b{background:var(--cobalt);color:var(--white)}
+.role h3{font-size:clamp(36px,4.6vw,64px);font-weight:800}
+.role .tag{font-size:15px;color:var(--cobalt)}.role.b .tag{color:var(--sun)}
+.role p{font-size:15px;max-width:40ch}
+.role .acts{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+.role.b .btn{background:var(--surface);color:var(--ink)}.role.b .btn.alt{background:var(--cobalt-2);color:var(--white)}
+
+/* JD → 리포트 */
+.demo{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(24px,5vw,80px);align-items:start;margin-top:40px}
+.steps{list-style:none;padding:0;display:grid;gap:6px}
+.steps li{padding:14px 18px;border-radius:14px;font-size:16px;color:var(--ink-2);background:transparent;transition:background .3s,color .3s}
+.steps li.on{background:var(--surface);color:var(--ink);font-weight:600}
+.board{background:var(--surface);border-radius:var(--r);padding:clamp(16px,2.4vw,28px);display:grid;gap:10px;position:relative}
+.jd{background:var(--mist);border-radius:14px;padding:16px 18px;font-size:14px}.jd b{display:block;font-size:16px}
+.cand{display:grid;grid-template-columns:40px 1fr auto;gap:14px;align-items:center;padding:12px 6px}
+.av{width:40px;height:40px;border-radius:50%;background:var(--sky);display:grid;place-items:center;font-weight:700;color:var(--cobalt)}
+.cand small{display:block;color:var(--ink-2);font-size:13px}
+.bar{height:6px;background:var(--mist);border-radius:3px;margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--cobalt);transform-origin:left;transform:scaleX(0);transition:transform 1s var(--ease)}
+.score{font:700 26px var(--f-disp);color:var(--cobalt);font-variant-numeric:tabular-nums}
+.stamp{justify-self:end;background:var(--sun);border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;transition:opacity .4s,transform .4s var(--ease)}
+.js .board:not(.done) .stamp{opacity:0;transform:translateY(8px)}
+.note{font-size:13px;color:var(--ink-2)}
+
+/* 네 걸음: 번호 대신 위치와 크기로 순서 */
+.loop{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:40px}
+.loop div{background:var(--surface);border-radius:var(--r);padding:24px;min-height:220px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px}
+.loop div:nth-child(2){background:var(--mist)}.loop div:nth-child(3){background:var(--sky)}
+.loop div.hil{background:var(--ink);color:var(--white)}
+.loop h3{font-size:clamp(22px,2.2vw,30px)}
+.loop p{font-size:15px}
+.loop .who{align-self:flex-start;background:var(--sun);color:var(--ink);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700}
+
+/* 문장 */
+.stmt{text-align:center;display:grid;justify-items:center;gap:20px}
+.stmt h2{font-size:clamp(34px,6vw,88px);max-width:none}
+.stmt .w{color:var(--dim);transition:color .35s}.stmt .w.lit{color:var(--ink)}.stmt em.w.lit{color:var(--cobalt)}
+.stmt p{max-width:52ch;font-size:16px;color:var(--ink-2)}
+.toasts{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.toast{display:flex;gap:10px;align-items:center;background:var(--surface);border-radius:999px;padding:10px 18px;font-size:14px}
+.toast i{width:10px;height:10px;border-radius:50%;background:var(--ok)}
+
+/* 작업물 */
+.works-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.works-head p{color:var(--ink-2);font-size:15px}
+.works-clip{margin-top:32px;overflow:hidden;border-radius:var(--r)}
+.track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px}
+.work{flex:none;width:clamp(240px,24vw,320px);min-height:clamp(300px,30vw,380px);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;justify-content:space-between;scroll-snap-align:start;background:var(--surface);transition:transform .3s var(--ease)}
+.work:hover{transform:translateY(-6px)}
+.work.c1{background:var(--cobalt);color:var(--white)}.work.c2{background:var(--sun)}.work.c3{background:var(--sky)}
+.work h3{font-size:clamp(22px,2.2vw,28px)}
+.work span{font-size:14px}
+
+/* CTA */
+.cta{margin-top:clamp(96px,14vw,176px);background:var(--cobalt);color:var(--white);padding:clamp(80px,12vw,160px) var(--m);text-align:center;display:grid;justify-items:center;gap:20px}
+.cta h2{font-size:clamp(34px,5.6vw,80px);max-width:16ch}
+.cta em{color:var(--sun)}
+.cta p{font-size:17px}
+.cta .acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.cta .btn{background:var(--surface);color:var(--ink)}.cta .btn.alt{background:var(--ink);color:var(--white)}
+
+/* 반전 푸터(현재 적용본과 동일) */
+.ft{background:var(--white);color:var(--cobalt);min-height:80svh;display:grid;grid-template-rows:auto 1fr auto auto;padding:40px var(--m) 24px}
+.ft .top{display:flex;gap:48px;font-size:14px;flex-wrap:wrap}.ft .top div{color:var(--soft);max-width:240px}.ft .top b{color:var(--cobalt)}.ft .top a{margin-left:auto}
+.ft .mail{align-self:end;font:700 clamp(30px,6.4vw,112px)/1 var(--f-disp);letter-spacing:-.05em;text-decoration:none}.ft .mail:hover{color:var(--ink)}
+.ft .cols{display:flex;gap:16px 36px;flex-wrap:wrap;margin:40px 0 28px;font-size:14px}.ft .cols a{text-decoration:none;color:var(--soft)}.ft .cols a:hover{color:var(--cobalt)}
+.ft .meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--soft)}
+
+.js .rise{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease)}.js .rise.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.rise{opacity:1;transform:none}.stmt .w{color:var(--ink)}}
+
+@media (max-width:960px){
+  .hero-in{grid-template-columns:1fr}
+  .demo{grid-template-columns:1fr}
+  .loop{grid-template-columns:1fr 1fr}
+}
+@media (max-width:640px){
+  .hd nav,.hd .login{display:none}.menu{display:inline-flex;margin-left:auto}
+  .roles,.loop{grid-template-columns:1fr}.roles{gap:40px}
+  .role{min-height:0}.loop div{min-height:0}
+  .hero h1{font-size:10.4vw}
+  .crowd-note{display:none}
+  .ft .mail{font-size:9.6vw}.ft .meta{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<script>document.body.classList.add("js")</script>
+<header class="hd">
+  <a class="logo" href="#">talent<b>folio</b></a>
+  <nav aria-label="주요 메뉴"><a href="#roles">역할</a><a href="#demo">작동 방식</a><a href="#works">작업물</a></nav>
+  <a class="login" href="#">로그인</a>
+  <a class="btn" href="#">시작하기</a>
+  <button class="menu" aria-label="메뉴 열기">메뉴</button>
+</header>
+
+<main>
+<section class="hero">
+  <div class="sun" aria-hidden="true"></div>
+  <div class="hero-in">
+    <h1 class="rise">오늘 아침, 재능과 기회가 <em>연결</em>됐어요</h1>
+    <div class="rise">
+      <p>구직자는 포트폴리오로 재능을 보여 주고, 기업은 JD 한 장으로 AI가 먼저 찾아 둔 후보를 만납니다.</p>
+      <div class="acts"><a class="btn" href="#">포트폴리오 올리기</a><a class="btn alt" href="#" style="background:none;text-decoration:underline">JD로 인재 찾기</a></div>
+    </div>
+  </div>
+  <div class="crowd" aria-hidden="true"><span style="height:62%"></span><span style="height:80%"></span><span style="height:54%"></span><span style="height:92%"></span><span style="height:70%"></span><span style="height:86%"></span><span style="height:58%"></span><span style="height:76%"></span><span style="height:66%"></span><span style="height:88%"></span><span style="height:60%"></span><span style="height:74%"></span></div>
+  <span class="crowd-note">군중 일러스트(openpeeps) 자리</span>
+</section>
+
+<section class="sec wrap" id="roles">
+  <h2 class="rise">지금 찾는 건 <em>기회인가요, 인재인가요?</em></h2>
+  <div class="roles">
+    <article class="role a rise"><h3>구직자</h3><span class="tag">나의 포트폴리오</span>
+      <p>작업물과 이력을 올려 두면 기업에 노출되고, 맞는 JD가 생기면 기업이 먼저 연락합니다. 공고를 직접 둘러보며 지원할 수도 있어요.</p>
+      <div class="acts"><a class="btn" href="#">스튜디오 열기</a><a class="btn alt" href="#">구직자로 가입</a></div></article>
+    <article class="role b rise"><h3>기업</h3><span class="tag">AI가 대신 찾아요</span>
+      <p>JD를 넣으면 AI가 후보를 탐색해 공고별 핏 리포트를 주기적으로 보내 드립니다. 관심 후보를 담아 비교할 수도 있어요.</p>
+      <div class="acts"><a class="btn" href="#">데스크 열기</a><a class="btn alt" href="#">기업으로 가입</a></div></article>
+  </div>
+</section>
+
+<section class="sec wrap" id="demo">
+  <h2 class="rise">JD 한 장이 <em>후보 리포트</em>가 되기까지</h2>
+  <div class="demo">
+    <ol class="steps" id="steps"><li class="on">JD를 입력하면</li><li>AI가 포트폴리오를 탐색하고</li><li>후보별 핏을 %로 산출해</li><li>정기 리포트로 보고합니다</li></ol>
+    <div class="board" id="board" data-ui>
+      <div class="jd"><b>프론트엔드 엔지니어 (React, TypeScript)</b>디자인 시스템 운영 경험, 성능 최적화, 3년 이상</div>
+      <div class="cand"><span class="av">하</span><div>하*린<small>디자인 시스템 12건</small><div class="bar"><i data-w="87"></i></div></div><span class="score" data-v="87">0</span></div>
+      <div class="cand"><span class="av">윤</span><div>윤*호<small>성능 개선 사례 7건</small><div class="bar"><i data-w="79"></i></div></div><span class="score" data-v="79">0</span></div>
+      <div class="cand"><span class="av">서</span><div>서*아<small>컴포넌트 라이브러리</small><div class="bar"><i data-w="73"></i></div></div><span class="score" data-v="73">0</span></div>
+      <span class="stamp">리포트 완료</span>
+      <span class="note">예시 데이터</span>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" id="loop">
+  <h2 class="rise">네 걸음, <em>한 바퀴</em></h2>
+  <div class="loop">
+    <div class="rise"><h3>JD 입력</h3><p>기업이 공고 조건을 넣습니다.</p></div>
+    <div class="rise"><h3>탐색과 분석</h3><p>AI가 포트폴리오를 읽고 핏을 계산합니다.</p></div>
+    <div class="rise"><h3>정기 리포트</h3><p>공고별 후보 목록을 주기적으로 보고합니다.</p></div>
+    <div class="rise hil"><h3>컨택</h3><span class="who">사람이 결정</span><p>기업이 JD와 함께 구직자에게 먼저 연락합니다.</p></div>
+  </div>
+</section>
+
+<section class="sec wrap stmt" id="stmt">
+  <h2><span class="w">작업물을</span> <span class="w">올려</span> <span class="w">두면,</span><br><em class="w">기업이</em> <em class="w">먼저</em> <span class="w">찾아옵니다.</span></h2>
+  <p>지원서는 이제 그만 쓰세요. 포트폴리오를 올려 두면 공고를 둘러보고 지원할 수도 있고, 기업은 JD를 넣으면 AI가 주기적으로 후보를 찾아 리포트로 보고합니다.</p>
+  <div class="toasts"><span class="toast"><i></i><span><b>A사 채용팀</b>이 JD와 함께 먼저 연락했어요</span></span></div>
+</section>
+
+<section class="sec wrap" id="works">
+  <div class="works-head"><h2 class="rise">오늘도 쌓이는 <em>작업물들</em></h2><p>예시 작업물 8건</p></div>
+  <div class="works-clip"><div class="track" tabindex="0" aria-label="예시 작업물">
+    <article class="work c1"><h3>디자인 시스템 리뉴얼</h3><span>웹, React와 Storybook</span></article>
+    <article class="work c2"><h3>오프라인 우선 가계부</h3><span>앱, Flutter</span></article>
+    <article class="work c3"><h3>동네 서점 아이덴티티</h3><span>브랜드, Figma와 일러스트</span></article>
+    <article class="work"><h3>지하철 혼잡도 대시보드</h3><span>데이터, D3와 Python</span></article>
+    <article class="work c2"><h3>시니어 키오스크 리서치</h3><span>UX, 인터뷰 18건</span></article>
+    <article class="work c1"><h3>주문 큐 장애 대응기</h3><span>백엔드, BullMQ와 Redis</span></article>
+    <article class="work"><h3>온보딩 모션 가이드</h3><span>모션, After Effects</span></article>
+    <article class="work c3"><h3>접근성 감사 리포트</h3><span>웹, WCAG 2.2</span></article>
+  </div></div>
+</section>
+
+<section class="cta">
+  <h2 class="rise">내일 아침엔 제안이 와요, <em>인재 리포트도 함께요</em></h2>
+  <p>작업물은 올려 두고, JD는 넣어 두세요.</p>
+  <div class="acts"><a class="btn" href="#">포트폴리오 입력하기</a><a class="btn alt" href="#">JD 입력하기</a></div>
+</section>
+</main>
+
+<footer class="ft">
+  <div class="top"><div><b>talentfolio</b><br>작업물로 연결되는 채용</div><div>평일 10시부터 18시까지<br>기업 문의는 하루 안에 답합니다</div><a href="#">맨 위로</a></div>
+  <a class="mail" href="mailto:sungwoo0723@naver.com">sungwoo0723@<br>naver.com</a>
+  <nav class="cols" aria-label="푸터 메뉴"><a href="#">구직자 시작하기</a><a href="#">기업으로 시작하기</a><a href="#">기업 데스크</a><a href="#">로그인</a></nav>
+  <div class="meta"><span>© 2026 talentfolio</span><span>Illustrations by openpeeps.com</span><span>서울</span></div>
+</footer>
+
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rise').forEach((el,n)=>{el.style.transitionDelay=(n%4)*80+'ms';io.observe(el)});
+// JD → 리포트: 보드가 보이면 단계 진행, 막대·점수 채움
+const board=document.getElementById('board'),steps=[...document.querySelectorAll('#steps li')];
+new IntersectionObserver(([e],o)=>{if(!e.isIntersecting)return;o.disconnect();
+  let k=0;const tick=()=>{steps.forEach((s,j)=>s.classList.toggle('on',j===k));
+    if(k===2)board.querySelectorAll('.bar i').forEach(b=>b.style.transform="scaleX("+b.dataset.w/100+")"),board.querySelectorAll('.score').forEach(s=>{const v=+s.dataset.v;let c=0;const t=setInterval(()=>{c=Math.min(v,c+3);s.textContent=c+'%';if(c>=v)clearInterval(t)},reduce?0:24)});
+    if(k===3)board.classList.add('done');if(++k<4)setTimeout(tick,reduce?0:900)};tick()},{threshold:.4}).observe(board);
+// 문장 점등
+const ws=document.querySelectorAll('.stmt .w'),ss=document.getElementById('stmt');
+function lit(){const r=ss.getBoundingClientRect(),p=reduce?1:Math.min(1,Math.max(0,(innerHeight*.85-r.top)/(innerHeight*.6)));ws.forEach((w,k)=>w.classList.toggle('lit',k<Math.round(p*ws.length)))}
+addEventListener('scroll',lit,{passive:true});lit();
+</script>
+</body>
+</html>

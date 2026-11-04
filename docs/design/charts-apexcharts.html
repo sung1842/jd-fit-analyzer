@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="talentfolio의 손으로 그린 CSS 그래프를 ApexCharts로 바꾼 디자인 시안">
+<title>talentfolio 차트 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js"></script>
+<style>
+/* 시안: 프로젝트 안 모든 통계·그래프(talentfolio /desk, FitReportDetail, /studio, 메인 데모)를 ApexCharts로.
+   팔레트: 브랜드 코발트 기준 범주 4색, dataviz validate_palette.js 라이트 모드 전 항목 통과.
+   #1F4FD6 코발트 · #C2710C 앰버 · #7A3FB0 보라(디자이너 직군색) · #00957F 청록. 순차는 코발트 한 색의 명도 단계. */
+:root{
+  --bg:#F5F9FF; --surface:#FFFFFF; --mist:#DCEBFF; --ink:#0B1C45; --ink-2:#44527A; --ink-3:#5C6A8E;
+  --c1:#1F4FD6; --c2:#C2710C; --c3:#7A3FB0; --c4:#00957F; --grid:#E6EEF9;
+  --ok:#0B6B45; --ok-bg:#DDF3E7; --warn:#7A4E00; --warn-bg:#FFEFC2; --danger:#A82A23;
+  --f-body:"Pretendard Variable",Pretendard,system-ui,sans-serif; --f-disp:"Wanted Sans Variable","Pretendard Variable",sans-serif;
+  --m:clamp(16px,3vw,40px); --r:20px;
+}
+*{box-sizing:border-box;margin:0}
+html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.6 var(--f-body);word-break:keep-all}
+h1,h2,h3{font-family:var(--f-disp);letter-spacing:-.04em;line-height:1.15;text-wrap:balance}
+.page{max-width:1280px;margin:0 auto;padding:40px var(--m) 96px}
+.page>header h1{font-size:clamp(28px,3.6vw,44px)}
+.page>header p{color:var(--ink-2);margin-top:8px;max-width:64ch}
+.group{margin-top:64px}
+.group>h2{font-size:clamp(22px,2.4vw,30px)}
+.group>p{color:var(--ink-2);margin-top:4px}
+.grid{display:grid;gap:16px;margin-top:20px;grid-template-columns:repeat(12,1fr)}
+.card{background:var(--surface);border-radius:var(--r);padding:20px;grid-column:span 6;min-width:0}
+.card.w12{grid-column:span 12}.card.w4{grid-column:span 4}.card.w8{grid-column:span 8}
+.card h3{font-size:18px}
+.card .sub{font-size:14px;color:var(--ink-2);margin-top:2px}
+.card .src{font-size:13px;color:var(--ink-3);margin-top:12px}
+.seg{display:inline-flex;background:var(--mist);border-radius:999px;padding:3px;margin-top:16px}
+.seg button{border:0;background:none;border-radius:999px;padding:6px 14px;font:600 14px var(--f-body);color:var(--ink-2);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--surface);color:var(--ink)}
+/* KPI 타일: 숫자 하나가 답인 자리는 차트가 아니라 타일 */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px}
+.kpi{background:var(--surface);border-radius:16px;padding:16px;display:grid;gap:2px}
+.kpi b{font:700 32px/1.1 var(--f-disp);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kpi b small{font:500 15px var(--f-body);color:var(--ink-2);margin-left:2px}
+.kpi span{font-size:14px}.kpi em{font-style:normal;font-size:13px;color:var(--ink-3)}
+.kpi.alert b{color:var(--danger)}
+details{margin-top:10px;font-size:14px}
+summary{cursor:pointer;color:var(--c1);font-weight:600}
+table{border-collapse:collapse;margin-top:8px;width:100%;font-variant-numeric:tabular-nums}
+td,th{padding:6px 8px;text-align:left}th{color:var(--ink-2);font-weight:600}
+tbody tr:nth-child(odd){background:var(--bg)}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.score-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.apexcharts-tooltip{font-family:var(--f-body)!important;border:0!important;box-shadow:0 12px 28px -12px rgba(11,28,69,.35)!important}
+:focus-visible{outline:3px solid var(--c1);outline-offset:3px}
+@media (max-width:960px){.card,.card.w4,.card.w8{grid-column:span 12}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.kpis{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <h1>통계·그래프 ApexCharts 시안</h1>
+  <p>지금 프로젝트의 그래프는 모두 CSS 막대로 직접 그려져 있어요. 같은 데이터 구조를 그대로 받아 ApexCharts로 바꾼 모습입니다. 수치는 모두 예시이고, 표 보기로 같은 값을 읽을 수 있어요.</p>
+</header>
+
+<!-- ───────── /desk 기업 데스크 ───────── -->
+<section class="group">
+  <h2>기업 데스크 (/desk)</h2>
+  <p>데이터 출처는 GET /api/desk/summary?range=7|30 이에요. 기간 전환은 모든 차트에 함께 걸려요.</p>
+  <div class="seg" role="group" aria-label="기간"><button aria-pressed="true" data-range="7">최근 7일</button><button aria-pressed="false" data-range="30">최근 30일</button></div>
+
+  <div class="kpis" aria-label="핵심 지표">
+    <div class="kpi alert"><span>승인 대기</span><b id="k1">6<small>건</small></b><em>가장 오래된 건 31시간</em></div>
+    <div class="kpi"><span>마감 임박 건</span><b id="k2">2<small>건</small></b><em>3일 안에 마감</em></div>
+    <div class="kpi"><span>첫 제안까지</span><b id="k3">2.4<small>일</small></b><em>중앙값</em></div>
+    <div class="kpi"><span>후보 응답률</span><b id="k4">38<small>%</small></b><em>13 / 34명</em></div>
+    <div class="kpi"><span>AI 판단 뒤집기</span><b id="k5">4<small>건</small></b><em>승인 판단 52건 중</em></div>
+  </div>
+
+  <div class="grid">
+    <article class="card w8"><h3>파이프라인 깔때기</h3><p class="sub">단계별 인원과 바로 앞 단계 대비 전환율. 가장 많이 새는 단계를 진하게 표시해요.</p>
+      <div id="funnel"></div>
+      <details><summary>표로 보기</summary><table id="t-funnel"></table></details>
+      <p class="src">desk/page.tsx .dk-funnel · s.funnel</p></article>
+    <article class="card w4"><h3>반려 사유</h3><p class="sub">헤드헌터가 후보를 반려한 이유</p>
+      <div id="reasons"></div>
+      <details><summary>표로 보기</summary><table id="t-reasons"></table></details>
+      <p class="src">.dk-reasons · s.rejectReasons</p></article>
+
+    <article class="card w12"><h3>스카우트 건별 진행</h3><p class="sub">건마다 매칭된 후보가 어디까지 왔는지. 남은 날짜는 오른쪽 라벨로.</p>
+      <div id="cases"></div>
+      <details><summary>표로 보기</summary><table id="t-cases"></table></details>
+      <p class="src">.dk-mini · s.cases[]</p></article>
+
+    <article class="card"><h3>검토 품질</h3><p class="sub">승인 판단의 질을 보는 네 가지 비율</p>
+      <div id="quality"></div>
+      <p class="sub" id="qx"></p>
+      <details><summary>표로 보기</summary><table id="t-quality"></table></details>
+      <p class="src">.dk-qi · s.quality, s.approval, s.overrides</p></article>
+    <article class="card"><h3>공급과 수요</h3><p class="sub">직군별 후보 수와 공고 수. 같은 단위(건)라 한 축으로 비교해요.</p>
+      <div id="sd"></div>
+      <p class="sub" id="gap">부족 기술: Kafka, Figma 디자인 시스템, iOS</p>
+      <details><summary>표로 보기</summary><table id="t-sd"></table></details>
+      <p class="src">.dk-sd · s.supplyDemand</p></article>
+  </div>
+</section>
+
+<!-- ───────── 핏 리포트 ───────── -->
+<section class="group">
+  <h2>핏 리포트 (/brief, 후보 상세)</h2>
+  <p>FitReport 한 건. 종합 점수는 숫자 하나가 답이라 반원 게이지로, 에이전트별 점수는 막대로 비교해요.</p>
+  <div class="grid">
+    <article class="card w4"><h3>종합 적합도</h3><p class="sub">이도윤 · 결제 플랫폼 백엔드</p>
+      <div id="overall"></div>
+      <div class="score-row"><span class="pill ok">강한 적합</span><span class="sub">임계값 75점 이상</span></div>
+      <p class="src">FitReportDetail.tsx · overallScore, verdict</p></article>
+    <article class="card w8"><h3>항목별 점수</h3><p class="sub">분석 에이전트마다 0~100점. 점선은 강한 적합 기준선 75점.</p>
+      <div id="agents"></div>
+      <details><summary>표로 보기</summary><table id="t-agents"></table></details>
+      <p class="src">AgentSection · report.agents[].score</p></article>
+    <article class="card w12"><h3>후보 비교</h3><p class="sub">같은 스카우트 건의 상위 후보, 종합 점수 순. 막대를 누르면 리포트로 이동하는 자리예요.</p>
+      <div id="rank"></div>
+      <p class="src">desk/candidates · FitScoreBadge, rankScore</p></article>
+  </div>
+</section>
+
+<!-- ───────── 스튜디오 ───────── -->
+<section class="group">
+  <h2>구직자 스튜디오 (/studio)</h2>
+  <div class="grid">
+    <article class="card w4"><h3>프로필 완성도</h3><p class="sub">채운 항목 / 전체 항목</p>
+      <div id="complete"></div>
+      <p class="sub">남은 항목: 대표 작업물 설명, 연락 가능 시간</p>
+      <p class="src">StudioApp.tsx · completeness</p></article>
+    <article class="card w8"><h3>내 작업물이 쓰인 곳</h3><p class="sub">이번 달 핏 리포트 등장, 관심 공고, 공개 증거 카드</p>
+      <div id="studio"></div>
+      <p class="src">.card.stat · reports, pins, pub</p></article>
+  </div>
+</section>
+
+<!-- ───────── 메인 데모 ───────── -->
+<section class="group">
+  <h2>메인 페이지 데모 보드</h2>
+  <p>JD 한 장이 후보 리포트가 되기까지의 예시 막대. 스크롤로 보드가 보이면 막대가 차올라요.</p>
+  <div class="grid"><article class="card w12"><div id="landing"></div><p class="src">SkyLanding.tsx CANDIDATES · 예시 데이터</p></article></div>
+</section>
+</div>
+
+<script>
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const C=[css('--c1'),css('--c2'),css('--c3'),css('--c4')], INK=css('--ink'), INK2=css('--ink-2'), GRID=css('--grid');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+Apex={chart:{fontFamily:'Pretendard Variable, sans-serif',toolbar:{show:false},foreColor:INK2,animations:{enabled:!reduce,speed:600}},yaxis:{labels:{style:{fontSize:"14px",colors:INK}}},
+  grid:{borderColor:GRID,strokeDashArray:0,padding:{left:4,right:8}},dataLabels:{enabled:false},legend:{fontSize:'14px',markers:{size:6,shape:'circle'},labels:{colors:INK}},
+  tooltip:{theme:'light'},states:{hover:{filter:{type:'darken',value:.9}}}};
+const tbl=(id,head,rows)=>{document.getElementById(id).innerHTML='<thead><tr>'+head.map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')+'</tbody>'};
+
+// 기간별 예시 데이터 (desk summary 응답과 같은 모양)
+const DATA={
+ 7:{funnel:[["매칭",186],["정밀 분석",58],["승인",21],["제안",17],["응답",7],["면접",3]], reasons:[["경력 부족",9],["기술 불일치",7],["지역·근무 형태",4],["이미 접촉함",2]],
+    sd:{supply:[412,168],demand:[31,9]}, quality:[64,8,82,3]},
+ 30:{funnel:[["매칭",742],["정밀 분석",231],["승인",88],["제안",71],["응답",27],["면접",11]], reasons:[["경력 부족",34],["기술 불일치",29],["지역·근무 형태",15],["이미 접촉함",8]],
+    sd:{supply:[1204,486],demand:[118,37]}, quality:[61,9,79,5]}};
+let range=7;
+
+// 깔때기: 가장 새는 단계(전환율 최저)를 진하게, 나머지는 같은 코발트를 옅게
+function funnelOpts(d){const f=d.funnel, conv=f.map((s,i)=>i?Math.round(s[1]/f[i-1][1]*100):100);
+  let leak=1;for(let i=2;i<f.length;i++)if(conv[i]<conv[leak])leak=i;
+  tbl('t-funnel',['단계','인원','앞 단계 대비'],f.map((s,i)=>[s[0],s[1].toLocaleString(),i?conv[i]+'%':'']));
+  return {...Apex,chart:{...Apex.chart,type:'bar',height:320},
+   series:[{name:'인원',data:f.map(s=>s[1])}],
+   plotOptions:{bar:{horizontal:true,borderRadius:4,borderRadiusApplication:"end",barHeight:"60%",distributed:true,dataLabels:{position:"top"}}},
+   colors:f.map((s,i)=>i===leak?C[1]:C[0]),
+   dataLabels:{enabled:true,offsetX:4,textAnchor:"start",style:{fontSize:"14px",fontWeight:600,colors:[INK]},formatter:(v,o)=>{const i=o.dataPointIndex;return `${v.toLocaleString()}${i?` · ${conv[i]}%`:''}`},dropShadow:{enabled:false}},
+   xaxis:{categories:f.map(s=>s[0]),max:Math.ceil(f[0][1]*1.25),labels:{show:false},axisBorder:{show:false},axisTicks:{show:false}},yaxis:{labels:{style:{colors:INK,fontSize:"14px"}}},grid:{show:false},legend:{show:false},
+   tooltip:{y:{formatter:(v,o)=>`${v.toLocaleString()}명${o.dataPointIndex?` (앞 단계 대비 ${conv[o.dataPointIndex]}%)`:''}${o.dataPointIndex===leak?' · 가장 많이 새는 단계':''}`}}}}
+
+function reasonsOpts(d){tbl('t-reasons',['사유','건수'],d.reasons);
+  return {...Apex,chart:{...Apex.chart,type:'bar',height:260},series:[{name:'반려',data:d.reasons.map(r=>r[1])}],
+   plotOptions:{bar:{horizontal:true,borderRadius:4,borderRadiusApplication:'end',barHeight:'56%'}},colors:[C[0]],
+   dataLabels:{enabled:true,offsetX:22,style:{colors:[INK],fontWeight:600}},xaxis:{categories:d.reasons.map(r=>r[0]),labels:{show:false},axisBorder:{show:false},axisTicks:{show:false}},
+   grid:{show:false},tooltip:{y:{formatter:v=>v+'건'}}}}
+
+function sdOpts(d){tbl('t-sd',['직군','후보(공급)','공고(수요)','공고당 후보'],[['개발',d.sd.supply[0],d.sd.demand[0],(d.sd.supply[0]/d.sd.demand[0]).toFixed(1)],['디자인',d.sd.supply[1],d.sd.demand[1],(d.sd.supply[1]/d.sd.demand[1]).toFixed(1)]]);
+  return {...Apex,chart:{...Apex.chart,type:'bar',height:260},series:[{name:'후보(공급)',data:d.sd.supply},{name:'공고(수요)',data:d.sd.demand}],
+   plotOptions:{bar:{horizontal:true,borderRadius:4,borderRadiusApplication:'end',barHeight:'64%'}},colors:[C[0],C[1]],stroke:{show:true,width:2,colors:['#FFFFFF']},
+   xaxis:{categories:['개발','디자인'],labels:{formatter:v=>Math.round(v).toLocaleString()}},tooltip:{shared:true,intersect:false,y:{formatter:v=>v.toLocaleString()+'건'}}}}
+
+function qualityOpts(d){document.getElementById("qx").textContent=`설명 요청 대기 ${d.quality[3]}건`;const L=['승인률','AI 판단 뒤집기','근거 보고 승인','설명 요청 대기'];
+  tbl('t-quality',['지표','값'],L.map((l,i)=>[l,i===3?d.quality[i]+'건':d.quality[i]+'%']));
+  return {...Apex,chart:{...Apex.chart,type:'bar',height:260},series:[{name:'비율',data:d.quality.slice(0,3)}],
+   plotOptions:{bar:{horizontal:true,borderRadius:4,borderRadiusApplication:'end',barHeight:'52%'}},colors:[C[0]],
+   dataLabels:{enabled:true,formatter:v=>v+'%',offsetX:26,style:{colors:[INK],fontWeight:600}},
+   xaxis:{categories:L.slice(0,3),max:100,labels:{formatter:v=>v+'%'}},tooltip:{y:{formatter:v=>v+'%'}}}}
+
+// 건별 누적 막대: 분석 전 / 분석됨 / 승인 (2px 흰 간격)
+const CASES=[["결제 플랫폼 백엔드",48,15,6,3],["디자인 시스템 리드",31,9,4,6],["데이터 엔지니어",52,18,5,1],["iOS 개발자",22,6,2,12],["프로덕트 디자이너",33,10,4,9]];
+tbl('t-cases',['스카우트 건','분석 전','분석됨','승인','남은 날'],CASES.map(c=>[c[0],c[1]-c[2],c[2]-c[3],c[3],'D-'+c[4]]));
+const casesOpts={...Apex,chart:{...Apex.chart,type:'bar',height:300,stacked:true},
+  series:[{name:'승인',data:CASES.map(c=>c[3])},{name:'분석됨',data:CASES.map(c=>c[2]-c[3])},{name:'분석 전',data:CASES.map(c=>c[1]-c[2])}],
+  plotOptions:{bar:{horizontal:true,barHeight:'58%',borderRadius:4,borderRadiusApplication:'end',borderRadiusWhenStacked:'last'}},
+  colors:[C[0],'#7FA3F0','#C8D8F5'],stroke:{width:2,colors:['#FFFFFF']},
+  xaxis:{categories:CASES.map(c=>c[0])},yaxis:{labels:{style:{colors:INK,fontSize:'14px'}}},
+  annotations:{points:CASES.map((c,i)=>({x:c[1],y:c[0],marker:{size:0},label:{text:'D-'+c[4],borderWidth:0,offsetX:30,style:{background:c[4]<=3?css('--warn-bg'):'#EEF5FF',color:c[4]<=3?css('--warn'):INK2,fontSize:'13px',fontWeight:600}}}))},
+  tooltip:{shared:true,intersect:false,y:{formatter:v=>v+'명'}}};
+
+// 핏 리포트
+const overallOpts={...Apex,chart:{...Apex.chart,type:'radialBar',height:240},series:[87],colors:[C[0]],
+  plotOptions:{radialBar:{startAngle:-110,endAngle:110,hollow:{size:'62%'},track:{background:css('--mist'),strokeWidth:'100%'},
+   dataLabels:{name:{show:true,offsetY:22,fontSize:'14px',color:INK2},value:{offsetY:-14,fontSize:'44px',fontWeight:700,fontFamily:'Wanted Sans Variable',color:INK,formatter:v=>Math.round(v)}}}},
+  labels:['/ 100'],stroke:{lineCap:'round'}};
+const AG=[["기술 스택",92],["경험·트러블슈팅",84],["컬처핏",71]];
+tbl('t-agents',['항목','점수'],AG);
+const agentsOpts={...Apex,chart:{...Apex.chart,type:'bar',height:220},series:[{name:'점수',data:AG.map(a=>a[1])}],
+  plotOptions:{bar:{horizontal:true,borderRadius:4,borderRadiusApplication:'end',barHeight:'50%'}},colors:[C[0]],
+  dataLabels:{enabled:true,offsetX:22,style:{colors:[INK],fontWeight:600}},xaxis:{categories:AG.map(a=>a[0]),min:0,max:100},
+  annotations:{xaxis:[{x:75,borderColor:INK2,strokeDashArray:4,label:{text:'75',borderWidth:0,style:{background:'transparent',color:INK2}}}]},tooltip:{y:{formatter:v=>v+'점'}}};
+const RK=[["이도윤",87],["한유진",84],["최서연",79],["정민재",72],["오세린",68],["박지훈",61]];
+const rankOpts={...Apex,chart:{...Apex.chart,type:'bar',height:260,events:{dataPointSelection:(e,c,o)=>console.log('open report',RK[o.dataPointIndex][0])}},
+  series:[{name:'종합 점수',data:RK.map(r=>r[1])}],plotOptions:{bar:{columnWidth:'44%',borderRadius:4,borderRadiusApplication:'end'}},
+  colors:[C[0]],dataLabels:{enabled:true,offsetY:-22,style:{colors:[INK],fontWeight:600},formatter:v=>v},plotOptions2:null,
+  xaxis:{categories:RK.map(r=>r[0]),labels:{style:{colors:INK,fontSize:'14px'}}},yaxis:{min:0,max:100,tickAmount:4},
+  annotations:{yaxis:[{y:75,borderColor:INK2,strokeDashArray:4,label:{text:'강한 적합 75',borderWidth:0,style:{background:'transparent',color:INK2}}}]},tooltip:{y:{formatter:v=>v+'점'}}};
+rankOpts.plotOptions.bar.dataLabels={position:'top'};
+
+// 스튜디오
+const completeOpts={...overallOpts,series:[80],labels:['완성도'],plotOptions:{radialBar:{...overallOpts.plotOptions.radialBar,dataLabels:{...overallOpts.plotOptions.radialBar.dataLabels,value:{...overallOpts.plotOptions.radialBar.dataLabels.value,formatter:v=>Math.round(v)+'%'}}}}};
+const studioOpts={...Apex,chart:{...Apex.chart,type:'bar',height:240},series:[{name:'건수',data:[12,5,7]}],
+  plotOptions:{bar:{columnWidth:'40%',borderRadius:4,borderRadiusApplication:'end',distributed:true,dataLabels:{position:'top'}}},colors:[C[0],C[0],C[0]],
+  dataLabels:{enabled:true,offsetY:-22,style:{colors:[INK],fontWeight:600}},legend:{show:false},
+  xaxis:{categories:['핏 리포트 등장','관심 공고','공개 증거 카드'],labels:{style:{colors:INK,fontSize:'14px'}}},yaxis:{show:false},grid:{show:false},tooltip:{y:{formatter:v=>v+'건'}}};
+
+// 메인 데모
+const LD=[[["하*린","디자인 시스템 12건"],92],[["윤*호","성능 개선 사례 7건"],84],[["서*아","컴포넌트 라이브러리"],77]];
+const landingOpts={...Apex,chart:{...Apex.chart,type:"bar",height:240,animations:{enabled:!reduce,speed:1100}},series:[{name:'JD 핏',data:LD.map(l=>l[1])}],
+  plotOptions:{bar:{horizontal:true,borderRadius:4,borderRadiusApplication:'end',barHeight:'46%'}},colors:[C[0]],
+  dataLabels:{enabled:true,formatter:v=>v+'%',offsetX:28,style:{colors:[INK],fontSize:'16px',fontWeight:700}},
+  xaxis:{categories:LD.map(l=>l[0]),max:100,labels:{show:false},axisBorder:{show:false},axisTicks:{show:false}},
+  yaxis:{labels:{style:{colors:INK,fontSize:'14px'},maxWidth:260,align:"left"}},grid:{show:false},tooltip:{y:{formatter:v=>v+'%'}}};
+
+const charts={};
+const fixH=o=>{const b=o.plotOptions&&o.plotOptions.bar;if(b&&b.horizontal&&o.dataLabels&&o.dataLabels.enabled){b.dataLabels={position:"top"};o.dataLabels={...o.dataLabels,offsetX:4,textAnchor:"start"}}return o};
+function mount(id,o){const b=o.plotOptions&&o.plotOptions.bar;if(b&&b.horizontal&&o.dataLabels&&o.dataLabels.enabled&&!o.chart.stacked){b.dataLabels={position:"top"};o.dataLabels={...o.dataLabels,offsetX:4,textAnchor:"start",style:{...(o.dataLabels.style||{}),colors:[INK]}}}charts[id]=new ApexCharts(document.getElementById(id),o);charts[id].render()}
+mount('funnel',funnelOpts(DATA[7]));mount('reasons',reasonsOpts(DATA[7]));mount('cases',casesOpts);
+mount('quality',qualityOpts(DATA[7]));mount('sd',sdOpts(DATA[7]));
+mount('overall',overallOpts);mount('agents',agentsOpts);mount('rank',rankOpts);
+mount('complete',completeOpts);mount('studio',studioOpts);
+// 메인 데모는 보일 때 그려서 차오르는 움직임을 살림
+new IntersectionObserver(([e],o)=>{if(e.isIntersecting){o.disconnect();mount('landing',landingOpts)}},{threshold:.3}).observe(document.getElementById('landing'));
+
+// 기간 전환: 같은 실체는 같은 색 유지, 값만 갱신
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{range=+b.dataset.range;
+  document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const d=DATA[range];[['funnel',funnelOpts],['reasons',reasonsOpts],['quality',qualityOpts],['sd',sdOpts]].forEach(([id,f])=>charts[id].updateOptions(fixH(f(d))));
+  const k=range===7?['6','2','2.4','38','4']:['19','5','2.9','35','13'];['k1','k2','k3','k4','k5'].forEach((id,i)=>document.getElementById(id).firstChild.nodeValue=k[i])});
+</script>
+</body>
+</html>
