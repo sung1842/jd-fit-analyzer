@@ -2,6 +2,12 @@
 
 매일 23:59 자동 커밋 시 그날의 변경 사항을 날짜별로 기록합니다.
 
+## 2026-11-08
+(브랜치: feat/account-split-cleanup)
+- JD-Fit 분석 시연 영상 촬영 가이드 추가(`docs/jd_fit_demo_test.md`): 2026-11-06 리허설 결과를 바탕으로 사전 점검표, 입력용 공고 2종(Java 백엔드·UI/UX 디자이너), 장면별 촬영 순서, 통과 기준, 문제 대응표 정리
+- 가이드에 캐시로 재분석이 안 되는 경우·필수 기술 과다 입력 시 점수 평준화 등 리허설에서 확인된 함정과 회피법 명시
+- 매칭 정답 시나리오 파일(`scripts/data/match-scenarios.json`)은 수집 공고 데이터를 포함해 공개 저장소 커밋에서 제외
+
 ## 2026-11-04
 (브랜치: feat/account-split-cleanup)
 - 회원 탈퇴 SQL 034 추가: `fit.delete_my_account()` 가 fit·public 스키마에서 본인 candidate_id/user_id 기록을 찾아 지움 (앱스토어 계정 삭제 요구·개인정보 파기 의무 대응, 실행 대기)
