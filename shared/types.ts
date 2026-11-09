@@ -36,6 +36,12 @@ export interface FitReport {
   ceoSummary: string; // CEO 에이전트의 종합 코멘트
   generatedAt: string; // ISO timestamp
   review?: FitReview; // HIL 승인/거절 기록 (20 문서 C1 — 설명 책임)
+  hold?: FitHold; // 보류 — 판단을 미룬 후보. 상태는 검토 대기 그대로 두고 "미처리" 목록에서만 뺀다
+}
+
+export interface FitHold {
+  at: string;
+  by: string | null;
 }
 
 export interface FitReview {

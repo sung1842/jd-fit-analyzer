@@ -11,6 +11,10 @@ if (!MCP_INTERNAL_KEY) {
   console.warn("[mcp] MCP_INTERNAL_KEY 미설정 — 내부 키 없이 연결합니다 (개발 환경에서만 허용).");
 }
 const STARTUP_RETRY_MS = 2000;
+// MCP SDK 기본 요청 타임아웃은 60초. mcp-server 는 Gemini 분당 한도(rateLimiter) 슬롯이 날 때까지 호출을 대기시키므로,
+// 큐에 후보가 몰리면 대기만으로 60초를 넘겨 "Request timed out" 으로 job 이 실패했다 (2026-11-09 미래로시스템 건 19/20 실패).
+// 대기는 정상 동작이므로 tool 호출 타임아웃을 넉넉히 둔다. BullMQ lock 은 자동 연장되어 job 이 stalled 되지 않는다.
+const MCP_TOOL_TIMEOUT_MS = Number(process.env.MCP_TOOL_TIMEOUT_MS) || 300_000;
 const STARTUP_MAX_ATTEMPTS = 15;
 
 let client: Client | null = null;
@@ -65,7 +69,7 @@ export async function getMcpClient(): Promise<Client> {
 
 async function callMcpToolOnce<T>(name: string, args: Record<string, unknown>): Promise<T> {
   const mcp = await getMcpClient();
-  const result = await mcp.callTool({ name, arguments: args });
+  const result = await mcp.callTool({ name, arguments: args }, undefined, { timeout: MCP_TOOL_TIMEOUT_MS, maxTotalTimeout: MCP_TOOL_TIMEOUT_MS });
 
   if (result.isError) {
     const message = (result.content as Array<{ type: string; text?: string }>)

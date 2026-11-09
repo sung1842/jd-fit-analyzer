@@ -10,6 +10,12 @@ export const REJECT_REASON_CODES: Record<string, string> = {
   "경력 범위 불일치": "career_mismatch",
   "이미 접촉한 후보": "already_contacted",
   "포지션 조건 불일치": "position_mismatch",
+  // 2026-11-10 승인함 개편 — AI 판단과 다르게 본 이유를 구체적으로 남긴다
+  "경력 수준 불일치": "career_mismatch",
+  "도메인·업종 경험 부족": "domain_mismatch",
+  "관련 경험이 오래됨": "stale_experience",
+  "근무 조건 불일치": "position_mismatch",
+  "고객사 요청으로 제외": "client_exclusion",
 };
 
 export function reasonCode(reason: string | null | undefined): string {

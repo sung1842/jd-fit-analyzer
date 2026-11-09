@@ -185,7 +185,7 @@ interface CaseRow {
   updated_at: string;
 }
 
-function toCase(row: CaseRow, counts?: { matched: number; analyzed: number; pending: number; approved: number; rejected: number }) {
+function toCase(row: CaseRow, counts?: CaseCounts) {
   return {
     id: row.id,
     jdHash: row.jd_hash,
@@ -199,7 +199,7 @@ function toCase(row: CaseRow, counts?: { matched: number; analyzed: number; pend
     closedAt: row.closed_at,
     lastStart: (row.plan_snapshot?.scoutStart as Record<string, unknown> | undefined) ?? null,
     createdAt: row.created_at,
-    counts: counts ?? { matched: 0, analyzed: 0, pending: 0, approved: 0, rejected: 0 },
+    counts: counts ?? emptyCounts(),
   };
 }
 
@@ -225,17 +225,28 @@ async function loadOwnCase(req: Request, res: Response, userId: string): Promise
   return data as CaseRow;
 }
 
+export interface CaseCounts { matched: number; analyzed: number; pending: number; approved: number; rejected: number; running: number; failed: number }
+const emptyCounts = (): CaseCounts => ({ matched: 0, analyzed: 0, pending: 0, approved: 0, rejected: 0, running: 0, failed: 0 });
+
+/** 거절해서 fit_reports 행을 지운 후보 (jd_runs.plan_snapshot.rejected). "더 찾기"가 다시 고르지 않게 한다 */
+export function rejectedOf(row: { plan_snapshot?: Record<string, unknown> | null }): string[] {
+  const list = row.plan_snapshot?.rejected;
+  return Array.isArray(list) ? list.map((x) => (x as { candidateId?: unknown }).candidateId).filter((v): v is string => typeof v === "string") : [];
+}
+
 async function countsByHash(userId: string, hashes: string[]) {
-  const out = new Map<string, { matched: number; analyzed: number; pending: number; approved: number; rejected: number }>();
+  const out = new Map<string, CaseCounts>();
   if (hashes.length === 0) return out;
   const { data } = await db.from("fit_reports").select("jd_hash, status, report").eq("user_id", userId).in("jd_hash", hashes);
   for (const r of (data ?? []) as { jd_hash: string; status: string; report: unknown }[]) {
-    const c = out.get(r.jd_hash) ?? { matched: 0, analyzed: 0, pending: 0, approved: 0, rejected: 0 };
+    const c = out.get(r.jd_hash) ?? emptyCounts();
     c.matched += 1;
     if (r.report) c.analyzed += 1;
     if ((r.status === "completed" || r.status === "pending_review") && r.report) c.pending += 1;
     if (r.status === "approved") c.approved += 1;
     if (r.status === "rejected") c.rejected += 1;
+    if (r.status === "queued" || r.status === "processing") c.running += 1;
+    if (r.status === "failed") c.failed += 1;
     out.set(r.jd_hash, c);
   }
   return out;
@@ -405,9 +416,16 @@ export function registerScoutCaseRoutes(app: Express): void {
     const limit = Number.isFinite(limitRaw) ? Math.min(START_MAX, Math.max(1, Math.floor(limitRaw))) : START_DEFAULT;
     try {
       const plan = await buildJdPlan(row.jd_text, undefined, undefined, toJobRequirements(row.requirements));
-      const { data: existing } = await db.from("fit_reports").select("candidate_id").eq("user_id", userId).eq("jd_hash", row.jd_hash);
-      const done = new Set(((existing ?? []) as { candidate_id: string }[]).map((r) => r.candidate_id));
-      const picks = plan.ranked.filter((c) => !done.has(c.candidateId)).slice(0, limit);
+      const { data: existing } = await db.from("fit_reports").select("candidate_id, status").eq("user_id", userId).eq("jd_hash", row.jd_hash);
+      const rows = (existing ?? []) as { candidate_id: string; status: string }[];
+      // 실패한 후보는 다시 분석 대상 (재시도 소진 = 일시 오류였을 가능성이 높다). 거절한 후보는 행이 지워지므로 건 기록에서 뺀다
+      const done = new Set([...rows.filter((r) => r.status !== "failed").map((r) => r.candidate_id), ...rejectedOf(row)]);
+      const failed = new Set(rows.filter((r) => r.status === "failed").map((r) => r.candidate_id));
+      // 먼저 넣은 분석이 아직 도는 중이면 새 후보는 그 뒤에 붙는다 (같은 priority = FIFO). 화면에 앞선 인원을 알려 준다
+      const ahead = rows.filter((r) => r.status === "queued" || r.status === "processing").length;
+      // 실패 재시도를 먼저, 그다음 새 후보
+      const fresh = plan.ranked.filter((c) => !done.has(c.candidateId));
+      const picks = [...fresh.filter((c) => failed.has(c.candidateId)), ...fresh.filter((c) => !failed.has(c.candidateId))].slice(0, limit);
 
       const queue = getQueue("paid");
       let queued = 0;
@@ -428,6 +446,8 @@ export function registerScoutCaseRoutes(app: Express): void {
         matched: plan.matchedCount,
         queued,
         alreadyAnalyzed: done.size,
+        retried: picks.filter((c) => failed.has(c.candidateId)).length,
+        ahead,
       };
       await db
         .from("jd_runs")
@@ -460,8 +480,8 @@ export function registerScoutCaseRoutes(app: Express): void {
     try {
       // 후보 풀(공개·구직자·제외 안 됨)에 있는 사람만
       const pool = new Set((await callMcpTool<{ id: string }[]>("search_candidates", {})).map((c) => c.id));
-      const { data: existing } = await db.from("fit_reports").select("candidate_id").eq("user_id", userId).eq("jd_hash", row.jd_hash).in("candidate_id", ids);
-      const done = new Set(((existing ?? []) as { candidate_id: string }[]).map((r) => r.candidate_id));
+      const { data: existing } = await db.from("fit_reports").select("candidate_id, status").eq("user_id", userId).eq("jd_hash", row.jd_hash).in("candidate_id", ids);
+      const done = new Set(((existing ?? []) as { candidate_id: string; status: string }[]).filter((r) => r.status !== "failed").map((r) => r.candidate_id));
       const queue = getQueue("paid");
       let queued = 0;
       for (const candidateId of ids) {
