@@ -36,7 +36,17 @@ export interface FitReport {
   ceoSummary: string; // CEO 에이전트의 종합 코멘트
   generatedAt: string; // ISO timestamp
   review?: FitReview; // HIL 승인/거절 기록 (20 문서 C1 — 설명 책임)
+  calibration?: FitCalibration; // 코드 점수 보정 결과 (orchestrator lib/calibrate.ts)
   hold?: FitHold; // 보류 — 판단을 미룬 후보. 상태는 검토 대기 그대로 두고 "미처리" 목록에서만 뺀다
+}
+
+/** 코드 점수 보정 기록 — 근거 등급 상한·근거 없는 충족 항목 이동 */
+export interface FitCalibration {
+  tier: "thin" | "basic" | "solid" | "rich";
+  cap: number;
+  rawScore: number; // 보정 전 CEO 점수
+  movedItems: string[]; // 근거로 확인되지 않아 부족(면접 확인)으로 옮긴 충족 항목
+  reasons: string[];
 }
 
 export interface FitHold {

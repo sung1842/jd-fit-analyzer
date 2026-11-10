@@ -264,8 +264,8 @@ export function createApp() {
       const postings = await listJobPostings({ q, source, limit });
       res.json({ postings });
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(500).json({ error: `채용공고 조회 실패: ${message}` });
+      console.error("[job-postings] 조회 실패", err);
+      res.status(500).json({ error: "채용공고를 불러오지 못했습니다. 다시 시도해 주세요." });
     }
   });
 
@@ -344,8 +344,8 @@ export function createApp() {
         card,
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(500).json({ error: `Brief 조회 실패: ${message}` });
+      console.error("[brief] 조회 실패", err);
+      res.status(500).json({ error: "요약을 불러오지 못했습니다. 다시 시도해 주세요." });
     }
   });
 
@@ -430,7 +430,8 @@ export function createApp() {
       await db.from("profile_views").delete().eq("fit_report_id", report.id);
       const { error } = await db.from("fit_reports").delete().eq("id", report.id);
       if (error) {
-        res.status(500).json({ error: `거절 처리 실패: ${error.message}` });
+        console.error("[review] 거절 처리 실패", error.message);
+        res.status(500).json({ error: "거절을 처리하지 못했습니다. 다시 시도해 주세요." });
         return;
       }
       await clearCachedReport(report.jd, report.candidateId).catch(() => undefined);
@@ -539,8 +540,8 @@ export function createApp() {
       const result = await autoSourcingFromJd({ jd, userId, channel, reports, manualSelection });
       res.status(result.created ? 201 : 200).json(result);
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(500).json({ error: `자동 소싱 요청 실패: ${message}` });
+      console.error("[sourcing] 자동 소싱 요청 실패", err);
+      res.status(500).json({ error: "요청을 처리하지 못했습니다. 다시 시도해 주세요." });
     }
   });
 
@@ -583,8 +584,8 @@ export function createApp() {
           : {}),
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(500).json({ error: `소싱 액션 생성 실패: ${message}` });
+      console.error("[sourcing] 액션 생성 실패", err);
+      res.status(500).json({ error: "요청을 처리하지 못했습니다. 다시 시도해 주세요." });
     }
   });
 
