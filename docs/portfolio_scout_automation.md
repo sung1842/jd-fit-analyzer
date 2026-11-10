@@ -166,7 +166,7 @@ sequenceDiagram
 | 단계 | 하는 일 | 구현 포인트 | 파일 |
 |---|---|---|---|
 | ① 건 입력 | JD → 요건 체크리스트 | LLM 1회 정규화 + jd 해시 캐시. **학력·나이·성별 요건은 정규식으로 차단** (스킬 중심 채용) | `orchestrator/src/lib/scoutCases.ts` |
-| ② 탐색 | 수만 명 → 수십 명 | 4단계 깔때기 A~C는 **코드·SQL만** 사용 (LLM 0회) | `lib/matchEngine.ts`, `lib/jdPlan.ts` |
+| ② 탐색 | 전체 후보 → 상위 소수 | 4단계 깔때기 A~C는 **코드·DB만** 사용 (LLM 0회) | `lib/matchEngine.ts`, `lib/jdPlan.ts` |
 | ③ 분석 | 상위 N명 정밀 분석 | Gemini 3종 tool + 검증/재작업 + CEO 종합 | `runFitAnalysis.ts`, `validation.ts`, `ceo.ts` |
 | ④ 승인 | 사람이 판단 | 워커는 기다리지 않음. **DB 상태값**으로 대기, 24h 타임아웃 delayed job | `queue/hilTimeout.ts`, `lib/slackBot.ts` |
 | ⑤ 실행 | 제안·알림 | 승인된 건만 발송, 추천 근거 카드 첨부 | `lib/createSourcingWithApproval.ts`, `notify_slack` |
@@ -180,11 +180,11 @@ sequenceDiagram
 
 ```mermaid
 flowchart TB
-    POOL["전체 후보 풀<br/>(수만 명)"] --> A
-    A["A. 필수 조건 필터<br/>SQL WHERE + GIN 인덱스<br/>구직 동의 · 직군 · 경력 · 지역 · 매칭 제외"] -->|수천 명| B
-    B["B. 후보 검색<br/>표준 기술 겹침 ∪ pgvector top-K<br/>(HNSW, cosine)"] -->|200~500명| C
-    C["C. 계산식 순위 (결정적)<br/>must·nice·years·role·vector·activity<br/>score_breakdown 저장"] -->|20~50명| D
-    D["D. LLM 정밀 분석<br/>analyze_* 3종 + CEO<br/>요금제별 상한 N명"] --> R["Fit Report<br/>점수 + 인용 근거 + 확인 질문"]
+    POOL["전체 후보 풀<br/>(현재 테스트 데이터 99명)"] --> A
+    A["A. 필수 조건 필터<br/>코드(requiredFilter)<br/>직군 · 경력 · 지역"] --> B
+    B["B. 후보 검색<br/>표준 기술 겹침 ∪ pgvector top-K<br/>(HNSW, cosine, B_TOP_K=300)"] --> C
+    C["C. 계산식 순위 (결정적)<br/>must·nice·years·role·vector·activity<br/>score_breakdown 저장<br/>상위 C_TOP_N=30 저장"] --> D
+    D["D. LLM 정밀 분석<br/>analyze_* 3종 + CEO<br/>기본 10명 · 1회 최대 20명"] --> R["Fit Report<br/>점수 + 인용 근거 + 확인 질문"]
 
     style A fill:#e8f1ff,stroke:#4a7bd0
     style B fill:#e8f1ff,stroke:#4a7bd0
@@ -237,7 +237,7 @@ flowchart TB
     GET --> P2["analyze_experience<br/>Gemini Flash"]
     GET --> P3["analyze_culture_fit<br/>Gemini Flash"]
     P1 & P2 & P3 --> V{"규칙 기반 검증<br/>근거-점수 모순? 인용 불일치?"}
-    V -- 통과 --> CEO["CEO 에이전트 (Claude Sonnet, 1회)<br/>overallScore = tech 0.5 + exp 0.3 + culture 0.2<br/>≥75 strong_fit · ≥45 possible_fit"]
+    V -- 통과 --> CEO["CEO 에이전트 (Claude Sonnet)<br/>시도마다 1회 호출<br/>overallScore = tech 0.5 + exp 0.3 + culture 0.2<br/>≥75 strong_fit · ≥45 possible_fit"]
     V -- 실패 --> RW["실패한 tool만 재작업<br/>(피드백 포함, tool당 최대 1회)"]
     RW --> V2{"재검증"}
     V2 -- 통과 --> CEO
@@ -252,8 +252,8 @@ flowchart TB
 
 | 규칙 | 내용 | 이유 |
 |---|---|---|
-| 호출 상한 | 후보 1명당 LLM 최대 5회, 재작업은 tool당 1회 | 재작업마다 토큰 2배 → 상한으로 비용 예측 가능 |
-| 모델 계층화 | 반복·좁은 분석 = Gemini Flash / 종합 판단 1회 = Claude Sonnet | 싼 모델로 양, 좋은 모델로 질 |
+| 호출 상한 | 시도 최대 3회(`MAX_ATTEMPTS`). 후보 1명당 LLM 최소 4회, 최악 13회(3시도 × 4회 + 강제 확정 CEO 1회) | 재작업 횟수를 묶어 비용 상한을 고정 |
+| 모델 계층화 | 반복·좁은 분석 = Gemini Flash / 종합 판단 = Claude Sonnet | 싼 모델로 양, 좋은 모델로 질 |
 | 구조화 출력 강제 | `config.responseJsonSchema` 로 JSON 강제 (프롬프트 "JSON으로" 금지) | 파싱 에러·형식 환각 제거 |
 | 선 정제 후 주입 | raw JSON을 Node.js에서 filter/map prune 후 LLM 투입 | 토큰 폭탄·핵심 상실 방지 |
 | 타겟 라우팅 재작업 | 전체 재실행이 아니라 **실패한 항목만** 재요청 | 비용 절감 |
@@ -287,6 +287,8 @@ stateDiagram-v2
 
 ## 8. 대규모 처리를 위한 방안
 
+> **현재 상태**: 아래는 규모 확장을 위한 설계·구현이며, 대규모 부하 테스트는 아직 하지 않았다. 현재 데이터는 공개 후보 99명, 공고 77건 규모다. A단계는 후보 전체를 메모리로 읽어 코드로 거르므로 수만 명 규모에서는 SQL 필터로 옮겨야 한다.
+
 ### 8.1 비동기 큐 아키텍처
 
 ```mermaid
@@ -315,18 +317,25 @@ flowchart LR
 | **자동 재시도** | 지수 백오프 3회 (20s→40s→80s) | 일시적 503/429 자가 복구 |
 | **중복 제거** | jobId = `jd해시_후보ID` (= 캐시 키) | 같은 분석 중복 등록·재호출 0 |
 | **결과 캐싱** | Redis `fitreport:cache:<jdHash>:<candidateId>` | 동일 분석 LLM 재호출 없음 |
-| **깔때기 매칭** | A~C 코드/SQL, D만 LLM | LLM 호출 수가 후보 수와 무관하게 상한 N |
-| **인덱스** | GIN(기술 키·역할), HNSW(pgvector), `(jd_run_id, rank_score desc)` | 수만 건 필터·검색을 ms 단위로 |
+| **깔때기 매칭** | A~C 코드/DB, D만 LLM (1회 기본 10명·최대 20명) | 건당 분석 LLM 호출에 상한. 단 후보 정규화는 후보 수에 비례 |
+| **인덱스** | GIN(기술 키·역할), HNSW(pgvector), `(jd_run_id, rank_score desc)` | 대량 조회 대비 (대규모 성능은 미측정) |
 | **증분 처리** | source_hash 변경 감지 → 바뀐 후보만 재정규화, 상시 수색은 delta 우선 | 전체 재계산 없음 |
 | **HIL 비블로킹** | 승인 대기는 DB 상태값, 타임아웃은 delayed job | 사람 대기 중에도 워커 100% 가용 |
 | **역할 분리 컨테이너** | Docker Compose로 API/워커/MCP/Redis 분리, 헬스체크 | 워커만 수평 확장 가능 |
 
-### 8.2 비용 구조 (후보 1만 명, 공고 1건 가정)
+### 8.2 LLM 호출 수 (코드 기준 계산, 실측 아님)
 
-```mermaid
-flowchart LR
-    X["순진한 방식<br/>1만 명 × LLM 5회<br/>= 50,000 호출"] -.비교.- Y["이 시스템<br/>정규화: 변경분만 1회(재사용)<br/>A~C: 0회<br/>D: 상위 N(예 30)명 × ≤5회<br/>≈ 150 호출"]
-```
+| 구분 | 호출 수 | 근거 |
+|---|---|---|
+| 후보 정규화 | 후보 1명당 LLM 1회 + 임베딩, 변경 시에만 | 후보 수에 비례하지만 공고마다 반복하지 않음 |
+| 건 시작 | `normalize_job` 1회 + 공고 임베딩 1회 | 해시 캐시 시 0회 |
+| 후보 1명 분석 | 최소 4회, 최악 13회 | Gemini 3 + CEO 1, 재작업 포함 3시도 + 강제 확정 |
+| **건당 합계 (10명 기본)** | **42~132회** | 2 + 10 × (4~13) |
+| 건당 합계 (20명 최대) | 82~262회 | 2 + 20 × (4~13) |
+
+- 전수 분석과 달리 건당 분석 호출은 후보 수가 늘어도 위 범위에 묶인다. 대신 후보 등록 비용은 별도로 든다.
+- 위 합계에 BullMQ 재시도(최대 3회)는 포함하지 않았다.
+- 재작업 비율이 실제로 얼마인지는 측정 전이므로 평균값은 적지 않는다.
 
 ---
 
@@ -381,7 +390,7 @@ flowchart LR
 2. **Anti-Blocking**: HTTP 요청 안에서 에이전트 루프를 기다리지 않는다. 전부 큐 + 상태값.
 3. **Anti-LLM-Omnipotence**: 데이터는 코드가 먼저 정제하고, LLM은 꼭 필요한 판단에만.
 
-> 면접/소개 문구 예: "LLM을 많이 쓰는 시스템이 아니라, **LLM을 적게 써도 되도록 설계한** 시스템입니다. 수만 명 중 비교·정렬은 코드와 인덱스가 하고, LLM은 마지막 수십 명의 근거 판단만 합니다."
+> 면접/소개 문구 예: "LLM을 많이 쓰는 시스템이 아니라, **LLM을 적게 써도 되도록 설계한** 시스템입니다. 비교·정렬은 코드와 인덱스가 하고, LLM은 상위 소수 후보의 근거 판단만 합니다."
 
 ---
 

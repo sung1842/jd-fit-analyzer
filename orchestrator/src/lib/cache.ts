@@ -21,3 +21,7 @@ export async function getCachedReport(jd: string, candidateId: string): Promise<
 export async function setCachedReport(jd: string, candidateId: string, report: FitReport): Promise<void> {
   await redis.set(`fitreport:cache:${cacheKey(jd, candidateId)}`, JSON.stringify(report), "EX", CACHE_TTL_SECONDS);
 }
+
+export async function clearCachedReport(jd: string, candidateId: string): Promise<void> {
+  await redis.del(`fitreport:cache:${cacheKey(jd, candidateId)}`);
+}

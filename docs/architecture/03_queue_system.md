@@ -131,3 +131,25 @@ interface FitAnalysisJobData {
 
 - BullMQ 이벤트(`completed`, `failed`, `stalled`)를 구독해 [01. 토큰/비용 관리 정책](01_agent_orchestration.md#토큰비용-관리-정책)의
   로깅 요구사항(분석 1건당 LLM 호출 횟수/토큰 사용량)을 job 결과에 포함시켜 기록한다.
+
+---
+
+## 핏 분석 투입·재시도·정리 규칙 (2026-11-10 개편)
+
+목표: 대규모 동시 접속(수천 명)에서 큐가 무너지지 않고, 재시도가 겹쳐 꼬이지 않고, DB 에 쓸모없는 행이 남지 않는다.
+
+| 항목 | 규칙 | 코드 |
+|---|---|---|
+| 투입 | 모든 경로가 단일 입구를 거친다. 멱등(같은 JD·후보는 한 번만 실행), 사용자별 진행 중 상한, 큐 깊이 초과 시 즉시 503 + `Retry-After`, 많이 넣은 사용자일수록 우선순위 낮춤, Redis 무응답 시 4초 안에 실패 | `orchestrator/src/queue/enqueue.ts` |
+| 진행 중 상태 | DB 에 쓰지 않는다. 사용자별 Redis ZSET(`fit:inflight:*`, `fit:retry:*`)에만 두고, 오래된 표시는 읽을 때 잘라낸다 | `orchestrator/src/lib/fitState.ts` |
+| 결과 기록 | `fit_reports` 행은 결과가 나왔을 때만 만든다 (완료·검토 대기·다시 해도 같은 실패) | `saveFitResult` (`lib/fitReports.ts`) |
+| 재시도 | BullMQ 한 곳에서만. mcp-server 는 모델당 1회만 시도하고 오류 코드(`[E_QUOTA]` `[E_BUSY]` `[E_UPSTREAM]` `[E_BLOCKED]` `[E_NOT_FOUND]` `[E_INVALID]`)를 붙여 돌려준다 | `mcp-server/src/lib/gemini.ts`, `lib/fitErrors.ts` |
+| 오류별 처리 | permanent → 즉시 실패(재시도 없음) · capacity(LLM 한도·슬롯) → 시도 횟수를 쓰지 않고 뒤로 미룸, 최대 30분 · transient → 백오프 후 최대 3회 | `queue/workers.ts` |
+| LLM 한도 | 분당 호출 수와 차단 표시(`llm:block:<model>`, `llm:breaker:analysis`)를 Redis 로 공유. 한도가 찬 모델은 호출하지 않는다 | `mcp-server/src/lib/rateLimiter.ts` |
+| 화면 문구 | LLM 한도 등 일시 오류는 원인·분석 데이터를 저장하지 않는다. 화면에는 "오류가 발생했습니다. 다시 시도해 주세요."만 | `fit:retry:*` 표시 |
+| 자동 정리 | 30분마다: 실패 행 2일 뒤 삭제, 예전 방식의 진행 중 행 정리, 24시간 넘은 검토 대기 만료. 끝난 job 은 완료 1시간·실패 2일 뒤 Redis 에서 삭제 | `queue/maintenanceQueue.ts`, `queue/queues.ts` |
+| SSE | 큐마다 Redis 구독 연결 1개를 모든 접속이 공유 (접속 수만큼 연결을 만들지 않는다) | `lib/sse.ts` |
+| 종료 | SIGTERM 시 하던 분석을 끝내고 내려간다 | `index.ts` |
+
+수평 확장: api·worker·mcp-server 모두 프로세스 메모리에 상태를 두지 않는다. 단 mcp-server 는 MCP 세션이 인스턴스에 묶이므로 여러 대일 때 세션 고정이 필요하다.
+처리량 상한은 LLM 계약 한도가 정한다. 환경변수(`GEMINI_RPM`, `FIT_WORKER_CONCURRENCY`, `FIT_PAID_JOBS_PER_MIN`, `FIT_FREE_JOBS_PER_MIN`, `FIT_MAX_INFLIGHT_PER_USER`, `FIT_MAX_QUEUE_DEPTH`, `FIT_MAX_WAIT_MS`)를 한도에 맞춰 함께 올린다.

@@ -15,11 +15,11 @@ import type { Express, Request, Response } from "express";
 import { db } from "./db.js";
 import { FORBIDDEN, resolveUserId } from "./auth.js";
 import { getCachedReport, jdHash } from "./cache.js";
-import { createFitReport } from "./fitReports.js";
+import { loadMarksSafe, clearRetry, member } from "./fitState.js";
 import { buildJdPlan } from "./jdPlan.js";
 import { getJobRequirements, type JobRequirements } from "./jobRequirements.js";
 import { recordStatusEvent } from "./deskRoutes.js";
-import { JOB_PRIORITY, buildJobId, getQueue, removeStaleFailedJob } from "../queue/queues.js";
+import { enqueueFitBatch, respondIfRejected } from "../queue/enqueue.js";
 import { extractJdHeadline } from "../../../shared/lib/shortlist.js";
 import { computeFacets, type PostingFacets } from "./postingFacets.js";
 import { callMcpTool } from "../mcp/client.js";
@@ -185,7 +185,7 @@ interface CaseRow {
   updated_at: string;
 }
 
-function toCase(row: CaseRow, counts?: { matched: number; analyzed: number; pending: number; approved: number; rejected: number }) {
+function toCase(row: CaseRow, counts?: CaseCounts) {
   return {
     id: row.id,
     jdHash: row.jd_hash,
@@ -199,7 +199,7 @@ function toCase(row: CaseRow, counts?: { matched: number; analyzed: number; pend
     closedAt: row.closed_at,
     lastStart: (row.plan_snapshot?.scoutStart as Record<string, unknown> | undefined) ?? null,
     createdAt: row.created_at,
-    counts: counts ?? { matched: 0, analyzed: 0, pending: 0, approved: 0, rejected: 0 },
+    counts: counts ?? emptyCounts(),
   };
 }
 
@@ -225,19 +225,45 @@ async function loadOwnCase(req: Request, res: Response, userId: string): Promise
   return data as CaseRow;
 }
 
+export interface CaseCounts { matched: number; analyzed: number; pending: number; approved: number; rejected: number; running: number; failed: number }
+const emptyCounts = (): CaseCounts => ({ matched: 0, analyzed: 0, pending: 0, approved: 0, rejected: 0, running: 0, failed: 0 });
+
+/** 거절해서 fit_reports 행을 지운 후보 (jd_runs.plan_snapshot.rejected). "더 찾기"가 다시 고르지 않게 한다 */
+export function rejectedOf(row: { plan_snapshot?: Record<string, unknown> | null }): string[] {
+  const list = row.plan_snapshot?.rejected;
+  return Array.isArray(list) ? list.map((x) => (x as { candidateId?: unknown }).candidateId).filter((v): v is string => typeof v === "string") : [];
+}
+
 async function countsByHash(userId: string, hashes: string[]) {
-  const out = new Map<string, { matched: number; analyzed: number; pending: number; approved: number; rejected: number }>();
+  const out = new Map<string, CaseCounts>();
   if (hashes.length === 0) return out;
-  const { data } = await db.from("fit_reports").select("jd_hash, status, report").eq("user_id", userId).in("jd_hash", hashes);
+  const { data } = await db.from("fit_reports").select("jd_hash, candidate_id, status, report").eq("user_id", userId).in("jd_hash", hashes);
   for (const r of (data ?? []) as { jd_hash: string; status: string; report: unknown }[]) {
-    const c = out.get(r.jd_hash) ?? { matched: 0, analyzed: 0, pending: 0, approved: 0, rejected: 0 };
+    const c = out.get(r.jd_hash) ?? emptyCounts();
     c.matched += 1;
     if (r.report) c.analyzed += 1;
     if ((r.status === "completed" || r.status === "pending_review") && r.report) c.pending += 1;
     if (r.status === "approved") c.approved += 1;
     if (r.status === "rejected") c.rejected += 1;
+    if (r.status === "queued" || r.status === "processing") c.running += 1;
+    if (r.status === "failed") c.failed += 1;
     out.set(r.jd_hash, c);
   }
+  // 진행 중·다시 시도 대상은 DB 행이 없다 (Redis 표시) → 같은 집계에 더한다
+  const marks = await loadMarksSafe(userId);
+  const want = new Set(hashes);
+  const seen = new Set(((data ?? []) as { jd_hash: string; candidate_id?: string }[]).map((r) => `${r.jd_hash}:${r.candidate_id}`));
+  const bump = (list: { jdHash: string; candidateId: string }[], field: "running" | "failed") => {
+    for (const m of list) {
+      if (!want.has(m.jdHash) || seen.has(`${m.jdHash}:${m.candidateId}`)) continue;
+      const c = out.get(m.jdHash) ?? emptyCounts();
+      c.matched += 1;
+      c[field] += 1;
+      out.set(m.jdHash, c);
+    }
+  };
+  bump(marks.inflight, "running");
+  bump(marks.retryable, "failed");
   return out;
 }
 
@@ -317,7 +343,8 @@ export function registerScoutCaseRoutes(app: Express): void {
           deadline: date(b.deadline),
           requirements,
           closed_at: null,
-          ...(posting && { plan_snapshot: { posting: { ...posting, facets: caseFacets(text(b.title, 120) ?? "", requirements, posting, date(b.deadline)) } } }),
+          // original_text = 기업이 붙여넣은 원문 → 구직자 공고 화면 본문 (SQL 035). 매칭은 jd_text(표준 양식)
+          ...(posting && { plan_snapshot: { posting: { ...posting, original_text: text(b.originalText, 20000), facets: caseFacets(text(b.title, 120) ?? "", requirements, posting, date(b.deadline)) } } }),
         },
         { onConflict: "user_id,jd_hash" },
       )
@@ -405,22 +432,21 @@ export function registerScoutCaseRoutes(app: Express): void {
     const limit = Number.isFinite(limitRaw) ? Math.min(START_MAX, Math.max(1, Math.floor(limitRaw))) : START_DEFAULT;
     try {
       const plan = await buildJdPlan(row.jd_text, undefined, undefined, toJobRequirements(row.requirements));
-      const { data: existing } = await db.from("fit_reports").select("candidate_id").eq("user_id", userId).eq("jd_hash", row.jd_hash);
-      const done = new Set(((existing ?? []) as { candidate_id: string }[]).map((r) => r.candidate_id));
-      const picks = plan.ranked.filter((c) => !done.has(c.candidateId)).slice(0, limit);
+      const { data: existing } = await db.from("fit_reports").select("candidate_id, status").eq("user_id", userId).eq("jd_hash", row.jd_hash);
+      const rows = (existing ?? []) as { candidate_id: string; status: string }[];
+      const marks = await loadMarksSafe(userId);
+      const running = new Set(marks.inflight.filter((m) => m.jdHash === row.jd_hash).map((m) => m.candidateId));
+      // 일시 오류로 끝난 후보(다시 시도 표시)는 먼저 다시 분석한다. 결과 행이 있는 후보(다시 해도 같은 실패 포함)와 거절한 후보는 건너뛴다.
+      const failed = new Set(marks.retryable.filter((m) => m.jdHash === row.jd_hash).map((m) => m.candidateId));
+      const done = new Set([...rows.map((r) => r.candidate_id), ...running, ...rejectedOf(row)]);
+      const fresh = plan.ranked.filter((c) => !done.has(c.candidateId));
+      const picks = [...fresh.filter((c) => failed.has(c.candidateId)), ...fresh.filter((c) => !failed.has(c.candidateId))].slice(0, limit);
 
-      const queue = getQueue("paid");
-      let queued = 0;
-      let cached = 0;
-      for (const c of picks) {
-        const jobId = buildJobId(row.jd_text, c.candidateId);
-        await removeStaleFailedJob(queue, jobId);
-        await createFitReport({ jobId, jd: row.jd_text, jdHash: row.jd_hash, candidateId: c.candidateId, userId });
-        // 캐시가 있어도 큐를 거쳐 리포트를 채운다 (워커가 캐시를 먼저 확인)
-        if (await getCachedReport(row.jd_text, c.candidateId)) cached += 1;
-        await queue.add("analyze-fit", { jd: row.jd_text, candidateId: c.candidateId, userId, tier: "paid" }, { jobId, priority: JOB_PRIORITY.paid });
-        queued += 1;
-      }
+      // 큐 투입은 단일 입구를 거친다 (멱등 · 사용자 상한 · 과부하 시 즉시 거절). 캐시가 있으면 워커가 LLM 없이 결과를 채운다.
+      const out = await enqueueFitBatch({ userId, tier: "paid", items: picks.map((c) => ({ jd: row.jd_text, jdHash: row.jd_hash, candidateId: c.candidateId })) });
+      const queued = out.queued;
+      const ahead = out.ahead;
+      const cached = 0;
       const scoutStart = {
         at: new Date().toISOString(),
         searched: plan.totalInRole,
@@ -428,6 +454,8 @@ export function registerScoutCaseRoutes(app: Express): void {
         matched: plan.matchedCount,
         queued,
         alreadyAnalyzed: done.size,
+        retried: picks.filter((c) => failed.has(c.candidateId)).length,
+        ahead,
       };
       await db
         .from("jd_runs")
@@ -436,6 +464,7 @@ export function registerScoutCaseRoutes(app: Express): void {
       await recordStatusEvent({ entity: "jd_run", entityId: row.id, from: row.status, to: "analyzed", actor: userId });
       res.status(202).json({ ...scoutStart, cached });
     } catch (err) {
+      if (respondIfRejected(err, res)) return;
       console.error("[scout] 탐색 시작 실패", err);
       res.status(500).json({ error: "후보 탐색을 시작하지 못했습니다." });
     }
@@ -460,27 +489,39 @@ export function registerScoutCaseRoutes(app: Express): void {
     try {
       // 후보 풀(공개·구직자·제외 안 됨)에 있는 사람만
       const pool = new Set((await callMcpTool<{ id: string }[]>("search_candidates", {})).map((c) => c.id));
-      const { data: existing } = await db.from("fit_reports").select("candidate_id").eq("user_id", userId).eq("jd_hash", row.jd_hash).in("candidate_id", ids);
-      const done = new Set(((existing ?? []) as { candidate_id: string }[]).map((r) => r.candidate_id));
-      const queue = getQueue("paid");
-      let queued = 0;
-      for (const candidateId of ids) {
-        if (!pool.has(candidateId) || done.has(candidateId)) continue;
-        const jobId = buildJobId(row.jd_text, candidateId);
-        await removeStaleFailedJob(queue, jobId);
-        await createFitReport({ jobId, jd: row.jd_text, jdHash: row.jd_hash, candidateId, userId });
-        await queue.add("analyze-fit", { jd: row.jd_text, candidateId, userId, tier: "paid" }, { jobId, priority: JOB_PRIORITY.paid });
-        queued += 1;
-      }
+      const { data: existing } = await db.from("fit_reports").select("candidate_id, status").eq("user_id", userId).eq("jd_hash", row.jd_hash).in("candidate_id", ids);
+      // 결과 행이 있는 후보는 다시 넣지 않는다. 진행 중인 후보는 입구에서 걸러진다.
+      const done = new Set(((existing ?? []) as { candidate_id: string; status: string }[]).map((r) => r.candidate_id));
+      const picked = ids.filter((id) => pool.has(id) && !done.has(id));
+      const out = await enqueueFitBatch({ userId, tier: "paid", items: picked.map((candidateId) => ({ jd: row.jd_text, jdHash: row.jd_hash, candidateId })) });
+      const queued = out.queued;
       if (queued > 0 && row.status === "draft") {
         await db.from("jd_runs").update({ status: "analyzed" }).eq("id", row.id);
         await recordStatusEvent({ entity: "jd_run", entityId: row.id, from: row.status, to: "analyzed", actor: userId });
       }
       res.status(202).json({ queued, alreadyInCase: done.size, notInPool: ids.filter((id) => !pool.has(id)).length });
     } catch (err) {
+      if (respondIfRejected(err, res)) return;
       console.error("[scout] 후보 담기 실패", err);
       res.status(500).json({ error: "후보를 건에 담지 못했습니다." });
     }
+  });
+
+  // 분석하지 못한 후보를 이 건 목록에서 치운다 (결과 행·다시 시도 표시 모두). 다시 넣으려면 "더 찾기".
+  app.post("/api/scout-cases/:id/clear-failed", async (req, res) => {
+    const userId = requireUser(req, res);
+    if (!userId) return;
+    const row = await loadOwnCase(req, res, userId);
+    if (!row) return;
+    const marks = await loadMarksSafe(userId);
+    const mine = marks.retryable.filter((m) => m.jdHash === row.jd_hash);
+    await clearRetry(userId, mine.map((m) => member(m.jdHash, m.candidateId))).catch(() => undefined);
+    const { data, error } = await db.from("fit_reports").delete().eq("user_id", userId).eq("jd_hash", row.jd_hash).eq("status", "failed").select("id");
+    if (error) {
+      res.status(500).json({ error: "목록을 정리하지 못했습니다." });
+      return;
+    }
+    res.json({ cleared: mine.length + (data?.length ?? 0) });
   });
 
   // 순위 점수가 왜 나왔는지 (코드 사전필터 단계 결과, LLM 없음). 직접 담은 후보는 순위 계산 전이라 없을 수 있다

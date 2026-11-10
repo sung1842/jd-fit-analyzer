@@ -11,6 +11,9 @@ if (!MCP_INTERNAL_KEY) {
   console.warn("[mcp] MCP_INTERNAL_KEY 미설정 — 내부 키 없이 연결합니다 (개발 환경에서만 허용).");
 }
 const STARTUP_RETRY_MS = 2000;
+// mcp-server 는 LLM 슬롯을 오래 기다리지 않는다 (슬롯이 없으면 [E_BUSY] 로 바로 돌려주고, 워커가 job 을 뒤로 미룬다).
+// 그래서 tool 호출은 "모델 응답 시간 + 짧은 슬롯 대기" 안에 끝난다. 타임아웃을 길게 두면 포기한 뒤에도 서버 쪽 호출이 남아 한도만 쓴다.
+const MCP_TOOL_TIMEOUT_MS = Number(process.env.MCP_TOOL_TIMEOUT_MS) || 120_000;
 const STARTUP_MAX_ATTEMPTS = 15;
 
 let client: Client | null = null;
@@ -65,7 +68,7 @@ export async function getMcpClient(): Promise<Client> {
 
 async function callMcpToolOnce<T>(name: string, args: Record<string, unknown>): Promise<T> {
   const mcp = await getMcpClient();
-  const result = await mcp.callTool({ name, arguments: args });
+  const result = await mcp.callTool({ name, arguments: args }, undefined, { timeout: MCP_TOOL_TIMEOUT_MS, maxTotalTimeout: MCP_TOOL_TIMEOUT_MS });
 
   if (result.isError) {
     const message = (result.content as Array<{ type: string; text?: string }>)

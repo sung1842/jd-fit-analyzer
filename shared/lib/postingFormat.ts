@@ -50,38 +50,63 @@ export const EMPTY_CONDITIONS: PostingConditions = {
   work_hours_text: null,
 };
 
-const clean = (v: string) => v.replace(/^[\s•*ㆍ·\-–]+/, "").replace(/\s+/g, " ").trim();
+const clean = (v: string) => v.replace(/^[\s•*ㆍ·\-–▪◦○●■□✔✓►▶※]+/, "").replace(/\s+/g, " ").trim();
 
 /** 여러 줄 입력 → 불릿 항목 */
 export function toItems(text: string | null | undefined): string[] {
   return (text ?? "").split("\n").map(clean).filter(Boolean);
 }
 
-const HEADER = /^\[?\s*(주요\s*업무|담당\s*업무|자격\s*요건|필수\s*(?:요건|기술|조건)|우대\s*(?:사항|조건)?|근무\s*조건)\s*\]?\s*:?\s*(.*)$/;
-function sectionOf(head: string): keyof PostingSections | "conditions" {
-  const h = head.replace(/\s/g, "");
-  if (h === "주요업무" || h === "담당업무") return "key_duties";
-  if (h.startsWith("자격") || h.startsWith("필수")) return "must_have";
-  if (h.startsWith("우대")) return "nice_to_have";
-  return "conditions";
+type Section = keyof Omit<PostingSections, "summary"> | "other";
+// 섹션 제목 (공백 무시). "other" = 매칭에 안 쓰는 블록 (조건·복지·절차 등 — 조건은 칸이 따로 있다)
+const SECTION_NAMES: [RegExp, Section][] = [
+  [/^(?:주요\s*업무|담당\s*업무|업무\s*내용|직무\s*(?:내용|소개)|하는\s*일|이런\s*일을\s*(?:해요|합니다|하게\s*돼요|하게\s*됩니다))/u, "key_duties"],
+  [/^(?:자격\s*(?:요건|조건|사항)|지원\s*자격|필수\s*(?:요건|기술|조건|역량|사항)|필요\s*(?:역량|기술|경험)|요구\s*사항|이런\s*분을\s*(?:찾아요|찾습니다|원해요))/u, "must_have"],
+  [/^(?:우대\s*(?:사항|조건|요건)?|가산점|이런\s*분이면\s*더\s*좋아요|이런\s*경험이\s*있으면\s*좋아요)/u, "nice_to_have"],
+  [/^(?:근무\s*(?:조건|환경|지|시간)|복지|복리\s*후생|혜택|채용\s*(?:절차|과정)|전형\s*절차|제출\s*서류|접수\s*(?:방법|기간)|유의\s*사항|기타\s*사항|회사\s*소개|기업\s*소개)/u, "other"],
+];
+
+/**
+ * 섹션 제목 줄인지. 앞 장식(📋 ■ [ 【 1. 등)은 떼고 본다. 불릿(• -)으로 시작한 줄은 항목이라 제목이 아니다.
+ * 제목 뒤에 글이 더 있으면 구분자(] 】 : )가 있을 때만 제목 + 첫 항목 ("자격요건: Java 3년")
+ */
+function headerOf(line: string): { sec: Section; rest: string } | null {
+  if (/^[•*ㆍ·\-–▪◦○●]/.test(line)) return null;
+  const core = line.replace(/^[^\p{L}]+/u, "");
+  for (const [re, sec] of SECTION_NAMES) {
+    const m = re.exec(core);
+    if (!m) continue;
+    const tail = core.slice(m[0].length);
+    if (!tail.trim()) return { sec, rest: "" };
+    const sep = /^\s*[\]】)>」』]?\s*[:：]?\s*/.exec(tail)![0];
+    if (/[\]】)>」』:：]/.test(sep)) return { sec, rest: tail.slice(sep.length) };
+    return null;
+  }
+  return null;
 }
 
-/** 붙여넣은 자유 본문 → 섹션. 제목 없는 앞부분은 요약, 제목 없는 본문 전체면 주요업무로 둔다. [근무조건] 블록은 버린다(조건 칸이 따로 있음) */
+/**
+ * 붙여넣은 자유 본문 → 섹션 (매칭 정규화용. 구직자 화면엔 원문을 따로 보여 준다).
+ * 첫 제목 앞부분은 요약, 제목이 하나도 없으면 본문 전체를 주요업무로 둔다 (누락 없음).
+ * 조건·복지·절차 블록("other")만 매칭 입력에서 뺀다.
+ */
 export function splitPostingText(text: string): PostingSections {
   const out: PostingSections = { summary: null, key_duties: [], must_have: [], nice_to_have: [] };
   const intro: string[] = [];
-  let cur: keyof PostingSections | "conditions" | null = null;
+  let cur: Section | null = null;
   for (const raw of text.split("\n")) {
     const line = raw.trim();
     if (!line) continue;
-    const m = HEADER.exec(line);
-    if (m) {
-      cur = sectionOf(m[1]);
-      if (m[2] && cur !== "conditions" && cur !== "summary") out[cur].push(clean(m[2]));
+    const h = headerOf(line);
+    if (h) {
+      cur = h.sec;
+      if (h.rest && cur !== "other") out[cur].push(clean(h.rest));
       continue;
     }
-    if (cur === null) intro.push(clean(line));
-    else if (cur !== "conditions" && cur !== "summary") out[cur].push(clean(line));
+    const item = clean(line);
+    if (!item) continue;
+    if (cur === null) intro.push(item);
+    else if (cur !== "other") out[cur].push(item);
   }
   const anySection = out.key_duties.length + out.must_have.length + out.nice_to_have.length > 0;
   if (!anySection) out.key_duties = intro;

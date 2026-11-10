@@ -10,6 +10,12 @@ export const REJECT_REASON_CODES: Record<string, string> = {
   "경력 범위 불일치": "career_mismatch",
   "이미 접촉한 후보": "already_contacted",
   "포지션 조건 불일치": "position_mismatch",
+  // 2026-11-10 승인함 개편 — AI 판단과 다르게 본 이유를 구체적으로 남긴다
+  "경력 수준 불일치": "career_mismatch",
+  "도메인·업종 경험 부족": "domain_mismatch",
+  "관련 경험이 오래됨": "stale_experience",
+  "근무 조건 불일치": "position_mismatch",
+  "고객사 요청으로 제외": "client_exclusion",
 };
 
 export function reasonCode(reason: string | null | undefined): string {
@@ -296,7 +302,7 @@ export function buildDeskFeed(input: Pick<DeskInput, "now" | "reports" | "jdRuns
       items.push({
         kind: "alert",
         at: new Date(Math.max(...failed.map((r) => ms(r.updatedAt)))).toISOString(),
-        text: `${title} 건 후보 ${failed.length}명 분석 실패 · 같은 JD 로 다시 분석하면 이어서 처리합니다.`,
+        text: `${title} 건 후보 ${failed.length}명을 분석하지 못했습니다 · 다시 시도해 주세요.`,
         href: review(hash),
       });
     }

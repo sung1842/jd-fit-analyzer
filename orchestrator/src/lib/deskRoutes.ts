@@ -12,7 +12,7 @@ import type { Express, Request, Response } from "express";
 import { db } from "./db.js";
 import { FORBIDDEN, resolveUserId } from "./auth.js";
 import { chunk } from "./deskMetrics.js";
-import { getFitReportById, listFitReports } from "./fitReports.js";
+import { getFitReportById, listFitReports, withFitMarks } from "./fitReports.js";
 import { listCandidates } from "./talentfolio.js";
 import {
   buildDeskFeed,
@@ -24,11 +24,11 @@ import {
   type DeskJdRunRow,
   type DeskOfferRow,
 } from "./deskMetrics.js";
-import type { FitReportRecord } from "../../../shared/types.js";
+import type { FitReport, FitReportRecord } from "../../../shared/types.js";
 
 const MISSING = new Set(["42P01", "42703", "PGRST204", "PGRST205"]);
 const isMissing = (err: { code?: string } | null) => Boolean(err && err.code && MISSING.has(err.code));
-const MIGRATION_REQUIRED = { error: "SQL 017 적용 후 사용할 수 있습니다.", code: "migration_required" } as const;
+const MIGRATION_REQUIRED = { error: "지금은 이 기능을 사용할 수 없습니다.", code: "migration_required" } as const;
 
 /** 상태 이력 기록 — 017 전에는 조용히 건너뛴다 (본 동작을 막지 않음) */
 export async function recordStatusEvent(ev: {
@@ -70,6 +70,37 @@ async function loadOffers(userId: string): Promise<DeskOfferRow[] | null> {
     throw new Error(`제안 조회 실패: ${error.message}`);
   }
   return (data ?? []) as DeskOfferRow[];
+}
+
+/** jd_runs.plan_snapshot.rejected → 지표용 가짜 리포트 행 (status=rejected, review 만 있음) */
+async function loadRejectedTombstones(userId: string, since: number): Promise<FitReportRecord[]> {
+  const { data } = await db.from("jd_runs").select("jd_hash, jd_text, plan_snapshot").eq("user_id", userId);
+  const out: FitReportRecord[] = [];
+  for (const run of (data ?? []) as { jd_hash: string; jd_text: string; plan_snapshot: Record<string, unknown> | null }[]) {
+    const list = run.plan_snapshot?.rejected;
+    if (!Array.isArray(list)) continue;
+    for (const t of list as { candidateId: string; reason: string | null; at: string; verdict?: string; createdAt?: string; candidateName?: string }[]) {
+      if (!t?.at || Date.parse(t.at) < since) continue;
+      out.push({
+        id: `rejected:${run.jd_hash}:${t.candidateId}`,
+        jobId: "",
+        jd: run.jd_text,
+        jdHash: run.jd_hash,
+        candidateId: t.candidateId,
+        candidateName: t.candidateName ?? null,
+        userId,
+        status: "rejected",
+        report: {
+          verdict: t.verdict,
+          candidateName: t.candidateName ?? "",
+          review: { decision: "rejected", reason: t.reason, decidedBy: null, decidedAt: t.at },
+        } as unknown as FitReport,
+        createdAt: t.createdAt ?? t.at,
+        updatedAt: t.at,
+      });
+    }
+  }
+  return out;
 }
 
 // missing 이 아닌 에러는 "0건"으로 숨기지 않고 null(준비 중) + 경고
@@ -171,7 +202,11 @@ async function buildInput(userId: string, rangeDays: number): Promise<DeskInput>
     loadMarket(),
     loadWithdrawn(approved),
   ]);
-  return { now: new Date(), rangeDays, reports, jdRuns: jd.rows, jdRunsExtended: jd.extended, offers, views, explanationDue, withdrawn, ...market };
+  // 거절한 후보는 fit_reports 행을 지운다(2026-11-10). 결정 지표(승인률·거절 사유·AI와 다른 판단)는 건에 남긴 기록으로 이어 센다
+  const tombs = await loadRejectedTombstones(userId, since);
+  // 진행 중·다시 시도 대상(행 없음)도 건 집계·소식에 보이게 자리 표시를 붙인다
+  const withMarks = await withFitMarks(reports, userId);
+  return { now: new Date(), rangeDays, reports: [...withMarks, ...tombs], jdRuns: jd.rows, jdRunsExtended: jd.extended, offers, views, explanationDue, withdrawn, ...market };
 }
 
 // 데스크는 legacy(query userId) 폴백을 허용하지 않는다 — 타인 지표 조회·쓰기 행세 차단

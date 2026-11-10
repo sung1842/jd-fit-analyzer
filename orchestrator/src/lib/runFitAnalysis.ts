@@ -1,7 +1,7 @@
 import type { FitReport } from "../../../shared/types.js";
 import { getCachedReport, jdHash } from "./cache.js";
-import { createFitReport } from "./fitReports.js";
-import { buildJobId, getQueue, JOB_PRIORITY, removeStaleFailedJob } from "../queue/queues.js";
+import { buildJobId, getQueue } from "../queue/queues.js";
+import { enqueueFitBatch } from "../queue/enqueue.js";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -21,29 +21,10 @@ export async function runFitAnalysisWait(
   const queue = getQueue(tier);
   const jobId = buildJobId(jd, candidateId);
 
-  await removeStaleFailedJob(queue, jobId);
-
-  let job = await queue.getJob(jobId);
-  if (!job) {
-    await createFitReport({ jobId, jd, jdHash: jdHash(jd), candidateId, userId });
-    job = await queue.add(
-      "analyze-fit",
-      { jd, candidateId, userId, tier },
-      { jobId, priority: JOB_PRIORITY[tier] }
-    );
-  } else {
-    const state = await job.getState();
-    if (state === "completed") return (job.returnvalue as FitReport) ?? null;
-    if (state === "failed") {
-      await removeStaleFailedJob(queue, jobId);
-      await createFitReport({ jobId, jd, jdHash: jdHash(jd), candidateId, userId });
-      job = await queue.add(
-        "analyze-fit",
-        { jd, candidateId, userId, tier },
-        { jobId, priority: JOB_PRIORITY[tier] }
-      );
-    }
-  }
+  // 단일 입구로 투입 (이미 대기·실행 중이면 그대로 두고 결과만 기다린다)
+  const existing = await queue.getJob(jobId);
+  if (existing && (await existing.getState()) === "completed") return (existing.returnvalue as FitReport) ?? null;
+  await enqueueFitBatch({ userId, tier, items: [{ jd, jdHash: jdHash(jd), candidateId }] });
 
   const started = Date.now();
   while (Date.now() - started < timeoutMs) {

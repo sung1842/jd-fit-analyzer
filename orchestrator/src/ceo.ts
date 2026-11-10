@@ -3,7 +3,17 @@ import Anthropic from "@anthropic-ai/sdk";
 import { startObservation } from "@langfuse/tracing";
 import type { AgentResult, CeoDecision, PreCheckResult } from "../../shared/types.js";
 
-const anthropic = new Anthropic();
+// SDK 자체 재시도는 끈다 — 재시도는 BullMQ 한 곳에서만 판단한다. 응답이 없으면 60초에 끊는다.
+const anthropic = new Anthropic({ maxRetries: 0, timeout: Number(process.env.CEO_TIMEOUT_MS) || 60_000 });
+
+/** 스키마를 강제해도 잘린 응답(max_tokens)이면 필드가 빠진다. 검증 없이 저장하면 깨진 리포트가 완료로 남고 캐시까지 된다 */
+function assertCeoDecision(d: unknown): asserts d is CeoDecision {
+  const x = d as Partial<CeoDecision> | null;
+  const report = x?.final_report;
+  const reportOk = !!report && Number.isFinite(report.overallScore) && typeof report.verdict === "string" && typeof report.ceoSummary === "string";
+  const ok = !!x && typeof x.is_valid === "boolean" && (x.is_valid ? reportOk : Array.isArray(x.target_departments));
+  if (!ok) throw new Error("CEO 판단 형식이 올바르지 않습니다 (일시 오류로 보고 재시도).");
+}
 
 const CEO_MODEL = "claude-sonnet-4-6"; // CEO 종합 판단은 Claude Sonnet (모델 계층화 정책)
 
@@ -117,7 +127,8 @@ export async function evaluateAsCeo(params: {
       })
       .end();
 
-    return toolUse.input as CeoDecision;
+    assertCeoDecision(toolUse.input);
+    return toolUse.input;
   } catch (err) {
     generation.update({ level: "ERROR", statusMessage: err instanceof Error ? err.message : String(err) }).end();
     throw err;

@@ -165,16 +165,8 @@ export function createCycleDeps(opts: WatchDepsOptions = {}): CycleDeps & { dryR
         log(`[watch][dry-run] fit-analysis 투입 생략 run=${run.id} candidate=${candidateId}`);
         return;
       }
-      const [{ buildJobId, getQueue, removeStaleFailedJob }, { createFitReport }, { jdHash }] = await Promise.all([
-        import("../queue/queues.js"),
-        import("./fitReports.js"),
-        import("./cache.js"),
-      ]);
-      const queue = getQueue("paid");
-      const jobId = buildJobId(run.jd_text, candidateId);
-      await removeStaleFailedJob(queue, jobId);
-      await createFitReport({ jobId, jd: run.jd_text, jdHash: jdHash(run.jd_text), candidateId, userId: run.user_id });
-      await queue.add("analyze-fit", { jd: run.jd_text, candidateId, userId: run.user_id, tier: "paid" }, { jobId, priority: WATCH_PRIORITY });
+      const [{ enqueueFitBatch }, { jdHash }] = await Promise.all([import("../queue/enqueue.js"), import("./cache.js")]);
+      await enqueueFitBatch({ userId: run.user_id, tier: "paid", priority: WATCH_PRIORITY, items: [{ jd: run.jd_text, jdHash: jdHash(run.jd_text), candidateId }] });
     },
     async recordHits(runId, hits) {
       if (opts.dryRun) {

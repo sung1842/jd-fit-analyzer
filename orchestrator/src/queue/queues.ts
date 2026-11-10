@@ -10,12 +10,18 @@ export const QUEUE_NAMES = {
   portfolioChat: "portfolio-chat",
 } as const;
 
-// Gemini 503/429 등 일시적 오류 대응: 지수 백오프로 최대 3회(원본 시도 + 재시도 2회) 자동 재시도
-// Gemini 무료 티어 429 응답의 retryDelay(약 56s)를 고려해 첫 백오프를 20s로 설정 (20s -> 40s -> 80s)
-const defaultJobOptions = {
+// 재시도는 여기 한 곳에서만 한다 (mcp-server 는 한 번만 시도하고 오류를 분류해 돌려준다).
+//  - 일시 오류: 지수 백오프로 원본 포함 최대 3회 (20s → 40s)
+//  - 다시 해도 같은 오류: 워커가 UnrecoverableError 로 즉시 끝낸다
+//  - LLM 한도·슬롯 부족: 시도 횟수를 쓰지 않고 뒤로 미룬다 (workers.ts)
+// 끝난 job 은 Redis 에 쌓아 두지 않는다. 완료 1시간(SSE 로 결과를 받아 갈 시간), 실패 2일 뒤 자동 삭제.
+export const fitJobOptions = {
   attempts: 3,
   backoff: { type: "exponential" as const, delay: 20_000 },
+  removeOnComplete: { age: 60 * 60, count: 10_000 },
+  removeOnFail: { age: 2 * 24 * 60 * 60, count: 10_000 },
 };
+const defaultJobOptions = fitJobOptions;
 
 export const paidQueue = new Queue<FitAnalysisJobData>(QUEUE_NAMES.paid, {
   connection: createRedisConnection(),
@@ -64,15 +70,21 @@ export function buildPortfolioChatJobId(candidateId: string, question: string): 
   return `${candidateId}_${questionHash(question)}`;
 }
 
-// BullMQ는 동일 jobId로 add() 호출 시 기존 job(완료/실패 불문)을 그대로 두고 재실행하지 않는다.
-// 재시도(attempts)를 모두 소진해 영구 실패한 job은 원인이 해결된 뒤에도 같은 jobId로는 재처리되지 않으므로,
-// add() 전에 failed 상태인 동일 jobId job을 제거해 새로 enqueue될 수 있게 한다.
-export async function removeStaleFailedJob(queue: Queue, jobId: string): Promise<void> {
+// BullMQ 는 같은 jobId 로 add() 하면 기존 job(완료/실패 포함)을 그대로 두고 아무것도 하지 않는다.
+// 끝난 job 이 남아 있으면 다시 넣어도 실행되지 않으므로, 넣기 전에 끝난 job 을 지운다.
+// 반환: true = 지금 대기·실행 중이라 새로 넣을 필요가 없다.
+export async function clearFinishedJob(queue: Queue, jobId: string): Promise<boolean> {
   const job = await queue.getJob(jobId);
-  if (!job) return;
-
+  if (!job) return false;
   const state = await job.getState();
-  if (state === "failed") {
-    await job.remove();
+  if (state === "completed" || state === "failed" || state === "unknown") {
+    await job.remove().catch(() => undefined);
+    return false;
   }
+  return true;
+}
+
+/** @deprecated clearFinishedJob 사용 */
+export async function removeStaleFailedJob(queue: Queue, jobId: string): Promise<void> {
+  await clearFinishedJob(queue, jobId);
 }
