@@ -7,7 +7,7 @@ import { clearCachedReport, getCachedReport, jdHash, setCachedReport } from "./l
 import { createSourcingWithApproval } from "./lib/createSourcingWithApproval.js";
 import { extractJdHeadline, fitReportToBriefCard } from "../../shared/lib/shortlist.js";
 import { db } from "./lib/db.js";
-import { createFitReport, getFitReportByCandidateAndJdHash, getFitReportById, listFitReports, updateFitReportByJobId } from "./lib/fitReports.js";
+import { getFitReportByCandidateAndJdHash, getFitReportById, listFitReports, updateFitReportByJobId, withFitMarks } from "./lib/fitReports.js";
 import { getCachedAnswer } from "./lib/portfolioChatCache.js";
 import { callMcpTool } from "./mcp/client.js";
 import { getSourcingActionById, listSourcingActions, updateSourcingAction } from "./lib/sourcingActions.js";
@@ -24,6 +24,7 @@ import { registerWatchRoutes } from "./lib/watchRoutes.js";
 import { isWatchNoSend } from "./lib/watchCore.js";
 import { recordStatusEvent, registerDeskRoutes } from "./lib/deskRoutes.js";
 import { registerScoutCaseRoutes } from "./lib/scoutCases.js";
+import { registerOfferMailRoutes } from "./lib/offerMail.js";
 import { buildJdPlan } from "./lib/jdPlan.js";
 import { handleSlackEvents, isUrlVerification, type SlackEventsBody } from "./lib/slackEvents.js";
 import {
@@ -31,7 +32,9 @@ import {
   listChannelConfigs,
   upsertChannelConfig,
 } from "./lib/slackChannelConfigs.js";
-import { JOB_PRIORITY, QUEUE_NAMES, buildJobId, buildPortfolioChatJobId, getQueue, portfolioChatQueue, removeStaleFailedJob } from "./queue/queues.js";
+import { QUEUE_NAMES, buildJobId, buildPortfolioChatJobId, getQueue, portfolioChatQueue, removeStaleFailedJob } from "./queue/queues.js";
+import { enqueueFitBatch, respondIfRejected } from "./queue/enqueue.js";
+import { redis } from "./lib/redis.js";
 import { FORBIDDEN, accountGate, authGate, isOwner, resolveUserId } from "./lib/auth.js";
 import { buildCorsOptions } from "./lib/corsConfig.js";
 import { listJobPostings, listPublicJobPostings } from "./lib/jobPostings.js";
@@ -201,6 +204,7 @@ export function createApp() {
   registerWatchRoutes(app);
   registerLifeRoutes(app);
   registerRecommendRoutes(app);
+  registerOfferMailRoutes(app);
   registerDeskRoutes(app);
   registerScoutCaseRoutes(app);
 
@@ -220,19 +224,29 @@ export function createApp() {
       return;
     }
 
-    const queue = getQueue(tier);
-    const jobId = buildJobId(jd, candidateId);
+    // 투입은 단일 입구(queue/enqueue.ts)를 거친다: 멱등 · 사용자 상한 · 과부하 시 즉시 503. DB 행은 결과가 나올 때 워커가 쓴다.
+    try {
+      const out = await enqueueFitBatch({ userId, tier, items: [{ jd, jdHash: jdHash(jd), candidateId }] });
+      if (out.overLimit > 0) {
+        res.setHeader("Retry-After", "30");
+        res.status(429).json({ error: "진행 중인 분석이 많습니다. 끝난 뒤 다시 시도해 주세요." });
+        return;
+      }
+      res.status(202).json({ jobId: buildJobId(jd, candidateId), tier });
+    } catch (err) {
+      if (respondIfRejected(err, res)) return;
+      throw err;
+    }
+  });
 
-    // 영구 실패(재시도 소진)한 동일 jobId의 job이 남아있으면 제거 — 그대로면 재처리되지 않음
-    await removeStaleFailedJob(queue, jobId);
-
-    // 워커가 jobId로 fit_reports를 조회/업데이트하기 전에 행이 먼저 존재해야 하므로
-    // (race condition 방지) createFitReport를 queue.add보다 먼저 수행한다.
-    await createFitReport({ jobId, jd, jdHash: jdHash(jd), candidateId, userId });
-
-    const job = await queue.add("analyze-fit", { jd, candidateId, userId, tier }, { jobId, priority: JOB_PRIORITY[tier] });
-
-    res.status(202).json({ jobId: job.id, tier });
+  // 부하 분산기·컨테이너 헬스체크용. Redis 가 응답하지 않으면 503 (요청을 받지 않게)
+  app.get("/health", async (_req, res) => {
+    try {
+      await Promise.race([redis.ping(), new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 1500))]);
+      res.json({ ok: true });
+    } catch {
+      res.status(503).json({ ok: false });
+    }
   });
 
   // 후보자 멀티선택용 목록 (talentfolio profiles 요약)
@@ -340,7 +354,8 @@ export function createApp() {
     const status = req.query.status as FitReportStatus | undefined;
     // 토큰 사용자는 자기 리포트만. legacy 모드(토큰 없음)에서만 query userId 폴백.
     const userId = resolveUserId(req, req.query.userId as string | undefined);
-    const reports = await listFitReports({ status, userId });
+    const stored = await listFitReports({ status, userId });
+    const reports = userId && !status ? await withFitMarks(stored, userId) : stored;
     // 승인함 건 묶음 제목: 스카우트 건(jd_runs)의 제목·고객사 (없으면 화면이 본문에서 추정)
     const cases: Record<string, { title: string | null; clientName: string | null; closed: boolean }> = {};
     const hashes = [...new Set(reports.map((r) => r.jdHash))];

@@ -12,7 +12,7 @@ import { startWatchSchedulers, startWatchWorkers } from "./queue/watchQueue.js";
 import { startWeightsScheduler, startWeightsWorker } from "./queue/weightsScheduler.js";
 import { startHilTimeoutWorker } from "./queue/hilTimeout.js";
 import { startPortfolioChatWorker } from "./queue/portfolioChatWorker.js";
-import { startPromotionScheduler } from "./queue/promotionScheduler.js";
+import { startMaintenanceSchedulers, startMaintenanceWorker } from "./queue/maintenanceQueue.js";
 import { startWorkers } from "./queue/workers.js";
 import { utimesSync, writeFileSync } from "node:fs";
 
@@ -32,6 +32,22 @@ if (!ROLES.includes(ROLE)) {
 const RUN_API = ROLE === "all" || ROLE === "api";
 const RUN_WORKERS = ROLE === "all" || ROLE === "worker";
 
+// 종료 신호를 받으면 새 job 을 받지 않고, 하던 분석을 끝낸 뒤 내려간다.
+// (그냥 죽으면 하던 job 이 stalled 로 넘어가 다른 워커가 처음부터 다시 한다)
+const shutdownTasks: (() => Promise<unknown>)[] = [];
+let shuttingDown = false;
+async function shutdown(signal: string) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`${signal} 수신 — 진행 중인 작업을 마치고 종료합니다.`);
+  const timer = setTimeout(() => process.exit(1), Number(process.env.SHUTDOWN_TIMEOUT_MS) || 120_000);
+  timer.unref();
+  await Promise.allSettled(shutdownTasks.map((close) => close()));
+  process.exit(0);
+}
+process.on("SIGTERM", () => void shutdown("SIGTERM"));
+process.on("SIGINT", () => void shutdown("SIGINT"));
+
 async function main() {
   await waitForMcpClient();
   console.log(`MCP client 연결 완료 (Streamable HTTP, ${process.env.MCP_SERVER_URL ?? "http://localhost:3002/mcp"})`);
@@ -39,7 +55,8 @@ async function main() {
   console.log(`orchestrator role: ${ROLE}`);
 
   if (RUN_WORKERS) {
-    startWorkers();
+    const { paidWorker, freeWorker } = startWorkers();
+    shutdownTasks.push(() => paidWorker.close(), () => freeWorker.close());
     console.log(
       `BullMQ 워커 시작: fit-analysis-paid / fit-analysis-free (concurrency ${process.env.FIT_WORKER_CONCURRENCY || 3}, LLM RPM 은 mcp-server GEMINI_RPM 이 제한)`
     );
@@ -89,8 +106,10 @@ async function main() {
     startHilTimeoutWorker();
     console.log("HIL 타임아웃 워커 시작: hil-timeout (24h delayed expire)");
 
-    startPromotionScheduler();
-    console.log("Job Promotion 스케줄러 시작: fit-analysis-free (5분 이상 대기 시 priority 승격)");
+    const maintenance = startMaintenanceWorker();
+    shutdownTasks.push(() => maintenance.close());
+    await startMaintenanceSchedulers();
+    console.log("정리 스케줄러 등록: fit-maintenance (분석 행 자동 정리 30분마다 · 무료 큐 승격 1분마다)");
 
     await startNormalizeSweepScheduler();
     console.log("후보 정규화 sweep 스케줄러 등록: candidate-normalize (매일 1회, NORMALIZE_SWEEP_CRON)");
@@ -105,9 +124,13 @@ async function main() {
     console.log("상시 수색 스케줄러 등록: match-delta (정기 점검·하루 요약)");
 
     const app = createApp();
-    app.listen(PORT, HOST, () => {
+    const server = app.listen(PORT, HOST, () => {
       console.log(`orchestrator API listening on http://${HOST}:${PORT}`);
     });
+    // 동시 접속이 많을 때 부하 분산기보다 먼저 연결을 끊지 않게 keep-alive 를 넉넉히 둔다
+    server.keepAliveTimeout = 65_000;
+    server.headersTimeout = 66_000;
+    shutdownTasks.push(() => new Promise((resolve) => server.close(() => resolve(undefined))));
   }
 }
 

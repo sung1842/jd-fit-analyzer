@@ -302,7 +302,7 @@ export function buildDeskFeed(input: Pick<DeskInput, "now" | "reports" | "jdRuns
       items.push({
         kind: "alert",
         at: new Date(Math.max(...failed.map((r) => ms(r.updatedAt)))).toISOString(),
-        text: `${title} 건 후보 ${failed.length}명 분석 실패 · 같은 JD 로 다시 분석하면 이어서 처리합니다.`,
+        text: `${title} 건 후보 ${failed.length}명을 분석하지 못했습니다 · 다시 시도해 주세요.`,
         href: review(hash),
       });
     }

@@ -28,7 +28,8 @@ services:
     networks: [backend]
     read_only: true
     tmpfs: [/tmp]
-    # rateLimiter(GEMINI_RPM) 가 프로세스 메모리 → scale 금지
+    # LLM 분당 한도·차단 표시는 Redis 공유 → 여러 대로 늘려도 합계가 유지된다.
+    # 단, MCP 세션이 인스턴스에 묶이므로 여러 대일 때는 부하 분산기에서 세션 고정(mcp-session-id)이 필요하다.
     environment:
       MCP_SERVER_PORT: "3002"
       REDIS_URL: redis://redis:6379
@@ -52,7 +53,7 @@ services:
     extra_hosts: ["host.docker.internal:host-gateway"]
     read_only: true
     tmpfs: [/tmp]
-    # promotion setInterval 이 인스턴스마다 돈다 → api 는 1개만
+    # 주기 작업은 BullMQ job scheduler 로 돈다 → api 를 여러 대 띄워도 한 번만 실행된다
     environment: &orch-env
       ORCHESTRATOR_ROLE: api
       REDIS_URL: redis://redis:6379
@@ -68,7 +69,7 @@ services:
       redis: { condition: service_healthy }
       mcp-server: { condition: service_healthy }
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/').then(()=>process.exit(0)).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 10s
       timeout: 5s
       retries: 5

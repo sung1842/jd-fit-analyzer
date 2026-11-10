@@ -3,7 +3,14 @@ import { evaluateAsCeo } from "./ceo.js";
 import { callMcpTool } from "./mcp/client.js";
 import { runRuleBasedValidation } from "./validation.js";
 
-const MAX_ATTEMPTS = 3; // 재작업 1회 추가마다 토큰 비용이 2배가 되므로 2~3회로 제한
+// 최초 분석 1회 + 재작업 1회 (운영 규칙: 재작업은 항목당 최대 1회)
+const MAX_ATTEMPTS = 2;
+
+/** 재시도 때 이미 끝난 단계를 다시 부르지 않기 위한 단계 결과 보관소 (워커가 Redis 로 구현) */
+export interface StepMemo {
+  get<T>(step: string): Promise<T | null>;
+  set(step: string, value: unknown): Promise<void>;
+}
 
 export type ProgressCallback = (stage: string) => void | Promise<void>;
 
@@ -28,9 +35,19 @@ function buildFitReport(
   };
 }
 
-export async function runFitAnalysis(jd: string, candidateId: string, onProgress?: ProgressCallback): Promise<FitReport> {
+export async function runFitAnalysis(jd: string, candidateId: string, onProgress?: ProgressCallback, memo?: StepMemo): Promise<FitReport> {
+  // 최초 분석 단계만 기억한다 (재작업은 피드백에 따라 결과가 달라져야 하므로 매번 호출)
+  const once = async <T>(step: string, attempt: number, run: () => Promise<T>): Promise<T> => {
+    if (!memo || attempt > 0) return run();
+    const hit = await memo.get<T>(step);
+    if (hit) return hit;
+    const value = await run();
+    await memo.set(step, value);
+    return value;
+  };
+
   await onProgress?.("portfolio_fetch");
-  const portfolio = await callMcpTool<CandidatePortfolio>("get_candidate_portfolio", { candidateId });
+  const portfolio = await once("portfolio", 0, () => callMcpTool<CandidatePortfolio>("get_candidate_portfolio", { candidateId }));
 
   let techResult: AgentResult | null = null;
   let expResult: AgentResult | null = null;
@@ -46,29 +63,29 @@ export async function runFitAnalysis(jd: string, candidateId: string, onProgress
     await onProgress?.(attempt === 0 ? "analyzing" : "reworking");
 
     const techPromise: Promise<AgentResult | null> = needTechRetry
-      ? callMcpTool<AgentResult>("analyze_tech_stack", {
+      ? once("analyze_tech_stack", attempt, () => callMcpTool<AgentResult>("analyze_tech_stack", {
           jd,
           portfolio,
           ...(techResult && techFeedback ? { rework: { previousResult: techResult, feedback: techFeedback } satisfies ReworkContext } : {}),
-        })
+        }))
       : Promise.resolve(null);
 
     const expPromise: Promise<AgentResult | null> = needExpRetry
-      ? callMcpTool<AgentResult>("analyze_experience", {
+      ? once("analyze_experience", attempt, () => callMcpTool<AgentResult>("analyze_experience", {
           jd,
           portfolio,
           ...(expResult && expFeedback ? { rework: { previousResult: expResult, feedback: expFeedback } satisfies ReworkContext } : {}),
-        })
+        }))
       : Promise.resolve(null);
 
     const culturePromise: Promise<AgentResult | null> = needCultureRetry
-      ? callMcpTool<AgentResult>("analyze_culture_fit", {
+      ? once("analyze_culture_fit", attempt, () => callMcpTool<AgentResult>("analyze_culture_fit", {
           jd,
           portfolio,
           ...(cultureResult && cultureFeedback
             ? { rework: { previousResult: cultureResult, feedback: cultureFeedback } satisfies ReworkContext }
             : {}),
-        })
+        }))
       : Promise.resolve(null);
 
     const [tech, exp, culture] = await Promise.all([techPromise, expPromise, culturePromise]);
@@ -115,6 +132,9 @@ export async function runFitAnalysis(jd: string, candidateId: string, onProgress
     cultureResult: cultureResult!,
     preCheck: forcedPreCheck,
   });
+  if (!ceoDecision.final_report || !Number.isFinite(ceoDecision.final_report.overallScore)) {
+    throw new Error("CEO 최종 판단에 결과가 없습니다 (일시 오류로 보고 재시도).");
+  }
 
   await onProgress?.("done");
   return buildFitReport(candidateId, portfolio.name, techResult!, expResult!, cultureResult!, ceoDecision.final_report);

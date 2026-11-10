@@ -1,5 +1,6 @@
 import type { FitReport, FitReportRecord, FitReportStatus } from "../../../shared/types.js";
 import { db } from "./db.js";
+import { loadMarksSafe } from "./fitState.js";
 
 interface FitReportRow {
   id: string;
@@ -31,12 +32,19 @@ function toRecord(row: FitReportRow): FitReportRecord {
   };
 }
 
-export async function createFitReport(input: {
+/**
+ * 분석 결과를 기록한다 (행을 만드는 유일한 지점). 진행 중 상태는 DB 에 쓰지 않는다 (lib/fitState.ts).
+ * 같은 (JD, 후보)를 다시 분석했으면 기존 행을 덮어쓴다.
+ */
+export async function saveFitResult(input: {
   jobId: string;
   jd: string;
   jdHash: string;
   candidateId: string;
   userId: string;
+  status: Extract<FitReportStatus, "completed" | "pending_review" | "failed">;
+  candidateName?: string | null;
+  report?: FitReport | null;
 }): Promise<FitReportRecord> {
   const { data, error } = await db
     .from("fit_reports")
@@ -47,14 +55,16 @@ export async function createFitReport(input: {
         jd_hash: input.jdHash,
         candidate_id: input.candidateId,
         user_id: input.userId,
-        status: "queued",
+        status: input.status,
+        candidate_name: input.candidateName ?? null,
+        report: input.report ?? null,
       },
       { onConflict: "job_id" }
     )
     .select()
     .single();
 
-  if (error) throw new Error(`fit_reports 생성 실패: ${error.message}`);
+  if (error) throw new Error(`fit_reports 기록 실패: ${error.message}`);
   return toRecord(data as FitReportRow);
 }
 
@@ -114,4 +124,25 @@ export async function listFitReports(filter: {
   const { data, error } = await query;
   if (error) throw new Error(`fit_reports 목록 조회 실패: ${error.message}`);
   return (data as FitReportRow[]).map(toRecord);
+}
+
+/**
+ * 진행 중·다시 시도 대상은 DB 행이 없다 (Redis 표시, lib/fitState.ts).
+ * 화면·집계가 같은 목록으로 볼 수 있게 자리 표시 레코드(report=null)를 붙인다: 진행 중 → queued, 다시 시도 → failed.
+ */
+export async function withFitMarks(reports: FitReportRecord[], userId: string): Promise<FitReportRecord[]> {
+  const marks = await loadMarksSafe(userId);
+  if (marks.inflight.length === 0 && marks.retryable.length === 0) return reports;
+  const have = new Set(reports.map((r) => `${r.jdHash}:${r.candidateId}`));
+  const out = [...reports];
+  const add = (m: { jdHash: string; candidateId: string; at: number }, status: FitReportStatus) => {
+    const key = `${m.jdHash}:${m.candidateId}`;
+    if (have.has(key)) return;
+    have.add(key);
+    const at = new Date(m.at).toISOString();
+    out.push({ id: `${status}:${key}`, jobId: `${m.jdHash}_${m.candidateId}`, jd: "", jdHash: m.jdHash, candidateId: m.candidateId, candidateName: null, userId, status, report: null, createdAt: at, updatedAt: at });
+  };
+  for (const m of marks.inflight) add(m, "queued");
+  for (const m of marks.retryable) add(m, "failed");
+  return out;
 }

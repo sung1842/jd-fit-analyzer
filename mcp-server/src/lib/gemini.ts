@@ -2,7 +2,7 @@ import "./env.js";
 import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenAI } from "@google/genai";
 import { startObservation } from "@langfuse/tracing";
-import { geminiLimiter } from "./rateLimiter.js";
+import { geminiLimiter, sharedRedis } from "./rateLimiter.js";
 
 // GEMINI_API_KEY 자동 탐색 (.env.local)
 export const ai = new GoogleGenAI({});
@@ -20,13 +20,61 @@ function geminiErrorMessage(err: unknown): string {
   }
 }
 
-function isRetryableGeminiError(err: unknown): boolean {
-  const msg = geminiErrorMessage(err);
-  return /503|429|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand/i.test(msg);
+// ── 오류 분류 ────────────────────────────────────────────────────────────────
+// 재시도 여부는 이 서버가 정하지 않는다. 한 번 시도하고, 오류에 코드를 붙여 돌려준다.
+// 재시도는 호출한 쪽(orchestrator 의 BullMQ) 한 곳에서만 판단한다 — 계층마다 따로 재시도하면 호출이 곱해진다.
+//   [E_QUOTA]    모든 모델의 호출 한도가 찼다 (잠시 뒤 다시 가능)
+//   [E_BUSY]     분당 슬롯이 없어 지금은 처리할 수 없다
+//   [E_UPSTREAM] 모델 서버의 일시 오류 (5xx 등)
+//   [E_BLOCKED]  모델이 응답을 거부했거나 빈 응답 — 같은 입력으로는 다시 해도 같다
+export class LlmError extends Error {
+  constructor(
+    public readonly code: "E_QUOTA" | "E_BUSY" | "E_UPSTREAM" | "E_BLOCKED",
+    detail: string
+  ) {
+    super(`[${code}] ${detail}`);
+    this.name = "LlmError";
+  }
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+function isQuotaError(msg: string): boolean {
+  return /429|RESOURCE_EXHAUSTED|quota/i.test(msg);
+}
+function isUpstreamError(msg: string): boolean {
+  return /50[0234]|UNAVAILABLE|INTERNAL|DEADLINE_EXCEEDED|high demand|overloaded|fetch failed|ECONNRESET|ETIMEDOUT/i.test(msg);
+}
+
+/** 429 응답이 알려 준 대기 시간. 하루 단위 한도면 길게, 분 단위면 응답의 retryDelay 만큼 */
+export function quotaBlockMs(msg: string): number {
+  if (/PerDay/i.test(msg)) return 15 * 60_000;
+  const m = msg.match(/retryDelay"?\s*[:=]\s*"?(\d+(?:\.\d+)?)s/i) ?? msg.match(/retry in (\d+(?:\.\d+)?)\s*s/i);
+  const sec = m ? Number(m[1]) : 60;
+  return Math.min(15 * 60_000, Math.max(5_000, Math.ceil(sec * 1000)));
+}
+
+// 모델별 차단 표시(한도 소진)와 전체 차단 표시. Redis 에 두어 모든 인스턴스·orchestrator 가 같이 본다.
+const memoryBlocks = new Map<string, number>();
+export const LLM_BREAKER_KEY = "llm:breaker:analysis";
+
+async function blockedForMs(model: string): Promise<number> {
+  if (sharedRedis) {
+    try {
+      const ttl = await sharedRedis.pttl(`llm:block:${model}`);
+      return ttl > 0 ? ttl : 0;
+    } catch {
+      /* Redis 장애 시 메모리 표시로 판단 */
+    }
+  }
+  return Math.max(0, (memoryBlocks.get(model) ?? 0) - Date.now());
+}
+
+async function blockModel(model: string, ms: number): Promise<void> {
+  memoryBlocks.set(model, Date.now() + ms);
+  await sharedRedis?.set(`llm:block:${model}`, "1", "PX", ms).catch(() => undefined);
+}
+
+async function openBreaker(ms: number): Promise<void> {
+  await sharedRedis?.set(LLM_BREAKER_KEY, String(Date.now() + ms), "PX", ms).catch(() => undefined);
 }
 
 async function generateStructuredOnce<T>(
@@ -36,8 +84,8 @@ async function generateStructuredOnce<T>(
   traceName: string
 ): Promise<T> {
   // 호출 직전 RPM 슬롯 확보 (워커 concurrency 와 무관하게 실제 API 호출 수를 제한)
-  const { waitedMs } = await geminiLimiter.acquire(model);
-  if (waitedMs > 1000) console.log(`[gemini] rate limit 대기 ${Math.round(waitedMs / 1000)}s (model=${model})`);
+  const slot = await geminiLimiter.acquire(model);
+  if (!slot.ok) throw new LlmError("E_BUSY", `no slot (model=${model})`);
 
   const generation = startObservation(traceName, { model, input: prompt }, { asType: "generation" });
 
@@ -51,7 +99,11 @@ async function generateStructuredOnce<T>(
       },
     });
 
-    const output = response.text!;
+    const output = response.text;
+    if (!output) {
+      const reason = response.candidates?.[0]?.finishReason ?? response.promptFeedback?.blockReason ?? "empty";
+      throw new LlmError("E_BLOCKED", `no content (${reason})`);
+    }
     generation
       .update({
         output,
@@ -63,7 +115,11 @@ async function generateStructuredOnce<T>(
       })
       .end();
 
-    return JSON.parse(output) as T;
+    try {
+      return JSON.parse(output) as T;
+    } catch {
+      throw new LlmError("E_UPSTREAM", "malformed structured output");
+    }
   } catch (err) {
     generation.update({ level: "ERROR", statusMessage: geminiErrorMessage(err) }).end();
     throw err;
@@ -116,36 +172,52 @@ export async function generateStructured<T>(
   traceName = "gemini-generate-structured"
 ): Promise<T> {
   if (analysisProvider() === "claude") return generateStructuredClaude<T>(prompt, responseJsonSchema, traceName);
-  let lastErr: unknown;
 
-  for (let modelIndex = 0; modelIndex < ANALYSIS_MODELS.length; modelIndex++) {
-    const model = ANALYSIS_MODELS[modelIndex];
-    const maxAttempts = modelIndex === 0 ? 4 : 2;
+  // 모델마다 한 번만 시도한다. 다음 모델로 넘어가는 것은 재시도가 아니라 별도 한도·용량으로의 우회다.
+  let sawQuota = false;
+  let sawBusy = false;
+  let minBlock = Infinity;
+  let lastDetail = "unavailable";
 
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      try {
-        return await generateStructuredOnce<T>(model, prompt, responseJsonSchema, traceName);
-      } catch (err) {
-        lastErr = err;
-        const lastModelAttempt = attempt === maxAttempts - 1;
-        const lastModel = modelIndex === ANALYSIS_MODELS.length - 1;
-
-        if (!isRetryableGeminiError(err) || (lastModelAttempt && lastModel)) {
-          throw err;
-        }
-
-        if (lastModelAttempt) break;
-
-        const delayMs = 2_000 * 2 ** attempt + Math.floor(Math.random() * 500);
-        console.warn(
-          `[gemini] ${model} ${traceName} 일시 오류 — ${delayMs}ms 후 재시도 (${attempt + 1}/${maxAttempts}): ${geminiErrorMessage(err).slice(0, 160)}`
-        );
-        await sleep(delayMs);
+  for (const model of ANALYSIS_MODELS) {
+    const blocked = await blockedForMs(model);
+    if (blocked > 0) {
+      sawQuota = true;
+      minBlock = Math.min(minBlock, blocked);
+      continue; // 한도가 찬 모델은 호출하지 않는다
+    }
+    try {
+      return await generateStructuredOnce<T>(model, prompt, responseJsonSchema, traceName);
+    } catch (err) {
+      if (err instanceof LlmError) {
+        if (err.code === "E_BLOCKED") throw err;
+        if (err.code === "E_BUSY") sawBusy = true;
+        lastDetail = err.message;
+        continue;
       }
+      const msg = geminiErrorMessage(err);
+      if (isQuotaError(msg)) {
+        const ms = quotaBlockMs(msg);
+        await blockModel(model, ms);
+        sawQuota = true;
+        minBlock = Math.min(minBlock, ms);
+        console.warn(`[llm] ${model} 한도 도달 — ${Math.round(ms / 1000)}s 동안 이 모델을 건너뜀`);
+        continue;
+      }
+      if (isUpstreamError(msg)) {
+        lastDetail = msg.slice(0, 160);
+        continue;
+      }
+      throw err; // 요청 자체의 문제 (인증·스키마 등) — 다른 모델로 넘겨도 같다
     }
   }
 
-  throw lastErr;
+  if (sawBusy) throw new LlmError("E_BUSY", "no slot");
+  if (sawQuota) {
+    await openBreaker(Number.isFinite(minBlock) ? minBlock : 60_000);
+    throw new LlmError("E_QUOTA", "all models at capacity");
+  }
+  throw new LlmError("E_UPSTREAM", lastDetail);
 }
 
 // text-embedding-004는 v1beta에서 더 이상 제공되지 않으므로 gemini-embedding-001 사용
@@ -155,7 +227,8 @@ const EMBEDDING_DIMENSIONS = 768;
 
 // Phase 5 RAG: 텍스트 배열을 임베딩 벡터 배열로 변환 (포트폴리오 청크/질문 임베딩 공용)
 export async function embedTexts(texts: string[]): Promise<number[][]> {
-  await geminiLimiter.acquire(EMBEDDING_MODEL);
+  const slot = await geminiLimiter.acquire(EMBEDDING_MODEL);
+  if (!slot.ok) throw new LlmError("E_BUSY", "no slot (embedding)");
 
   const generation = startObservation(
     "gemini-embed",

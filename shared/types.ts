@@ -100,6 +100,8 @@ export interface CeoDecision {
 
 export interface FitAnalysisJobData {
   jd: string;
+  /** 건(jd_runs)의 jd_hash. 없으면 워커가 jd 로 계산한다 */
+  jdHash?: string;
   candidateId: string;
   userId: string;
   tier: "paid" | "free";

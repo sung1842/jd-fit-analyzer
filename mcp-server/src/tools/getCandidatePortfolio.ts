@@ -22,14 +22,16 @@ export async function getCandidatePortfolio(candidateId: string): Promise<Candid
   const { data, error } = await supabase.from("profiles").select("*").eq("id", candidateId).single();
 
   if (error || !data) {
-    throw new Error(`후보자를 찾을 수 없습니다: ${candidateId} (${error?.message ?? "no data"})`);
+    // 코드가 붙은 오류는 호출한 쪽이 "다시 해도 같은 결과"로 보고 재시도하지 않는다
+    const code = !error || error.code === "PGRST116" || error.code === "22P02" ? "E_NOT_FOUND" : "E_UPSTREAM";
+    throw new Error(`[${code}] 후보자를 찾을 수 없습니다: ${candidateId} (${error?.message ?? "no data"})`);
   }
 
   const pruned = pruneJsonData<CandidatePortfolio>(data, PORTFOLIO_ALLOWED_KEYS, PORTFOLIO_KEY_DICTIONARY);
 
   for (const key of PORTFOLIO_ALLOWED_KEYS) {
     if (pruned[key] === undefined) {
-      throw new Error(`portfolio 필드 누락: ${key}`);
+      throw new Error(`[E_INVALID] portfolio 필드 누락: ${key}`);
     }
   }
 
