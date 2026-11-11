@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import type { AgentResult, CandidatePortfolio, FitReport } from "../../shared/types.js";
-import { calibrateReport, evidenceHaystack, evidenceTier, isSupported } from "../src/lib/calibrate.js";
+import { calibrateAgent, calibrateReport, evidenceHaystack, evidenceTier, isSupported, splitCompound } from "../src/lib/calibrate.js";
 
 const thin: CandidatePortfolio = {
   id: "c1", name: "한도윤", role: "developer", title: "백엔드 개발자",
@@ -28,6 +28,14 @@ describe("calibrate", () => {
   test("태그·짧은 소개뿐이면 thin 등급", () => {
     assert.equal(evidenceTier(thin), "thin");
     assert.equal(evidenceTier({ ...thin, evidence_cards: [{ id: "a", claim: "x", trust: "self", recorded_at: null, source: null }] }), "basic");
+  });
+
+  test("rich 는 신뢰 등급이 아니라 구체적인 카드 수로", () => {
+    const card = (i: number, claim: string, trust = "confirmed") => ({ id: `k${i}`, claim, trust, recorded_at: null, source: null });
+    const vague = Array.from({ length: 6 }, (_, i) => card(i, "열심히 했습니다"));
+    assert.notEqual(evidenceTier({ ...thin, evidence_cards: vague }), "rich"); // 확인 표시가 붙어도 내용이 없으면 rich 아님
+    const concrete = Array.from({ length: 5 }, (_, i) => card(i, "상황: 카드 신청 완료율이 41%에 머물렀다. 행동: 사용성 테스트 7명으로 원인을 찾고 9단계를 6단계로 묶었다. 결과: 4주 A/B 테스트에서 완료율 58%.", "self"));
+    assert.equal(evidenceTier({ ...thin, evidence_cards: concrete }), "rich");
   });
 
   test("근거 없는 충족 항목 판별", () => {
@@ -54,5 +62,20 @@ describe("calibrate", () => {
   test("점수는 올리지 않는다", () => {
     const low = { ...report, overallScore: 20 };
     assert.ok(calibrateReport(low, thin).overallScore <= 20);
+  });
+
+  test("나열형 요건은 도구별로 판정 (홍시우 건: Illustrator 만 근거)", () => {
+    assert.deepEqual(splitCompound("Adobe Photoshop, Illustrator, InDesign 활용 가능자"), ["Adobe Photoshop", "Illustrator", "InDesign"]);
+    assert.deepEqual(splitCompound("관계형 데이터베이스(Oracle, MariaDB, PostgreSQL 등) 사용 경험"), ["관계형 데이터베이스(Oracle, MariaDB, PostgreSQL 등) 사용 경험"]);
+    const hay = ["ui/ux 디자이너", "figma", "ui design", "illustrator"].join("\n");
+    assert.ok(!isSupported("Adobe Photoshop", hay)); // "adobe" 만으로는 인정 안 함
+    const { result } = calibrateAgent(agent("experience", 40, ["Adobe Photoshop, Illustrator, InDesign 활용 가능자"], []), hay);
+    assert.deepEqual(result.matched_items, ["Illustrator"]);
+    assert.ok(result.missing_items.includes("Adobe Photoshop") && result.missing_items.includes("InDesign"));
+  });
+
+  test("나열형이 전부 받쳐지면 원문 유지", () => {
+    const { result } = calibrateAgent(agent("experience", 70, ["Java·Spring Boot·JPA를 활용한 웹 애플리케이션 개발 경험"], []), evidenceHaystack(thin));
+    assert.deepEqual(result.matched_items, ["Java·Spring Boot·JPA를 활용한 웹 애플리케이션 개발 경험"]);
   });
 });

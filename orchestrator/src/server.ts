@@ -23,6 +23,7 @@ import { registerMatchQualityRoutes } from "./lib/matchQualityRoutes.js";
 import { registerWatchRoutes } from "./lib/watchRoutes.js";
 import { isWatchNoSend } from "./lib/watchCore.js";
 import { recordStatusEvent, registerDeskRoutes } from "./lib/deskRoutes.js";
+import { registerPublicResumeRoutes } from "./lib/publicResume.js";
 import { registerScoutCaseRoutes } from "./lib/scoutCases.js";
 import { registerOfferMailRoutes } from "./lib/offerMail.js";
 import { buildJdPlan } from "./lib/jdPlan.js";
@@ -191,7 +192,7 @@ export function createApp() {
     "/api",
     accountGate({
       publicPaths,
-      company: [/^\/analyze$/, /^\/jd-runs(\/|$)/, /^\/candidates$/, /^\/desk(\/|$)/, /^\/fit-reports(\/|$)/, /^\/jd(\/|$)/, /^\/jobs\/[^/]+\/stream$/, /^\/notion(\/|$)/, /^\/portfolio-chat(\/|$)/, /^\/scout-cases(\/|$)/, /^\/slack\/channel-configs(\/|$)/, /^\/sourcing(\/|$)/],
+      company: [/^\/analyze$/, /^\/jd-runs(\/|$)/, /^\/candidates$/, /^\/candidates\/[^/]+\/public-resume$/, /^\/desk(\/|$)/, /^\/fit-reports(\/|$)/, /^\/jd(\/|$)/, /^\/jobs\/[^/]+\/stream$/, /^\/notion(\/|$)/, /^\/portfolio-chat(\/|$)/, /^\/scout-cases(\/|$)/, /^\/slack\/channel-configs(\/|$)/, /^\/sourcing(\/|$)/],
       seeker: [/^\/v1\/life(\/|$)/, /^\/candidates\/me(\/|$)/],
     })
   );
@@ -206,6 +207,7 @@ export function createApp() {
   registerRecommendRoutes(app);
   registerOfferMailRoutes(app);
   registerDeskRoutes(app);
+  registerPublicResumeRoutes(app);
   registerScoutCaseRoutes(app);
 
   // 202 Accepted — 동기 await 없이 즉시 jobId 반환 (절대 규칙 2: Anti-Blocking)

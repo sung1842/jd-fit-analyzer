@@ -6,8 +6,9 @@ export const PUBLIC_EVIDENCE_VIEW = "public_evidence_cards";
 export const MAX_CARDS_PER_CANDIDATE = 8;
 export const MAX_CLAIM_LENGTH = 200;
 
-// 015 SQL CHECK: trust_level in (self, attached, confirmed). 모르는 값은 0 (맨 뒤).
-const TRUST_RANK: Record<string, number> = { confirmed: 3, attached: 2, self: 1 };
+// 2026-11-11 결정: 카드의 신뢰 등급(self/attached/confirmed)은 아무도 검증하지 않으므로 분석에 쓰지 않는다.
+// 모든 카드를 "자기 신고"로 똑같이 넘기고, 진위는 면접에서 사람이 확인한다. 정렬은 최신순만.
+export const UNIFIED_TRUST = "self";
 
 export interface PublicEvidenceCardRow {
   id: string;
@@ -28,7 +29,7 @@ export function isMissingRelationError(error: { code?: string; message?: string 
   return msg.includes("does not exist") || msg.includes("could not find the table");
 }
 
-/** 정렬(신뢰도 → 최신순) 후 상위 N장, claim 길이 상한 적용, 투입 필드 5개만 남긴다. */
+/** 정렬(최신순) 후 상위 N장, claim 길이 상한 적용, 투입 필드 5개만 남긴다. */
 export function prunePublicEvidenceCards(
   rows: PublicEvidenceCardRow[],
   limit = MAX_CARDS_PER_CANDIDATE,
@@ -36,18 +37,14 @@ export function prunePublicEvidenceCards(
 ): EvidenceCardInput[] {
   return rows
     .filter((r) => r && typeof r.id === "string" && typeof r.claim === "string" && r.claim.trim().length > 0)
-    .sort((a, b) => {
-      const t = (TRUST_RANK[b.trust_level ?? ""] ?? 0) - (TRUST_RANK[a.trust_level ?? ""] ?? 0);
-      if (t !== 0) return t;
-      return (b.recorded_at ?? "").localeCompare(a.recorded_at ?? "");
-    })
+    .sort((a, b) => (b.recorded_at ?? "").localeCompare(a.recorded_at ?? ""))
     .slice(0, limit)
     .map((r) => {
       const claim = r.claim!.trim();
       return {
         id: r.id,
         claim: claim.length > maxClaim ? `${claim.slice(0, maxClaim - 1)}…` : claim,
-        trust: r.trust_level ?? "unknown",
+        trust: UNIFIED_TRUST,
         recorded_at: r.recorded_at,
         source: r.source,
       };

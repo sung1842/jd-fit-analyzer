@@ -64,7 +64,7 @@ export interface DeskInput {
   supply: { developer: number; designer: number };
   demand: { developer: number; designer: number };
   /** 공고 요구 역량 빈도 상위 → 공개 카드 언급 수 */
-  skillGap: { skill: string; demand: number; cards: number }[];
+  skillGap: { skill: string; demand: number; holders: number }[]; // holders = 이 스킬을 프로필에 적은 공개 후보 수
   /** 인용됐지만 지금 공개 뷰에 없는 카드 (공개 철회) — 승인 후보 기준 */
   withdrawn: { candidateName: string; jdHash: string; count: number }[];
 }
@@ -367,14 +367,15 @@ export function classifyPosting(title: string, skills: string[]): "developer" | 
 }
 
 /** 공고 요구 역량 상위 중 공개 카드에서 언급이 적은 것 */
-export function computeSkillGap(postings: { skills: string[] }[], claims: string[], top = 6) {
+export function computeSkillGap(postings: { skills: string[] }[], candidateSkills: string[][], top = 6) {
   const freq = new Map<string, number>();
   for (const p of postings) for (const s of new Set(p.skills.map((x) => x.trim()).filter(Boolean))) freq.set(s, (freq.get(s) ?? 0) + 1);
-  const lower = claims.map((c) => c.toLowerCase());
+  const have = new Map<string, number>();
+  for (const list of candidateSkills) for (const s of new Set(list.map((x) => x.trim().toLowerCase()).filter(Boolean))) have.set(s, (have.get(s) ?? 0) + 1);
   return [...freq]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 30)
-    .map(([skill, demand]) => ({ skill, demand, cards: lower.filter((c) => c.includes(skill.toLowerCase())).length }))
-    .sort((a, b) => a.cards / Math.max(1, a.demand) - b.cards / Math.max(1, b.demand) || b.demand - a.demand)
+    .map(([skill, demand]) => ({ skill, demand, holders: have.get(skill.toLowerCase()) ?? 0 }))
+    .sort((a, b) => a.holders / Math.max(1, a.demand) - b.holders / Math.max(1, b.demand) || b.demand - a.demand)
     .slice(0, top);
 }

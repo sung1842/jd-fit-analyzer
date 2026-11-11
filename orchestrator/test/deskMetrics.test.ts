@@ -145,9 +145,9 @@ describe("보조 규칙", () => {
     assert.equal(classifyPosting("프로덕트 디자이너", []), "designer");
     assert.equal(classifyPosting("백엔드 개발자", ["Node.js"]), "developer");
   });
-  test("computeSkillGap: 카드 언급이 적은 역량 우선", () => {
-    const gap = computeSkillGap([{ skills: ["Kafka", "Node.js"] }, { skills: ["Kafka", "Node.js"] }], ["Node.js 로 API 개발"], 2);
+  test("computeSkillGap: 보유 후보가 적은 역량 우선", () => {
+    const gap = computeSkillGap([{ skills: ["Kafka", "Node.js"] }, { skills: ["Kafka", "Node.js"] }], [["node.js", "React"]], 2);
     assert.equal(gap[0].skill, "Kafka");
-    assert.equal(gap[0].cards, 0);
+    assert.equal(gap[0].holders, 0);
   });
 });

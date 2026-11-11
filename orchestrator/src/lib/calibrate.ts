@@ -37,15 +37,18 @@ function resumeFacts(p: CandidatePortfolio): number {
  *  thin  : 공개 카드 0, 이력서 사실 0, 긴 소개 200자 미만 — 기술 태그와 짧은 소개뿐 (자기 신고)
  *  basic : 카드 1~2장, 또는 이력서 사실 1개 이상, 또는 긴 소개 200자 이상
  *  solid : 카드 3장 이상, 또는 (카드 1장 이상 + 이력서 경력)
- *  rich  : 카드 5장 이상이면서 확인·첨부 등급 카드 2장 이상
+ *  rich  : 카드 5장 이상이면서 구체적인 카드(80자 이상 + 수치 포함) 3장 이상
+ * 카드의 신뢰 등급(확인·첨부)은 검증되지 않으므로 쓰지 않는다 (2026-11-11). 모든 카드는 자기 신고, 진위는 면접에서.
  */
+const isConcrete = (claim: string) => claim.trim().length >= 80 && /\d/.test(claim);
+
 export function evidenceTier(p: CandidatePortfolio): EvidenceTier {
   const cards = p.evidence_cards ?? [];
-  const strong = cards.filter((c) => c.trust === "confirmed" || c.trust === "attached").length;
+  const concrete = cards.filter((c) => isConcrete(c.claim)).length;
   const bio = (p.long_bio ?? "").trim().length;
   const facts = resumeFacts(p);
   const hasCareer = (p.resume?.experiences.length ?? 0) > 0;
-  if (cards.length >= 5 && strong >= 2) return "rich";
+  if (cards.length >= 5 && concrete >= 3) return "rich";
   if (cards.length >= 3 || (cards.length >= 1 && hasCareer)) return "solid";
   if (cards.length >= 1 || facts >= 1 || bio >= 200) return "basic";
   return "thin";
@@ -73,11 +76,14 @@ const STOP = new Set([
   "프로젝트", "서비스", "시스템", "웹", "애플리케이션", "기술", "개선", "관리", "적용", "적용한", "수행", "참여", "능숙", "능숙한", "지식", "the", "and", "or", "with", "of",
 ]);
 
+// 브랜드명·흔한 영문어 — 이것만 맞았다고 근거로 보지 않는다 (예: "Adobe" 만으로 Photoshop 근거 인정 금지)
+const GENERIC_TECH = new Set(["adobe", "microsoft", "ms", "google", "api", "tool", "tools", "program", "ai"]);
+
 /** 요건 문장 → 대조할 키워드. 영문 기술어(Linux, RESTful 등)가 있으면 그것만, 없으면 한글 명사형 키워드 */
 export function itemKeywords(item: string): { tech: string[]; words: string[] } {
   const clean = item.toLowerCase().replace(/[()[\]{}·,/|:;"'`~!?]/g, " ");
   const tokens = clean.split(/\s+/).map((t) => t.replace(/^[.\-]+|[.\-]+$/g, "")).filter((t) => t.length >= 2 && !STOP.has(t));
-  const tech = tokens.filter((t) => /[a-z]/.test(t) && /^[a-z0-9.+#\-]+$/.test(t));
+  const tech = tokens.filter((t) => /[a-z]/.test(t) && /^[a-z0-9.+#\-]+$/.test(t) && !GENERIC_TECH.has(t));
   // 한글 키워드는 조사 끝 한 글자를 떼서 비교 (예: "데이터베이스를" → "데이터베이" 대신 원형 우선 비교, 실패 시 절단형)
   const words = tokens.filter((t) => !tech.includes(t) && /[가-힣]/.test(t));
   return { tech, words };
@@ -119,11 +125,37 @@ export function isSupported(item: string, hay: string): boolean {
   return hit >= Math.max(1, Math.ceil(words.length / 2));
 }
 
+/**
+ * 나열형 요건을 도구 단위로 쪼갠다. "Adobe Photoshop, Illustrator, InDesign 활용 가능자" → [Adobe Photoshop, Illustrator, InDesign].
+ * 괄호 안 나열(예: "관계형 DB(Oracle, MariaDB 등)")은 '그중 하나'라는 뜻이라 쪼개지 않는다. 영문 도구명이 2개 미만이면 그대로 둔다.
+ */
+export function splitCompound(item: string): string[] {
+  const outer = item.replace(/\([^)]*\)/g, " ");
+  const parts = outer.split(/\s*(?:,|\/|·|\s및\s|\s와\s|\s과\s)\s*/).map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 2) return [item];
+  const tools = parts.map((p) => p.match(/[A-Za-z][A-Za-z0-9.+#\- ]*[A-Za-z0-9+#]|[A-Za-z]/)?.[0].trim() ?? "");
+  if (tools.some((t) => !t) || tools.filter((t) => itemKeywords(t).tech.length > 0).length < 2) return [item];
+  return [...new Set(tools)];
+}
+
 /** 영역 하나 보정. 충족 검증 → 비율 상한 → 모순 상한 */
 export function calibrateAgent(a: AgentResult, hay: string): { result: AgentResult; moved: string[]; from: number } {
   const kept: string[] = [];
   const moved: string[] = [];
-  for (const m of a.matched_items) (isSupported(m, hay) ? kept : moved).push(m);
+  for (const m of a.matched_items) {
+    const parts = splitCompound(m);
+    if (parts.length === 1) {
+      (isSupported(m, hay) ? kept : moved).push(m);
+      continue;
+    }
+    // 나열형: 전부 받쳐지면 원문 그대로, 일부만이면 받쳐진 도구만 충족으로 남기고 나머지는 근거 없음으로
+    const ok = parts.filter((t) => isSupported(t, hay));
+    if (ok.length === parts.length) kept.push(m);
+    else {
+      kept.push(...ok);
+      moved.push(...parts.filter((t) => !ok.includes(t)));
+    }
+  }
   const missing = [...a.missing_items, ...moved.filter((m) => !a.missing_items.includes(m))];
   const total = kept.length + missing.length;
   let score = a.score;

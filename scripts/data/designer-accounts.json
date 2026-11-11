@@ -1,0 +1,127 @@
+{
+ "_meta": {
+  "purpose": "가입된 디자이너 구직 계정의 이력·근거 카드·작업물(프로젝트). 보정(근거 등급) 비교용으로 계정마다 근거 양을 다르게 둔다.",
+  "tiers": "윤지아 rich · 카리나 solid · 이수아 solid · 김현수 basic(경력만) · 강예원/서채린/박나연/조민기 basic~solid(직무 상이)"
+ },
+ "accounts": [
+  {
+   "user_id": "bbd0fc87-0775-46cf-bb60-8c3ec875d36f",
+   "name": "윤지아",
+   "basics": { "headline": "리서치로 문제를 정의하고 0→1 앱을 출시해 온 프로덕트 디자이너", "region_sido": "서울", "region_sigungu": "성동구", "desired_categories": ["design"], "desired_regions": ["서울"], "desired_employment_types": ["정규직"], "job_search_status": "active" },
+   "experiences": [
+    { "company": "주식회사 머니플로우", "department": "프로덕트팀", "position": "프로덕트 디자이너", "start": "2023-03", "end": null, "duties": "개인 자산관리 앱의 가계부·소비 리포트·카드 추천 영역 담당. PM·데이터 분석가와 분기 OKR 수립, 사용자 인터뷰 월 2회 운영, Figma 기반 디자인 시스템 'Leaf' 운영.", "achievements": "소비 리포트 개편으로 주간 재방문율 22%→31%. 카드 추천 플로우 단계 축소로 신청 전환율 35% 개선. 디자인 시스템 컴포넌트 90여 개 정비." },
+    { "company": "헬시노트 주식회사", "department": "서비스디자인팀", "position": "UX/UI 디자이너", "start": "2021-01", "end": "2023-02", "duties": "복약 관리 앱 0→1 디자인. JTBD 인터뷰 설계, 와이어프레임·프로토타입, 앱스토어 출시 대응.", "achievements": "출시 3개월 만에 앱스토어 건강 카테고리 상위 5위. 복약 알림 완료율 64%→79%." }
+   ],
+   "educations": [ { "school": "홍익대학교", "major": "시각디자인과", "degree": "bachelor", "start": "2014-03", "end": "2019-02" } ],
+   "certs": [ { "kind": "license", "name": "컬러리스트기사", "issuer": "한국산업인력공단", "acquired": "2018-11" }, { "kind": "language", "name": "OPIc", "issuer": "ACTFL", "score": "IH", "acquired": "2024-05" } ],
+   "projects": [
+    { "title": "소비 리포트 리디자인", "org": "머니플로우", "start": "2024-04", "end": "2024-08", "description": "사용자 인터뷰 12명과 이벤트 로그 분석으로 '리포트를 열고도 다음 행동이 없다'는 문제를 정의. 카테고리별 절약 제안 카드와 목표 설정 흐름을 설계하고 Maze로 비대면 사용성 테스트 2회 진행. 기여도 80%(리드 디자이너)." },
+    { "title": "디자인 시스템 Leaf 2.0", "org": "머니플로우", "start": "2023-09", "end": "2024-02", "description": "Figma Variables로 라이트/다크·밀도 토큰 구성, 개발팀과 토큰 이름 규칙 합의. 컴포넌트 문서를 Storybook과 연결해 핸드오프 질문을 줄임. 기여도 60%." },
+    { "title": "복약 관리 앱 0→1", "org": "헬시노트", "start": "2021-03", "end": "2021-10", "description": "고령 사용자 중심 큰 글씨·고대비 UI, 복약 알림·가족 공유 기능 설계. 출시 후 리뷰 평점 4.7. 기여도 100%(단독 디자이너)." }
+   ],
+   "cards": [
+    { "claim": "상황: 카드 추천에서 신청까지 8단계라 이탈이 컸다.\n역할: 담당 프로덕트 디자이너.\n행동: 퍼널 분석과 인터뷰 6명으로 혼란 지점을 찾아 비교·선택·신청을 한 화면 흐름으로 합쳤다.\n결과: 신청 전환율 35% 개선(4주 A/B).\n배운 점: 단계 수보다 결정 부담이 문제였다.", "trust": "confirmed", "featured": true },
+    { "claim": "상황: 다크 모드 요청이 많았지만 색 값이 화면마다 하드코딩돼 있었다.\n역할: 디자인 시스템 담당.\n행동: Figma Variables로 시맨틱 토큰을 정의하고 개발자와 이름 규칙을 맞췄다.\n결과: 2주 만에 전 화면 다크 모드 출시, 색상 관련 QA 이슈 70% 감소.", "trust": "attached", "featured": true },
+    { "claim": "상황: 소비 리포트를 열어도 다음 행동이 없었다.\n행동: 인터뷰 12명·로그 분석으로 문제를 정의하고 절약 제안 카드를 설계, Maze 테스트 2회로 검증했다.\n결과: 주간 재방문율 22%→31%.", "trust": "confirmed", "featured": true },
+    { "claim": "상황: 고령 사용자가 복약 알림을 놓쳤다.\n행동: 큰 글씨·고대비·한 번 탭 완료로 알림 화면을 다시 설계했다.\n결과: 복약 완료율 64%→79%, 접근성 리뷰 개선.", "trust": "self" },
+    { "claim": "주니어 디자이너 2명의 온보딩을 맡아 디자인 리뷰 체크리스트와 주간 크리틱을 운영했다. 6개월 뒤 두 사람 모두 단독으로 기능을 맡았다.", "trust": "self" }
+   ]
+  },
+  {
+   "user_id": "eaa81e10-4e14-47b6-92fd-fae56429ab83",
+   "name": "카리나",
+   "basics": { "headline": "B2B SaaS 디자인 시스템과 온보딩을 설계해 온 5년 차 UI/UX 디자이너", "region_sido": "경기", "region_sigungu": "성남시", "desired_categories": ["design"], "desired_regions": ["서울", "경기"], "desired_employment_types": ["정규직"], "job_search_status": "open" },
+   "experiences": [
+    { "company": "워크브릿지 주식회사", "department": "디자인팀", "position": "UI/UX 디자이너", "start": "2021-06", "end": null, "duties": "협업툴 SaaS의 웹 관리자·온보딩 화면 설계, 디자인 시스템 운영, Figma Dev Mode 기반 핸드오프 정립.", "achievements": "온보딩 개편으로 가입 완료율 18% 향상. 컴포넌트 50여 종 라이브러리 정리." },
+    { "company": "스튜디오 오르빗", "department": "웹디자인팀", "position": "웹 디자이너", "start": "2020-01", "end": "2021-05", "duties": "기업 홈페이지·랜딩페이지 디자인, 퍼블리셔와 협업.", "achievements": "연 20여 건 프로젝트 납품." }
+   ],
+   "educations": [ { "school": "서울과학기술대학교", "major": "디자인학과", "degree": "bachelor", "start": "2015-03", "end": "2019-08" } ],
+   "certs": [ { "kind": "license", "name": "웹디자인기능사", "issuer": "한국산업인력공단", "acquired": "2018-06" } ],
+   "projects": [
+    { "title": "SaaS 온보딩 개편", "org": "워크브릿지", "start": "2023-02", "end": "2023-06", "description": "가입 후 첫 프로젝트 생성까지의 흐름을 체크리스트형으로 바꾸고 빈 화면 가이드를 추가. 사용성 테스트 5명 진행. 기여도 70%." }
+   ],
+   "cards": [
+    { "claim": "상황: 신규 가입자의 절반이 첫 프로젝트를 만들지 않고 떠났다.\n행동: 사용성 테스트 5명으로 막히는 지점을 찾아 체크리스트형 온보딩과 빈 화면 가이드를 설계했다.\n결과: 가입 완료율 18% 향상.", "trust": "self", "featured": true },
+    { "claim": "Figma Dev Mode 도입을 주도해 디자이너·개발자 간 스펙 문의를 주 10건 이하로 줄였다.", "trust": "self" }
+   ]
+  },
+  {
+   "user_id": "6dda3e06-1c09-442a-8d18-8aff7921911a",
+   "name": "이수아",
+   "basics": { "headline": "복잡한 관리자 화면을 단순하게 만드는 서비스 UX 디자이너", "region_sido": "서울", "region_sigungu": "강남구", "desired_categories": ["design"], "desired_regions": ["서울"], "desired_employment_types": ["정규직"], "job_search_status": "open" },
+   "experiences": [
+    { "company": "로지스랩 주식회사", "department": "플랫폼디자인팀", "position": "서비스 UX 디자이너", "start": "2022-04", "end": null, "duties": "물류 관제 대시보드 IA 설계, 데이터 시각화 컴포넌트 정의, 운영자 인터뷰.", "achievements": "배차 관제 화면 개편으로 운영자 평균 처리 시간 25% 단축." }
+   ],
+   "educations": [ { "school": "이화여자대학교", "major": "디지털미디어학부", "degree": "bachelor", "start": "2016-03", "end": "2020-02" } ],
+   "certs": [],
+   "projects": [
+    { "title": "배차 관제 대시보드 IA 재설계", "org": "로지스랩", "start": "2023-05", "end": "2023-11", "description": "운영자 8명 섀도잉으로 업무 흐름을 정리하고 경보 우선순위 기준을 새로 정의. 지도·타임라인·표를 한 화면에서 전환하는 구조로 개편. 기여도 90%." }
+   ],
+   "cards": [
+    { "claim": "상황: 관제 화면에 경보가 너무 많아 중요한 지연을 놓쳤다.\n행동: 운영자 섀도잉으로 경보 우선순위를 3단계로 다시 정의하고 화면 구조를 바꿨다.\n결과: 평균 처리 시간 25% 단축.", "trust": "self" }
+   ]
+  },
+  {
+   "user_id": "40366364-72b6-47eb-8540-96f5b59ba970",
+   "name": "김현수",
+   "basics": { "headline": "디자인하고 직접 구현하는 UX 엔지니어", "region_sido": "서울", "region_sigungu": "마포구", "desired_categories": ["design", "it_dev_frontend"], "desired_regions": ["서울", "원격"], "desired_employment_types": ["정규직"], "job_search_status": "open" },
+   "experiences": [
+    { "company": "피그먼트 주식회사", "department": "디자인시스템팀", "position": "UX 엔지니어", "start": "2021-02", "end": "2024-06", "duties": "디자인 시스템 1.0~3.0 총괄, React 컴포넌트 구현, 접근성 기준 수립.", "achievements": "Radix 기반 컴포넌트 40여 종 배포." }
+   ],
+   "educations": [],
+   "certs": [],
+   "projects": [],
+   "cards": []
+  },
+  {
+   "user_id": "e9ce6b47-f769-47d7-ae28-02e9199ad999",
+   "name": "강예원",
+   "basics": { "headline": "스타트업 브랜드를 처음부터 만드는 BI·패키지 디자이너", "region_sido": "서울", "region_sigungu": "용산구", "desired_categories": ["design"], "desired_regions": ["서울"], "desired_employment_types": ["정규직", "프리랜서"], "job_search_status": "open" },
+   "experiences": [
+    { "company": "브랜드스튜디오 결", "department": "브랜딩팀", "position": "브랜드 디자이너", "start": "2020-03", "end": null, "duties": "로고·브랜드 가이드라인·패키지 디자인, 인쇄 감리.", "achievements": "스타트업·식품 브랜드 BI 30여 건." }
+   ],
+   "educations": [ { "school": "국민대학교", "major": "시각디자인학과", "degree": "bachelor", "start": "2014-03", "end": "2018-02" } ],
+   "certs": [],
+   "projects": [
+    { "title": "비건 스낵 브랜드 BI·패키지", "org": "브랜드스튜디오 결", "start": "2024-01", "end": "2024-04", "description": "로고, 컬러 시스템, 파우치 패키지 4종 디자인과 인쇄 감리. 기여도 100%." }
+   ],
+   "cards": [
+    { "claim": "식품 스타트업 BI를 로고부터 패키지 4종까지 혼자 맡아 3개월 만에 출시했다. 인쇄 감리로 색 오차 재인쇄 0건.", "trust": "self" }
+   ]
+  },
+  {
+   "user_id": "89db3a1b-83d4-4acd-82a1-387da54ef334",
+   "name": "서채린",
+   "basics": { "headline": "앱 온보딩과 마이크로 인터랙션을 만드는 모션 디자이너", "region_sido": "서울", "region_sigungu": "서초구", "desired_categories": ["design"], "desired_regions": ["서울"], "desired_employment_types": ["정규직"], "job_search_status": "open" },
+   "experiences": [
+    { "company": "모아핏 주식회사", "department": "브랜드경험팀", "position": "모션 디자이너", "start": "2022-01", "end": null, "duties": "운동 앱 온보딩·완료 애니메이션 제작(Rive, Lottie), 광고 모션.", "achievements": "온보딩 애니메이션 개편 후 D7 리텐션 18% 향상." }
+   ],
+   "educations": [],
+   "certs": [],
+   "projects": [],
+   "cards": []
+  },
+  {
+   "user_id": "07e78c3d-c8ad-4a3f-936d-e7343d174342",
+   "name": "박나연",
+   "basics": { "headline": "제품 3D 렌더링과 WebAR 콘텐츠를 만드는 디자이너", "region_sido": "경기", "region_sigungu": "고양시", "desired_categories": ["design"], "desired_regions": ["서울", "경기"], "desired_employment_types": ["정규직"], "job_search_status": "open" },
+   "experiences": [
+    { "company": "렌더하우스", "department": "3D팀", "position": "3D 디자이너", "start": "2021-07", "end": null, "duties": "가전·뷰티 제품 렌더링, 런칭 모션, WebAR 가상 착용 콘텐츠 제작.", "achievements": "뷰티 브랜드 WebAR 캠페인 3건 납품." }
+   ],
+   "educations": [],
+   "certs": [],
+   "projects": [],
+   "cards": []
+  },
+  {
+   "user_id": "feeb46e5-97fa-40f5-8b6a-e46ed2a10f04",
+   "name": "조민기",
+   "basics": { "headline": "생성형 AI로 캠페인 비주얼을 만드는 디자이너", "region_sido": "서울", "region_sigungu": "성동구", "desired_categories": ["design"], "desired_regions": ["서울"], "desired_employment_types": ["정규직", "프리랜서"], "job_search_status": "open" },
+   "experiences": [],
+   "educations": [],
+   "certs": [],
+   "projects": [],
+   "cards": []
+  }
+ ]
+}

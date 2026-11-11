@@ -20,6 +20,16 @@ export interface CandidateSummary {
 }
 
 // 후보자 멀티선택 목록용 — 가벼운 요약 정보만 조회 (절대 규칙 3: prune & 정규화)
+/** 공개 후보(기업 계정 제외)의 스킬 목록. 홈 공급·수요의 "스킬 보유 후보 수"용 */
+export async function listCandidateSkills(): Promise<string[][]> {
+  const [{ data, error }, companies] = await Promise.all([
+    talentfolio.from("profiles").select("id, skills").eq("is_public", true).limit(5000),
+    companyUserIds(),
+  ]);
+  if (error) throw new Error(`후보 스킬 조회 실패: ${error.message}`);
+  return ((data ?? []) as { id: string; skills: string[] | null }[]).filter((r) => !companies.has(r.id)).map((r) => r.skills ?? []);
+}
+
 export async function listCandidates(): Promise<CandidateSummary[]> {
   // 공개 프로필만, 기업 계정 제외 (23 문서 G3)
   const [{ data, error }, companies] = await Promise.all([
