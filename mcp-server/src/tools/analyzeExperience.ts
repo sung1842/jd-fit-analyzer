@@ -2,6 +2,7 @@ import { pruneJsonData } from "../../../shared/lib/pruneJsonData.js";
 import type { AgentResult, CandidatePortfolio, ReworkContext } from "../../../shared/types.js";
 import { generateStructured } from "../lib/gemini.js";
 import { buildEvidenceCardPrompt, CITED_CARD_IDS_SCHEMA, toCitations } from "../lib/evidenceCards.js";
+import { SCORING_RUBRIC } from "../lib/scoringRubric.js";
 import { AGENT_RESULT_KEY_DICTIONARY } from "../lib/keyDictionary.js";
 
 const expAgentSchema = {
@@ -50,7 +51,7 @@ export async function analyzeExperience(
     : "";
 
   const { evidence_cards: cards, ...profile } = portfolio;
-  const prompt = `[JD]: ${jd}\n[Portfolio]: ${JSON.stringify(profile)}${buildEvidenceCardPrompt(cards)}${reworkSection}\nJD의 직무 경험/트러블슈팅 요구사항과 포트폴리오의 long_bio/프로젝트 설명과 resume(공개 경력·학력·자격·기본 자기소개서, 있을 때만)를 비교해 경험 적합도만 분석해. matched_experiences, missing_experiences, analysis_reason을 포함한 모든 출력 필드는 반드시 한국어로 작성해.`;
+  const prompt = `[JD]: ${jd}\n[Portfolio]: ${JSON.stringify(profile)}${buildEvidenceCardPrompt(cards)}${reworkSection}${SCORING_RUBRIC}\nJD의 직무 경험/트러블슈팅 요구사항과 포트폴리오의 long_bio/프로젝트 설명과 resume(공개 경력·학력·자격·기본 자기소개서, 있을 때만)를 비교해 경험 적합도만 분석해. matched_experiences, missing_experiences, analysis_reason을 포함한 모든 출력 필드는 반드시 한국어로 작성해.`;
 
   const raw = await generateStructured<Record<string, unknown>>(prompt, expAgentSchema, "analyze-experience");
   const pruned = pruneJsonData<AgentResult>(raw, AGENT_RESULT_ALLOWED_KEYS, AGENT_RESULT_KEY_DICTIONARY);

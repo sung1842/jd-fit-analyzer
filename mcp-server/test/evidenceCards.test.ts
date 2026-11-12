@@ -53,19 +53,14 @@ describe("prunePublicEvidenceCards", () => {
     assert.deepEqual(Object.keys(card).sort(), ["claim", "id", "recorded_at", "source", "trust"]);
   });
 
-  test("신뢰도 우선 → 최신순, 빈 claim 제외", () => {
+  test("신뢰 등급과 무관하게 최신순, 빈 claim 제외", () => {
     const out = prunePublicEvidenceCards([row(1), row(2, { trust_level: "confirmed" }), row(3), row(4, { claim: "  " })]);
-    assert.deepEqual(out.map((c) => c.id), ["c2", "c3", "c1"]);
+    assert.deepEqual(out.map((c) => c.id), ["c3", "c2", "c1"]);
   });
 
-  test("trust 순서 confirmed > attached > self > 알 수 없음", () => {
-    const out = prunePublicEvidenceCards([
-      row(1, { trust_level: "self" }),
-      row(2, { trust_level: "unknown_x" }),
-      row(3, { trust_level: "confirmed" }),
-      row(4, { trust_level: "attached" }),
-    ]);
-    assert.deepEqual(out.map((c) => c.id), ["c3", "c4", "c1", "c2"]);
+  test("모든 카드는 자기 신고로 통일 (검증 안 된 등급을 분석에 넘기지 않음)", () => {
+    const out = prunePublicEvidenceCards([row(1, { trust_level: "confirmed" }), row(2, { trust_level: "attached" }), row(3, { trust_level: "self" })]);
+    assert.ok(out.every((c) => c.trust === "self"));
   });
 });
 

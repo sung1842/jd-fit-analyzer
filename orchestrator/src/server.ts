@@ -23,6 +23,7 @@ import { registerMatchQualityRoutes } from "./lib/matchQualityRoutes.js";
 import { registerWatchRoutes } from "./lib/watchRoutes.js";
 import { isWatchNoSend } from "./lib/watchCore.js";
 import { recordStatusEvent, registerDeskRoutes } from "./lib/deskRoutes.js";
+import { registerPublicResumeRoutes } from "./lib/publicResume.js";
 import { registerScoutCaseRoutes } from "./lib/scoutCases.js";
 import { registerOfferMailRoutes } from "./lib/offerMail.js";
 import { buildJdPlan } from "./lib/jdPlan.js";
@@ -191,7 +192,7 @@ export function createApp() {
     "/api",
     accountGate({
       publicPaths,
-      company: [/^\/analyze$/, /^\/jd-runs(\/|$)/, /^\/candidates$/, /^\/desk(\/|$)/, /^\/fit-reports(\/|$)/, /^\/jd(\/|$)/, /^\/jobs\/[^/]+\/stream$/, /^\/notion(\/|$)/, /^\/portfolio-chat(\/|$)/, /^\/scout-cases(\/|$)/, /^\/slack\/channel-configs(\/|$)/, /^\/sourcing(\/|$)/],
+      company: [/^\/analyze$/, /^\/jd-runs(\/|$)/, /^\/candidates$/, /^\/candidates\/[^/]+\/public-resume$/, /^\/desk(\/|$)/, /^\/fit-reports(\/|$)/, /^\/jd(\/|$)/, /^\/jobs\/[^/]+\/stream$/, /^\/notion(\/|$)/, /^\/portfolio-chat(\/|$)/, /^\/scout-cases(\/|$)/, /^\/slack\/channel-configs(\/|$)/, /^\/sourcing(\/|$)/],
       seeker: [/^\/v1\/life(\/|$)/, /^\/candidates\/me(\/|$)/],
     })
   );
@@ -206,6 +207,7 @@ export function createApp() {
   registerRecommendRoutes(app);
   registerOfferMailRoutes(app);
   registerDeskRoutes(app);
+  registerPublicResumeRoutes(app);
   registerScoutCaseRoutes(app);
 
   // 202 Accepted — 동기 await 없이 즉시 jobId 반환 (절대 규칙 2: Anti-Blocking)
@@ -264,8 +266,8 @@ export function createApp() {
       const postings = await listJobPostings({ q, source, limit });
       res.json({ postings });
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(500).json({ error: `채용공고 조회 실패: ${message}` });
+      console.error("[job-postings] 조회 실패", err);
+      res.status(500).json({ error: "채용공고를 불러오지 못했습니다. 다시 시도해 주세요." });
     }
   });
 
@@ -344,8 +346,8 @@ export function createApp() {
         card,
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(500).json({ error: `Brief 조회 실패: ${message}` });
+      console.error("[brief] 조회 실패", err);
+      res.status(500).json({ error: "요약을 불러오지 못했습니다. 다시 시도해 주세요." });
     }
   });
 
@@ -430,7 +432,8 @@ export function createApp() {
       await db.from("profile_views").delete().eq("fit_report_id", report.id);
       const { error } = await db.from("fit_reports").delete().eq("id", report.id);
       if (error) {
-        res.status(500).json({ error: `거절 처리 실패: ${error.message}` });
+        console.error("[review] 거절 처리 실패", error.message);
+        res.status(500).json({ error: "거절을 처리하지 못했습니다. 다시 시도해 주세요." });
         return;
       }
       await clearCachedReport(report.jd, report.candidateId).catch(() => undefined);
@@ -539,8 +542,8 @@ export function createApp() {
       const result = await autoSourcingFromJd({ jd, userId, channel, reports, manualSelection });
       res.status(result.created ? 201 : 200).json(result);
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(500).json({ error: `자동 소싱 요청 실패: ${message}` });
+      console.error("[sourcing] 자동 소싱 요청 실패", err);
+      res.status(500).json({ error: "요청을 처리하지 못했습니다. 다시 시도해 주세요." });
     }
   });
 
@@ -583,8 +586,8 @@ export function createApp() {
           : {}),
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(500).json({ error: `소싱 액션 생성 실패: ${message}` });
+      console.error("[sourcing] 액션 생성 실패", err);
+      res.status(500).json({ error: "요청을 처리하지 못했습니다. 다시 시도해 주세요." });
     }
   });
 

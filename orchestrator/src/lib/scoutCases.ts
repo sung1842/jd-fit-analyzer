@@ -203,6 +203,24 @@ function toCase(row: CaseRow, counts?: CaseCounts) {
   };
 }
 
+/** 공고로 올린 건 id. posted_at 컬럼(SQL 037)이 없으면 빈 집합 */
+async function postedIds(ids: string[]): Promise<Set<string>> {
+  if (ids.length === 0) return new Set();
+  const { data, error } = await db.from("jd_runs").select("id").in("id", ids).not("posted_at", "is", null);
+  if (error) return new Set();
+  return new Set((data ?? []).map((r: { id: string }) => r.id));
+}
+
+/** posted_at 설정. 성공 시 on, 컬럼이 없거나 실패하면 null */
+async function setPosted(id: string, on: boolean): Promise<boolean | null> {
+  const { error } = await db.from("jd_runs").update({ posted_at: on ? new Date().toISOString() : null }).eq("id", id);
+  if (error) {
+    console.error("[scout] 공고 올리기 실패", error.message);
+    return null;
+  }
+  return on;
+}
+
 function requireUser(req: Request, res: Response): string | null {
   const userId = req.auth ? resolveUserId(req) : undefined;
   if (!userId) {
@@ -357,7 +375,9 @@ export function registerScoutCaseRoutes(app: Express): void {
     }
     await recordStatusEvent({ entity: "jd_run", entityId: data.id, from: null, to: "draft", actor: userId });
     if (posting) await syncPostingConditions(data.id, posting, (data as CaseRow).plan_snapshot);
-    res.status(201).json({ case: toCase(data as CaseRow), rejected });
+    // 공고로 올리기는 기업이 고른 경우만 (SQL 037). 실패해도 건 생성은 유지
+    const post = b.post === true ? (await setPosted(data.id, true)) === true : false;
+    res.status(201).json({ case: { ...toCase(data as CaseRow), posted: post }, rejected });
   });
 
   app.get("/api/scout-cases", async (req, res) => {
@@ -370,7 +390,8 @@ export function registerScoutCaseRoutes(app: Express): void {
     }
     const rows = (data ?? []) as CaseRow[];
     const counts = await countsByHash(userId, rows.map((r) => r.jd_hash));
-    const cases = rows.map((r) => toCase(r, counts.get(r.jd_hash)));
+    const posted = await postedIds(rows.map((r) => r.id));
+    const cases = rows.map((r) => ({ ...toCase(r, counts.get(r.jd_hash)), posted: posted.has(r.id) }));
     // 열린 건 먼저, 마감 가까운 순
     cases.sort((a, b) => Number(!!a.closedAt) - Number(!!b.closedAt) || (a.deadline ?? "9999").localeCompare(b.deadline ?? "9999"));
     res.json({ cases });
@@ -545,6 +566,25 @@ export function registerScoutCaseRoutes(app: Express): void {
       mustUnmet: r.score_breakdown?.mustUnmet ?? false,
     }));
     res.json({ scores });
+  });
+
+  // 구직자 공고 목록에 올리기/내리기 (SQL 037 posted_at → 트리거가 job_postings 를 맞춘다)
+  app.post("/api/scout-cases/:id/post", async (req, res) => {
+    const userId = requireUser(req, res);
+    if (!userId) return;
+    const row = await loadOwnCase(req, res, userId);
+    if (!row) return;
+    const on = (req.body as { post?: unknown }).post === true;
+    if (on && row.closed_at) {
+      res.status(400).json({ error: "종료한 건은 공고로 올릴 수 없습니다. 먼저 다시 여세요." });
+      return;
+    }
+    const ok = await setPosted(row.id, on);
+    if (ok === null) {
+      res.status(503).json({ error: "공고 올리기를 아직 쓸 수 없습니다. 관리자에게 문의하세요." });
+      return;
+    }
+    res.json({ posted: on });
   });
 
   app.post("/api/scout-cases/:id/close", async (req, res) => {

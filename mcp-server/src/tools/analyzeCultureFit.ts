@@ -2,6 +2,7 @@ import { pruneJsonData } from "../../../shared/lib/pruneJsonData.js";
 import type { AgentResult, CandidatePortfolio, ReworkContext } from "../../../shared/types.js";
 import { generateStructured } from "../lib/gemini.js";
 import { buildEvidenceCardPrompt, CITED_CARD_IDS_SCHEMA, toCitations } from "../lib/evidenceCards.js";
+import { SCORING_RUBRIC } from "../lib/scoringRubric.js";
 import { AGENT_RESULT_KEY_DICTIONARY } from "../lib/keyDictionary.js";
 
 const cultureAgentSchema = {
@@ -50,7 +51,7 @@ export async function analyzeCultureFit(
     : "";
 
   const { evidence_cards: cards, ...profile } = portfolio;
-  const prompt = `[JD]: ${jd}\n[Portfolio]: ${JSON.stringify(profile)}${buildEvidenceCardPrompt(cards)}${reworkSection}\nJD에 드러난 조직문화/협업 방식(예: 협업 스타일, 커뮤니케이션, 자기주도성, 성장 마인드셋 등) 요구사항과 포트폴리오의 short_bio/long_bio에 드러난 태도·경험을 비교해 컬처핏 적합도만 분석해. matched_values, missing_values, analysis_reason을 포함한 모든 출력 필드는 반드시 한국어로 작성해.`;
+  const prompt = `[JD]: ${jd}\n[Portfolio]: ${JSON.stringify(profile)}${buildEvidenceCardPrompt(cards)}${reworkSection}${SCORING_RUBRIC}\nJD에 드러난 조직문화/협업 방식(예: 협업 스타일, 커뮤니케이션, 자기주도성, 성장 마인드셋 등) 요구사항과 포트폴리오의 short_bio/long_bio에 드러난 태도·경험을 비교해 컬처핏 적합도만 분석해. matched_values, missing_values, analysis_reason을 포함한 모든 출력 필드는 반드시 한국어로 작성해.`;
 
   const raw = await generateStructured<Record<string, unknown>>(prompt, cultureAgentSchema, "analyze-culture-fit");
   const pruned = pruneJsonData<AgentResult>(raw, AGENT_RESULT_ALLOWED_KEYS, AGENT_RESULT_KEY_DICTIONARY);

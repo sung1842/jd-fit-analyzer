@@ -2,6 +2,7 @@ import type { AgentResult, CandidatePortfolio, CeoDecision, FitReport, ReworkCon
 import { evaluateAsCeo } from "./ceo.js";
 import { callMcpTool } from "./mcp/client.js";
 import { runRuleBasedValidation } from "./validation.js";
+import { calibrateReport } from "./lib/calibrate.js";
 
 // 최초 분석 1회 + 재작업 1회 (운영 규칙: 재작업은 항목당 최대 1회)
 const MAX_ATTEMPTS = 2;
@@ -15,6 +16,7 @@ export interface StepMemo {
 export type ProgressCallback = (stage: string) => void | Promise<void>;
 
 function buildFitReport(
+  portfolio: CandidatePortfolio,
   candidateId: string,
   candidateName: string,
   techResult: AgentResult,
@@ -22,7 +24,8 @@ function buildFitReport(
   cultureResult: AgentResult,
   finalReport: CeoDecision["final_report"]
 ): FitReport {
-  return {
+  // 최종 점수는 코드 보정을 거친다 (근거 없는 충족 항목 제거·근거 등급 상한, LLM 호출 없음)
+  return calibrateReport({
     candidateId,
     candidateName,
     overallScore: finalReport.overallScore,
@@ -32,7 +35,7 @@ function buildFitReport(
     cultureFit: cultureResult,
     ceoSummary: finalReport.ceoSummary,
     generatedAt: new Date().toISOString(),
-  };
+  }, portfolio);
 }
 
 export async function runFitAnalysis(jd: string, candidateId: string, onProgress?: ProgressCallback, memo?: StepMemo): Promise<FitReport> {
@@ -106,7 +109,7 @@ export async function runFitAnalysis(jd: string, candidateId: string, onProgress
 
     if (ceoDecision.is_valid) {
       await onProgress?.("done");
-      return buildFitReport(candidateId, portfolio.name, techResult!, expResult!, cultureResult!, ceoDecision.final_report);
+      return buildFitReport(portfolio, candidateId, portfolio.name, techResult!, expResult!, cultureResult!, ceoDecision.final_report);
     }
 
     needTechRetry = ceoDecision.target_departments.includes("TECH");
@@ -137,5 +140,5 @@ export async function runFitAnalysis(jd: string, candidateId: string, onProgress
   }
 
   await onProgress?.("done");
-  return buildFitReport(candidateId, portfolio.name, techResult!, expResult!, cultureResult!, ceoDecision.final_report);
+  return buildFitReport(portfolio, candidateId, portfolio.name, techResult!, expResult!, cultureResult!, ceoDecision.final_report);
 }

@@ -13,7 +13,7 @@ import { db } from "./db.js";
 import { FORBIDDEN, resolveUserId } from "./auth.js";
 import { chunk } from "./deskMetrics.js";
 import { getFitReportById, listFitReports, withFitMarks } from "./fitReports.js";
-import { listCandidates } from "./talentfolio.js";
+import { listCandidates, listCandidateSkills } from "./talentfolio.js";
 import {
   buildDeskFeed,
   classifyPosting,
@@ -151,18 +151,17 @@ let marketCache: { at: number; value: Pick<DeskInput, "supply" | "demand" | "ski
 
 async function loadMarket(): Promise<Pick<DeskInput, "supply" | "demand" | "skillGap">> {
   if (marketCache && Date.now() - marketCache.at < MARKET_TTL) return marketCache.value;
-  const [cands, postings, claims] = await Promise.all([
+  const [cands, postings, skillRows] = await Promise.all([
     listCandidates().catch(() => []),
     db.from("job_postings").select("title, skills").limit(2000),
-    db.from("public_evidence_cards").select("claim").limit(2000),
+    listCandidateSkills().catch(() => [] as string[][]),
   ]);
   const supply = { developer: 0, designer: 0 };
   for (const c of cands) if (c.role === "developer" || c.role === "designer") supply[c.role] += 1;
   const demand = { developer: 0, designer: 0 };
   const postRows = (postings.data ?? []) as { title: string; skills: string[] | null }[];
   for (const p of postRows) demand[classifyPosting(p.title ?? "", p.skills ?? [])] += 1;
-  const cardRows = (claims.data ?? []) as { claim: string }[];
-  const skillGap = computeSkillGap(postRows.map((p) => ({ skills: p.skills ?? [] })), cardRows.map((c) => c.claim));
+  const skillGap = computeSkillGap(postRows.map((p) => ({ skills: p.skills ?? [] })), skillRows);
   const value = { supply, demand, skillGap };
   marketCache = { at: Date.now(), value };
   return value;

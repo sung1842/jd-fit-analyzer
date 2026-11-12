@@ -1,6 +1,7 @@
 import { pruneJsonData } from "../../../shared/lib/pruneJsonData.js";
 import type { AgentResult, CandidatePortfolio, ReworkContext } from "../../../shared/types.js";
 import { generateStructured } from "../lib/gemini.js";
+import { SCORING_RUBRIC } from "../lib/scoringRubric.js";
 import { AGENT_RESULT_KEY_DICTIONARY } from "../lib/keyDictionary.js";
 
 const techAgentSchema = {
@@ -47,7 +48,7 @@ export async function analyzeTechStack(
     ? `\n[이전 평가]: ${JSON.stringify(rework.previousResult)}\n[CEO 피드백]: ${rework.feedback}\n위 피드백을 반영해 재평가하라.`
     : "";
 
-  const prompt = `[JD]: ${jd}\n[Portfolio]: ${JSON.stringify(portfolio)}${reworkSection}\nJD에서 요구하는 기술 스택을 추출하고 포트폴리오의 skills/long_bio와 비교해 기술 스택 적합도만 분석해. matched_stacks, missing_stacks, analysis_reason을 포함한 모든 출력 필드는 반드시 한국어로 작성해.`;
+  const prompt = `[JD]: ${jd}\n[Portfolio]: ${JSON.stringify(portfolio)}${reworkSection}${SCORING_RUBRIC}\nJD에서 요구하는 기술 스택을 추출하고 포트폴리오의 skills/long_bio와 비교해 기술 스택 적합도만 분석해. matched_stacks, missing_stacks, analysis_reason을 포함한 모든 출력 필드는 반드시 한국어로 작성해.`;
 
   const raw = await generateStructured<Record<string, unknown>>(prompt, techAgentSchema, "analyze-tech-stack");
   const pruned = pruneJsonData<AgentResult>(raw, AGENT_RESULT_ALLOWED_KEYS, AGENT_RESULT_KEY_DICTIONARY);
