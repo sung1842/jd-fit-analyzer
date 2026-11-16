@@ -6,9 +6,9 @@ export const options = {
   scenarios: {
     main: {
       executor: 'constant-arrival-rate', // [레슨 4] 열린 모델: 매초 정해진 수가 도착
-      rate: 250,                // 1초에 5개 요청
+      rate: 10,                // 1초에 5개 요청
       timeUnit: '1s',
-      duration: '30s',        // 30초 동안
+      duration: '2m',        // 30초 동안
       preAllocatedVUs: 50,    // 미리 준비해 둘 가상 사용자 수
       maxVUs: 500,            // 부족하면 여기까지 늘림
     },
@@ -25,7 +25,7 @@ export const options = {
 };
 
 export default function () {
-  const res = http.get('http://localhost:3000/work');
+  const res = http.get('http://localhost:3000/flaky');
 
   // [레슨 3] 실패의 정의: 내가 기대한 응답인가
   check(res, {
