@@ -2,6 +2,11 @@
 
 매일 23:59 자동 커밋 시 그날의 변경 사항을 날짜별로 기록합니다.
 
+## 2026-11-17
+(브랜치: feat/account-split-cleanup)
+- 부하 테스트·메트릭 연습용 서버(`server.js`) 삭제: 학습용 실습 코드라 제품 코드(orchestrator/mcp-server)와 무관해 저장소에서 정리
+- 매칭 정답 시나리오 파일(`scripts/data/match-scenarios.json`)은 수집 공고 데이터를 포함해 계속 커밋에서 제외
+
 ## 2026-11-16
 (브랜치: feat/account-split-cleanup)
 - 부하 테스트 연습 서버(`server.js`)에 `/metrics` 주소 추가: 누적 요청 수·처리 중 요청 수·누적 오류 수를 Prometheus 텍스트 형식으로 노출해 카운터/게이지 개념을 확인
